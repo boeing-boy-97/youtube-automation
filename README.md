@@ -1,62 +1,90 @@
 # ShortForge
 
-**Your content engine, running on autopilot.**
+Autonomous short-form video production platform.
+Node.js + TypeScript monorepo: Fastify API, React/Vite frontend, Prisma + Postgres, Redis + BullMQ.
 
-ShortForge is an autonomous short-form video operating system for YouTube creators — a production-grade frontend application built with React, TypeScript, Vite, Tailwind CSS, React Router, Zustand, React Query, React Hook Form, Framer Motion, Recharts, and React Flow.
+## Repository Layout
 
-## Quick Start
+```
+shortforge/
+├── apps/
+│   ├── api/              # Fastify backend (REST API, queues, workers)
+│   └── web/              # React + Vite frontend (dashboard, creator studio)
+├── packages/
+│   ├── shared/           # Shared utilities, constants, error types
+│   ├── types/            # Shared TypeScript types (API, content, YouTube, jobs)
+│   └── config/           # Shared ESLint / TS / Prettier configs
+├── prisma/               # Prisma schema + migrations (shared DB)
+├── scripts/              # Setup / DB / dev / maintenance scripts
+├── infra/
+│   ├── docker/           # Dockerfiles (api, worker)
+│   ├── compose/          # docker-compose stacks (dev, prod)
+│   ├── monitoring/       # Grafana/Prometheus/Loki configs (TBD)
+│   └── deployment/       # Render/Railway/Fly/AWS deployment manifests (TBD)
+├── docs/                 # Architecture, API, DB, runbooks, ADRs
+└── .github/workflows/    # CI/CD pipelines
+```
 
+## Quick Start (local development)
+
+### Prerequisites
+- Node.js ≥ 20.10
+- npm ≥ 10
+- Docker + Docker Compose (for Postgres & Redis)
+- ffmpeg / ffprobe installed locally
+
+### 1. Spin up infrastructure
+```bash
+cd infra/compose
+docker compose -f docker-compose.dev.yml up -d postgres redis
+```
+
+### 2. Install dependencies
 ```bash
 npm install
-npm run dev      # start dev server at http://localhost:5173
-npm run build    # production build
 ```
 
-## Architecture
+### 3. Configure environment
+Copy `.env.example` to `apps/api/.env` and fill in required provider keys:
+- `DATABASE_URL` (postgres)
+- `REDIS_URL` (redis)
+- `SESSION_SECRET`, `ENCRYPTION_KEY`, `ARGON2_PEPPER` (base64, 32 bytes each)
+- `OPENAI_API_KEY`
+- `ELEVENLABS_API_KEY`
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `YOUTUBE_API_KEY` (for YouTube OAuth/upload)
+- `RESEND_API_KEY` (email)
 
+In production, failure to set a required provider causes the server to refuse startup rather than silently using mocks.
+
+### 4. Initialize the database
+```bash
+npm run db:generate
+npm run db:migrate
+npm run db:seed      # optional — seeds demo workspace/admin user
 ```
-src/
-  app/            # App shell, router, providers
-  components/
-    ui/           # Reusable primitives (Button, Card, Input, Dialog, etc.)
-    shell/        # Sidebar, Header, MobileNav, CommandPalette, Toast
-    common/       # PageHeader, EmptyState
-  pages/          # All routes (Landing, Login, Onboarding, Dashboard, …)
-  services/
-    demoEngine.ts # Staged async simulation (script, voice, visuals, render, QC, publish)
-    mockApi.ts    # Simulated progress helpers
-  stores/         # auth, workspace, content, automation, ui (Zustand)
-  mock/           # Seed data for ideas, content, analytics, YouTube
-  types/          # Full TypeScript domain types
-  lib/            # utils, constants, formatters, validators
-  styles/         # Design tokens in globals.css (light/dark)
+
+### 5. Run dev servers
+```bash
+# Terminal 1 — API server
+npm run dev:api      # http://localhost:4000
+
+# Terminal 2 — Worker (BullMQ queue processors)
+npm run dev:worker
+
+# Terminal 3 — Frontend
+npm run dev:web      # http://localhost:5173
 ```
 
-## Demo Flow
+## Testing & Typechecking
+```bash
+npm run typecheck
+npm test
+npm run build        # builds all workspaces
+```
 
-1. Open `/` → click "Start Building"
-2. Sign up with any name/email (demo auth, localStorage only)
-3. Complete onboarding: Welcome → Connect YouTube (simulated) → Channel → Pillars → Rules → Voice → Brand → Publishing → Automation → Launch
-4. Dashboard shows seeded KPIs, pipeline, queue, engine health
-5. Click **Create** → AI-generate a concept → step through Script → Voice → Visuals → Studio → Render → QC → Approve → Schedule
-6. Open **Automation** → enable Assisted or Autonomous → Run Now (runs the full pipeline with live progress)
-7. **Calendar**, **Queue**, **Analytics**, **YouTube**, **Workflow builder**, **Templates**, **Brand Kit**, **Assets**, **Notifications**, **Settings**, **Help** are all connected.
+## Production
+- Docker images: `infra/docker/Dockerfile.api`, `infra/docker/Dockerfile.worker`
+- Build from repo root: `docker build -f infra/docker/Dockerfile.api -t shortforge-api .`
+- All providers are real implementations (OpenAI, ElevenLabs, AWS S3/R2, FFmpeg, Resend, googleapis). There are NO mocks in `src/`. Missing credentials fail fast.
 
-## Keyboard Shortcuts
-
-- `C` — Create
-- `/` or `Cmd/Ctrl+K` — Command palette
-- `G D/I/C/Q/A/S` — Navigate (Go to Dashboard/Ideas/Content/Queue/Analytics/Settings)
-- `Esc` — Close dialogs/drawers/palette
-
-## Design System
-
-- **Palette:** off-white background, white surfaces, charcoal typography, emerald accent (#1a7d4c), semantic success/warning/error/info
-- **Typography:** Inter with display / page-title / section-title / card-title / body / caption / metadata / micro-label scale
-- **Dark mode:** Theme toggle in Settings or header; persisted in localStorage
-- **Mobile:** Bottom nav with floating Create button; tables become cards; responsive layouts at sm/md/lg breakpoints
-- **Motion:** Subtle fade/slide/scale transitions with reduced-motion support
-
-## Data Persistence
-
-All demo state (user, workspace, content, ideas, jobs, notifications, automation config, theme) is persisted to `localStorage`. Use **Settings → Danger Zone → Reset Demo Data** to clear everything and return to onboarding.
+See `docs/` for architecture, API reference, operational runbooks, and security notes.

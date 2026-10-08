@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+coverage
+*.tsbuildinfo
+node_modules
+.env
+.env.*
+!.env.example
+storage/
+tmp/
+work/
+*.log
+package-lock.json
+pnpm-lock.yaml

@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  typecheck-test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck API
+        run: npm run typecheck -w @shortforge/api
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Unit tests
+        run: npm test -w @shortforge/api
+      - name: Build API
+        run: npm run build -w @shortforge/api
+      - name: Build Web
+        run: npm run build -w @shortforge/web

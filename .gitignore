@@ -7,33 +7,37 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies & builds
 node_modules
 dist
 dist-ssr
+*.tsbuildinfo
 *.local
+coverage
 
-# Editor directories and files
+# Editor / OS
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# Backend-specific
-backend/node_modules
-backend/dist
-backend/.env
-backend/.env.*
+# Environment (never commit secrets)
+.env
+.env.*
 !.env.example
-backend/storage
-backend/tmp
-backend/work
-backend/coverage
-backend/postcss.config.js
+!.env.*.example
 
-# OS
-Thumbs.db
+# Runtime data
+storage/
+tmp/
+work/
+
+# Frontend / backend specific
+apps/*/dist
+apps/*/node_modules

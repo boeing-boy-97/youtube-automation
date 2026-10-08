@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1.6
+# ShortForge API — production image (monorepo root context)
+# Build: docker build -f infra/docker/Dockerfile.api -t shortforge-api .
+FROM node:20-alpine AS deps
+RUN apk add --no-cache ffmpeg
+WORKDIR /app
+# Root workspace files
+COPY package.json package-lock.json* ./
+COPY apps/api/package.json apps/api/package.json
+COPY prisma ./prisma
+RUN npm ci --no-audit --no-fund --workspace @shortforge/api
+
+FROM node:20-alpine AS builder
+RUN apk add --no-cache ffmpeg
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
+COPY . .
+RUN npm run db:generate -w @shortforge/api
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build -w @shortforge/api
+
+FROM node:20-alpine AS runtime
+RUN apk add --no-cache ffmpeg tini
+ENV NODE_ENV=production
+WORKDIR /app
+RUN addgroup -g 1001 -S sf && adduser -S sf -u 1001
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+USER sf
+EXPOSE 4000
+WORKDIR /app/apps/api
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "dist/app/server.js"]
