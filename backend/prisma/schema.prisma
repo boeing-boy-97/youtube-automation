@@ -1,0 +1,1402 @@
+// ShortForge PostgreSQL schema — modular monolith, multi-tenant
+// All workspace-owned entities have workspaceId and an FK to Workspace with referential integrity.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============== ENUMS ==============
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  EDITOR
+  REVIEWER
+  VIEWER
+}
+
+enum ChannelStatus {
+  ACTIVE
+  TOKEN_EXPIRED
+  QUOTA_EXCEEDED
+  REVOKED
+  UNHEALTHY
+}
+
+enum OAuthProvider {
+  GOOGLE
+}
+
+enum ContentState {
+  IDEA
+  DRAFT
+  SCRIPT_GENERATING
+  SCRIPT_READY
+  SCRIPT_REVISING
+  SCRIPT_FAILED
+  VOICE_GENERATING
+  VOICE_READY
+  VOICE_REGENERATING
+  VOICE_FAILED
+  VISUALS_GENERATING
+  VISUALS_READY
+  VISUALS_REGENERATING
+  VISUALS_FAILED
+  RENDERING
+  RENDERED
+  RENDER_FAILED
+  QUALITY_CHECKING
+  QUALITY_FAILED
+  REVIEW
+  REJECTED
+  APPROVED
+  SCHEDULED
+  PUBLISHING
+  PUBLISH_FAILED
+  PUBLISHED
+  CANCELLED
+  FAILED
+  ARCHIVED
+}
+
+enum AssetType {
+  IMAGE
+  VIDEO
+  AUDIO
+  FONT
+  SUBTITLE
+  OTHER
+}
+
+enum AssetStatus {
+  UPLOADING
+  READY
+  PROCESSING
+  FAILED
+  DELETED
+}
+
+enum AssetKind {
+  VOICEOVER
+  SCENE_VISUAL
+  THUMBNAIL
+  B_ROLL
+  MUSIC
+  SUBTITLE
+  RENDER_OUTPUT
+  TEMPLATE
+  BRAND_LOGO
+  OTHER
+}
+
+enum JobStatus {
+  WAITING
+  ACTIVE
+  COMPLETED
+  FAILED
+  DELAYED
+  CANCELLED
+}
+
+enum JobName {
+  IDEA_GENERATION
+  SCRIPT_GENERATION
+  VOICE_GENERATION
+  VISUAL_GENERATION
+  SCENE_PROCESSING
+  RENDERING
+  SUBTITLE_GENERATION
+  QUALITY_CHECK
+  PUBLISHING
+  ANALYTICS_SYNC
+  PERFORMANCE_ANALYSIS
+  NOTIFICATIONS
+  CLEANUP
+  AUTOMATION
+}
+
+enum QCLevel {
+  BLOCK
+  WARNING
+  PASS
+}
+
+enum QCCategory {
+  AUDIO_LEVEL
+  SUBTITLE_SYNC
+  DURATION
+  RESOLUTION
+  FRAME_RATE
+  ASPECT_RATIO
+  TEXT_READABILITY
+  COPYRIGHT_SUSPECT
+  CONTENT_POLICY
+  THUMBNAIL
+  METADATA
+  CUSTOM
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  APPROVAL_REQUESTED
+  PUBLISH_SUCCEEDED
+  PUBLISH_FAILED
+  QC_WARNING
+  DAILY_SUMMARY
+  SYSTEM
+}
+
+enum SubscriptionTier {
+  FREE
+  STARTER
+  PRO
+  TEAMS
+  ENTERPRISE
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  FAILED
+  VOID
+}
+
+enum AutomationMode {
+  MANUAL
+  ASSISTED
+  AUTONOMOUS
+}
+
+enum StrategyTone {
+  EDUCATIONAL
+  ENTERTAINING
+  INSPIRATIONAL
+  NEWS
+  TUTORIAL
+  STORY
+  COMMENTARY
+}
+
+enum PublicationStatus {
+  PENDING_RECONCILE
+  UPLOADED
+  PROCESSING
+  LIVE
+  FAILED
+  PRIVATE
+  UNLISTED
+  REMOVED
+}
+
+enum ScheduleStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHING
+  PUBLISHED
+  CANCELLED
+  FAILED
+}
+
+enum WorkflowTrigger {
+  MANUAL
+  ON_IDEA_APPROVED
+  ON_SCRIPT_READY
+  ON_APPROVED
+  SCHEDULED
+  AUTOMATION
+}
+
+enum ExecutionStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+  PAUSED
+}
+
+// ============== USERS / AUTH ==============
+
+model User {
+  id             String         @id @default(cuid())
+  email          String         @unique
+  name           String?
+  avatarUrl      String?
+  passwordHash   String?
+  emailVerified  Boolean        @default(false)
+  authProvider   OAuthProvider?
+  authProviderId String?
+  lastLoginAt    DateTime?
+  disabled       Boolean        @default(false)
+  timeZone       String         @default("UTC")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+
+  sessions             Session[]
+  oauthAccounts        OAuthAccount[]
+  workspaceMemberships WorkspaceMember[]
+  notifications        Notification[]
+  resetTokens          PasswordResetToken[]
+  auditLogs            AuditLog[]
+  preferences          NotificationPreference?
+
+  @@index([email])
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique
+  refreshHash String    @unique
+  userAgent   String?
+  ipAddress   String?
+  createdAt   DateTime  @default(now())
+  expiresAt     DateTime
+  lastSeenAt    DateTime @default(now())
+  rotatedAt     DateTime @default(now())
+  revokedAt   DateTime?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model OAuthAccount {
+  id         String        @id @default(cuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider   OAuthProvider
+  providerId String
+  email      String?
+  rawProfile Json?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([provider, providerId])
+}
+
+// ============== WORKSPACE / RBAC ==============
+
+model Workspace {
+  id               String           @id @default(cuid())
+  name             String
+  slug             String           @unique
+  avatarUrl        String?
+  tier             SubscriptionTier @default(FREE)
+  stripeCustomerId String?          @unique
+  stripeSubId      String?
+  settings         Json             @default("{}")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+
+  members       WorkspaceMember[]
+  channels      YouTubeChannel[]
+  strategies    ContentStrategy[]
+  ideas         ContentIdea[]
+  contents      Content[]
+  voices        Voice[]
+  assets        Asset[]
+  videoProjects VideoProject[]
+  schedules     Schedule[]
+  publications  Publication[]
+  analytics     AnalyticsSnapshot[]
+  workflows     Workflow[]
+  automations   AutomationConfig[]
+  usageRecords  UsageRecord[]
+  usageLimits   UsageLimit[]
+  invoices      Invoice[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  renderJobs    RenderJob[]
+
+  @@index([slug])
+  @@index([tier])
+}
+
+model WorkspaceMember {
+  id          String        @id @default(cuid())
+  workspaceId String
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        WorkspaceRole
+  invitedBy   String?
+  invitedAt   DateTime?
+  joinedAt    DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+// ============== YOUTUBE ==============
+
+model YouTubeChannel {
+  id                String             @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  providerChannelId String             @unique
+  title             String
+  description       String?
+  thumbnailUrl      String?
+  customUrl         String?
+  country           String?
+  defaultCategory   String             @default("22")
+  defaultPrivacy    String             @default("private")
+  subscriberCount   Int                @default(0)
+  viewCount         Int                @default(0)
+  videoCount        Int                @default(0)
+  credentials       YouTubeCredential?
+  status            ChannelStatus      @default(ACTIVE)
+  lastSyncAt        DateTime?
+  lastPublishAt     DateTime?
+  lastError         String?
+  connectedAt       DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?
+
+  schedules    Schedule[]
+  publications Publication[]
+  analytics    AnalyticsSnapshot[]
+  Content      Content[]
+
+  @@index([workspaceId])
+  @@index([status])
+}
+
+model YouTubeCredential {
+  id               String         @id @default(cuid())
+  channelId        String         @unique
+  channel          YouTubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  encryptedToken   String // AES-256-GCM blob of {accessToken, refreshToken, expiryDate}
+  tokenExpiresAt   DateTime?
+  scopeVersion     Int            @default(1)
+  lastRefreshedAt  DateTime?
+  lastRefreshError String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+// ============== STRATEGY / IDEAS ==============
+
+model ContentStrategy {
+  id                String       @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name              String
+  niche             String
+  audience          String
+  tone              StrategyTone @default(EDUCATIONAL)
+  hookStyle         String?
+  avgDurationSec    Int          @default(60)
+  brandVoice        Json?
+  topicPillars      String[]     @default([])
+  forbiddenTopics   String[]     @default([])
+  publishingCadence Json?
+  targetVideoLength Json?
+  ctaTemplate       String?
+  hashtags          String[]     @default([])
+  promptSnippets    Json?
+  isDefault         Boolean      @default(false)
+  version           Int          @default(1)
+  archivedAt        DateTime?
+  createdById       String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  ideas   ContentIdea[]
+  Content Content[]
+
+  @@index([workspaceId])
+}
+
+model ContentIdea {
+  id                String           @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  strategyId        String?
+  strategy          ContentStrategy? @relation(fields: [strategyId], references: [id], onDelete: SetNull)
+  title             String
+  hook              String?
+  summary           String
+  targetDurationSec Int              @default(60)
+  keywords          String[]         @default([])
+  angle             String?
+  source            String?
+  duplicateOfId     String?
+  duplicateOf       ContentIdea?     @relation("DuplicateOf", fields: [duplicateOfId], references: [id], onDelete: SetNull)
+  duplicates        ContentIdea[]    @relation("DuplicateOf")
+  scoreId           String?          @unique
+  score             IdeaScore?
+  approved          Boolean          @default(false)
+  rejected          Boolean          @default(false)
+  rejectionReason   String?
+  tags              String[]         @default([])
+  notes             String?
+  metadata          Json?
+  createdById       String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  archivedAt        DateTime?
+
+  contents Content[]
+
+  @@index([workspaceId])
+  @@index([strategyId])
+  @@index([approved])
+  @@index([createdAt])
+}
+
+model IdeaScore {
+  id              String      @id @default(cuid())
+  ideaId          String      @unique
+  idea            ContentIdea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  hook            Float       @default(0)
+  novelty         Float       @default(0)
+  relevance       Float       @default(0)
+  clickability    Float       @default(0)
+  retention       Float       @default(0)
+  productionCost  Float       @default(0)
+  overall         Float       @default(0)
+  reasoning       String?
+  vectorEmbedding Json?
+  model           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+// ============== CONTENT / SCRIPTS ==============
+
+model Content {
+  id                String           @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  ideaId            String?
+  idea              ContentIdea?     @relation(fields: [ideaId], references: [id], onDelete: SetNull)
+  strategyId        String?
+  strategy          ContentStrategy? @relation(fields: [strategyId], references: [id], onDelete: SetNull)
+  channelId         String?
+  channel           YouTubeChannel?  @relation(fields: [channelId], references: [id], onDelete: SetNull)
+  title             String
+  hook              String?
+  slug              String?
+  description       String?
+  tags              String[]         @default([])
+  hashtags          String[]         @default([])
+  state             ContentState     @default(IDEA)
+  previousState     ContentState?
+  durationSec       Int?
+  targetDurationSec Int              @default(60)
+  width             Int              @default(1080)
+  height            Int              @default(1920)
+  fps               Int              @default(30)
+  aspectRatio       String           @default("9:16")
+  privacyStatus     String           @default("private")
+  categoryId        String           @default("22")
+  scheduledFor      DateTime?
+  publishedAt       DateTime?
+  publishVideoId    String?
+  errorCode         String?
+  errorMessage      String?
+  retries           Int              @default(0)
+  lastErrorAt       DateTime?
+  automationMode    AutomationMode   @default(MANUAL)
+  policySnapshot    Json?
+  metadata          Json?
+  createdById       String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  deletedAt         DateTime?
+  archivedAt        DateTime?
+
+  versions      ContentVersion[]
+  scripts       Script[]
+  voices        Voice[]
+  scenes        Scene[]
+  videoProjects VideoProject[]
+  qualityChecks QualityCheck[]
+  reviews       Review[]
+  approvals     Approval[]
+  schedule      Schedule?
+  publication   Publication?
+  analytics     VideoAnalytics[]
+  insights      PerformanceInsight[]
+  adjustments   StrategyAdjustment[]
+
+  @@index([workspaceId])
+  @@index([state])
+  @@index([channelId])
+  @@index([ideaId])
+  @@index([createdAt])
+  @@index([scheduledFor])
+}
+
+model ContentVersion {
+  id          String   @id @default(cuid())
+  contentId   String
+  content     Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  version     Int
+  snapshot    Json
+  changedById String?
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  @@unique([contentId, version])
+}
+
+model Script {
+  id                   String    @id @default(cuid())
+  workspaceId          String
+  contentId            String
+  content              Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  title                String
+  hook                 String?
+  body                 String
+  scenes               Json? // Array<{index,durationSec,narration,visualPrompt,textOverlay,cta}>
+  cta                  String?
+  wordCount            Int       @default(0)
+  estimatedDurationSec Int       @default(0)
+  tone                 String?
+  model                String?
+  promptTokens         Int       @default(0)
+  completionTokens     Int       @default(0)
+  estimatedCost        Float     @default(0)
+  currentVersion       Int       @default(1)
+  approvedAt           DateTime?
+  rejectedReason       String?
+  metadata             Json?
+  createdById          String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  versions ScriptVersion[]
+
+  @@index([workspaceId])
+  @@index([contentId])
+}
+
+model ScriptVersion {
+  id          String   @id @default(cuid())
+  scriptId    String
+  script      Script   @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+  version     Int
+  body        String
+  hook        String?
+  scenes      Json?
+  diff        Json?
+  model       String?
+  changedById String?
+  createdAt   DateTime @default(now())
+
+  @@unique([scriptId, version])
+}
+
+// ============== VOICE ==============
+
+model Voice {
+  id              String    @id @default(cuid())
+  workspaceId     String
+  contentId       String?
+  content         Content?  @relation(fields: [contentId], references: [id], onDelete: SetNull)
+  provider        String    @default("elevenlabs")
+  providerVoiceId String
+  name            String
+  labels          Json?
+  previewUrl      String?
+  isDefault       Boolean   @default(false)
+  settings        Json?
+  archivedAt      DateTime?
+  createdById     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  generations VoiceGeneration[]
+  Workspace   Workspace         @relation(fields: [workspaceId], references: [id])
+
+  @@index([workspaceId])
+}
+
+model VoiceGeneration {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  voiceId      String
+  voice        Voice     @relation(fields: [voiceId], references: [id], onDelete: Cascade)
+  contentId    String?
+  scriptId     String?
+  sceneId      String?
+  audioAssetId String?
+  text         String
+  model        String?
+  settings     Json?
+  charCount    Int       @default(0)
+  durationSec  Float?
+  status       JobStatus @default(WAITING)
+  errorMessage String?
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([voiceId])
+  @@index([contentId])
+}
+
+// ============== SCENES / ASSETS ==============
+
+model Scene {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  contentId    String
+  content      Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  index        Int
+  durationSec  Float
+  narration    String?
+  visualPrompt String?
+  textOverlay  String?
+  cta          String?
+  transition   String   @default("cut")
+  metadata     Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assets SceneAsset[]
+
+  @@unique([contentId, index])
+  @@index([workspaceId])
+}
+
+model SceneAsset {
+  id          String   @id @default(cuid())
+  sceneId     String
+  scene       Scene    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  assetId     String
+  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  role        String // voiceover, visual, subtitle, music
+  positionSec Float?
+  durationSec Float?
+  volume      Float?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([sceneId])
+  @@index([assetId])
+}
+
+model Asset {
+  id            String      @id @default(cuid())
+  workspaceId   String
+  workspace     Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contentId     String?
+  voiceId       String?
+  kind          AssetKind   @default(OTHER)
+  type          AssetType
+  status        AssetStatus @default(UPLOADING)
+  storageKey    String
+  storageBucket String?
+  filename      String
+  mimeType      String
+  sizeBytes     Int         @default(0)
+  width         Int?
+  height        Int?
+  durationSec   Float?
+  fps           Float?
+  checksum      String?
+  provider      String?
+  model         String?
+  prompt        String?
+  expiresAt     DateTime?
+  metadata      Json?
+  createdById   String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+
+  variants    AssetVariant[]
+  sceneAssets SceneAsset[]
+
+  @@index([workspaceId])
+  @@index([contentId])
+  @@index([kind])
+  @@index([status])
+}
+
+model AssetVariant {
+  id          String   @id @default(cuid())
+  assetId     String
+  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  variant     String // e.g. "thumbnail", "240p", "1080p", "web"
+  storageKey  String
+  mimeType    String
+  sizeBytes   Int      @default(0)
+  width       Int?
+  height      Int?
+  durationSec Float?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([assetId])
+}
+
+// ============== VIDEO PROJECT / RENDERING ==============
+
+model VideoProject {
+  id                 String    @id @default(cuid())
+  workspaceId        String
+  workspace          Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contentId          String
+  content            Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  width              Int
+  height             Int
+  fps                Int       @default(30)
+  aspectRatio        String    @default("9:16")
+  templateId         String?
+  renderSettings     Json?
+  status             JobStatus @default(WAITING)
+  currentRenderJobId String?
+  finalAssetId       String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  renderJobs    RenderJob[]
+  subtitles     SubtitleTrack[]
+  qualityChecks QualityCheck[]
+
+  @@index([workspaceId])
+  @@index([contentId])
+}
+
+model RenderJob {
+  id            String       @id @default(cuid())
+  workspaceId   String
+  workspace     Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  projectId     String
+  project       VideoProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  bullId        String? // BullMQ job id
+  status        JobStatus    @default(WAITING)
+  attempt       Int          @default(0)
+  priority      Int          @default(0)
+  progress      Int          @default(0)
+  stage         String?
+  outputKey     String?
+  outputAssetId String?
+  errorCode     String?
+  errorMessage  String?
+  diagnostics   Json?
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([workspaceId])
+  @@index([projectId])
+  @@index([status])
+  @@index([bullId])
+}
+
+model SubtitleTrack {
+  id           String       @id @default(cuid())
+  workspaceId  String
+  projectId    String
+  project      VideoProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  language     String       @default("en")
+  format       String       @default("vtt")
+  storageKey   String
+  assetId      String?
+  cues         Json?
+  source       String       @default("generated") // generated, uploaded
+  status       JobStatus    @default(WAITING)
+  errorMessage String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([workspaceId])
+  @@index([projectId])
+}
+
+// ============== QUALITY CHECK / REVIEW ==============
+
+model QualityCheck {
+  id            String        @id @default(cuid())
+  workspaceId   String
+  contentId     String
+  content       Content       @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  projectId     String?
+  project       VideoProject? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  status        JobStatus     @default(WAITING)
+  overall       QCLevel
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  engineVersion String        @default("1")
+  thresholds    Json?
+  metadata      Json?
+  createdAt     DateTime      @default(now())
+
+  issues QualityIssue[]
+
+  @@index([workspaceId])
+  @@index([contentId])
+}
+
+model QualityIssue {
+  id          String       @id @default(cuid())
+  checkId     String
+  check       QualityCheck @relation(fields: [checkId], references: [id], onDelete: Cascade)
+  category    QCCategory
+  severity    QCLevel
+  message     String
+  detail      Json?
+  timeSec     Float?
+  sceneId     String?
+  autoFixable Boolean      @default(false)
+  resolvedAt  DateTime?
+  createdAt   DateTime     @default(now())
+
+  @@index([checkId])
+  @@index([severity])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  workspaceId String
+  contentId   String
+  content     Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  reviewerId  String
+  decision    String // APPROVED, REQUESTED_CHANGES
+  comment     String?
+  annotations Json?
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId])
+  @@index([contentId])
+}
+
+model Approval {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  contentId    String
+  content      Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  approvedById String
+  stage        String // script, voice, visuals, final
+  note         String?
+  createdAt    DateTime @default(now())
+
+  @@index([workspaceId])
+  @@index([contentId])
+}
+
+// ============== SCHEDULE / PUBLISH ==============
+
+model Schedule {
+  id             String         @id @default(cuid())
+  workspaceId    String
+  contentId      String         @unique
+  content        Content        @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  channelId      String
+  channel        YouTubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  status         ScheduleStatus @default(DRAFT)
+  scheduledAt    DateTime
+  privacyStatus  String         @default("private")
+  publishAt      DateTime?
+  title          String?
+  description    String?
+  tags           String[]       @default([])
+  idempotencyKey String?        @unique
+  retryCount     Int            @default(0)
+  lastError      String?
+  createdById    String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  cancelledAt    DateTime?
+  Workspace      Workspace      @relation(fields: [workspaceId], references: [id])
+
+  @@index([workspaceId])
+  @@index([channelId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+model Publication {
+  id             String            @id @default(cuid())
+  workspaceId    String
+  contentId      String            @unique
+  content        Content           @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  channelId      String
+  channel        YouTubeChannel    @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  videoId        String?
+  playlistId     String?
+  status         PublicationStatus @default(PENDING_RECONCILE)
+  privacyStatus  String            @default("private")
+  title          String
+  description    String
+  tags           String[]          @default([])
+  uploadAttempts Int               @default(0)
+  idempotencyKey String            @unique
+  reconciled     Boolean           @default(false)
+  uploadedAt     DateTime?
+  processedAt    DateTime?
+  liveAt         DateTime?
+  failedAt       DateTime?
+  failureReason  String?
+  lastCheckAt    DateTime?
+  metadata       Json?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  Workspace      Workspace         @relation(fields: [workspaceId], references: [id])
+
+  @@index([workspaceId])
+  @@index([channelId])
+  @@index([videoId])
+  @@index([status])
+}
+
+// ============== ANALYTICS ==============
+
+model AnalyticsSnapshot {
+  id          String          @id @default(cuid())
+  workspaceId String
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  channelId   String?
+  channel     YouTubeChannel? @relation(fields: [channelId], references: [id], onDelete: SetNull)
+  periodStart DateTime
+  periodEnd   DateTime
+  metrics     Json
+  source      String          @default("youtube")
+  createdAt   DateTime        @default(now())
+
+  @@index([workspaceId])
+  @@index([channelId])
+  @@index([periodStart])
+}
+
+model VideoAnalytics {
+  id                  String   @id @default(cuid())
+  workspaceId         String
+  contentId           String
+  content             Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  videoId             String
+  periodStart         DateTime
+  periodEnd           DateTime
+  views               Int      @default(0)
+  likes               Int      @default(0)
+  comments            Int      @default(0)
+  shares              Int      @default(0)
+  watchTimeMinutes    Float    @default(0)
+  averageViewDuration Float    @default(0)
+  subscribersGained   Int      @default(0)
+  subscribersLost     Int      @default(0)
+  impressions         Int      @default(0)
+  clickThroughRate    Float    @default(0)
+  retentionCurve      Json?
+  demographics        Json?
+  trafficSources      Json?
+  source              String   @default("youtube")
+  createdAt           DateTime @default(now())
+
+  @@index([workspaceId])
+  @@index([contentId])
+  @@index([videoId])
+  @@index([periodStart])
+}
+
+model PerformanceInsight {
+  id             String    @id @default(cuid())
+  workspaceId    String
+  contentId      String?
+  content        Content?  @relation(fields: [contentId], references: [id], onDelete: SetNull)
+  channelId      String?
+  kind           String // hook, retention, thumbnail, topic, timing, ctr, length
+  severity       String    @default("info")
+  title          String
+  explanation    String
+  evidence       Json?
+  recommendation String?
+  confidence     Float     @default(0)
+  autoApplied    Boolean   @default(false)
+  dismissedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([contentId])
+  @@index([kind])
+}
+
+model StrategyAdjustment {
+  id               String    @id @default(cuid())
+  workspaceId      String
+  contentId        String?
+  content          Content?  @relation(fields: [contentId], references: [id], onDelete: SetNull)
+  strategyId       String?
+  triggerInsightId String?
+  field            String
+  previousValue    Json?
+  newValue         Json?
+  reason           String
+  applied          Boolean   @default(false)
+  appliedById      String?
+  appliedAt        DateTime?
+  rolledBackAt     DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([strategyId])
+}
+
+// ============== WORKFLOWS / AUTOMATION ==============
+
+model Workflow {
+  id             String          @id @default(cuid())
+  workspaceId    String
+  workspace      Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name           String
+  trigger        WorkflowTrigger @default(MANUAL)
+  nodes          Json? // graph nodes
+  edges          Json? // graph edges
+  configSnapshot Json?
+  currentVersion Int             @default(1)
+  published      Boolean         @default(false)
+  archivedAt     DateTime?
+  createdById    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  executions WorkflowExecution[]
+
+  @@index([workspaceId])
+}
+
+model WorkflowNode {
+  id         String   @id @default(cuid())
+  workflowId String
+  type       String
+  label      String?
+  position   Json?
+  config     Json?
+  createdAt  DateTime @default(now())
+
+  @@index([workflowId])
+}
+
+model WorkflowEdge {
+  id         String   @id @default(cuid())
+  workflowId String
+  sourceId   String
+  targetId   String
+  condition  Json?
+  createdAt  DateTime @default(now())
+
+  @@index([workflowId])
+}
+
+model WorkflowExecution {
+  id            String          @id @default(cuid())
+  workflowId    String
+  workflow      Workflow        @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  contentId     String?
+  status        ExecutionStatus @default(RUNNING)
+  currentNodeId String?
+  startedAt     DateTime        @default(now())
+  finishedAt    DateTime?
+  error         String?
+  snapshot      Json?
+  triggeredById String?
+  createdAt     DateTime        @default(now())
+
+  nodeExecutions WorkflowExecutionNode[]
+
+  @@index([workflowId])
+  @@index([status])
+}
+
+model WorkflowExecutionNode {
+  id          String            @id @default(cuid())
+  executionId String
+  execution   WorkflowExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  nodeId      String
+  status      ExecutionStatus   @default(RUNNING)
+  attempts    Int               @default(0)
+  input       Json?
+  output      Json?
+  error       String?
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  createdAt   DateTime          @default(now())
+
+  @@index([executionId])
+  @@index([nodeId])
+}
+
+model AutomationConfig {
+  id                           String         @id @default(cuid())
+  workspaceId                  String
+  workspace                    Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name                         String
+  mode                         AutomationMode @default(MANUAL)
+  strategyId                   String?
+  channelId                    String?
+  maxVideosPerDay              Int            @default(1)
+  maxCostPerDay                Float          @default(5)
+  publishingHours              Json? // allowed UTC windows
+  minQCLevel                   QCLevel        @default(PASS)
+  requireApprovalBeforePublish Boolean        @default(true)
+  autoApplyInsights            Boolean        @default(false)
+  policy                       Json?
+  paused                       Boolean        @default(false)
+  lastRunAt                    DateTime?
+  nextRunAt                    DateTime?
+  createdById                  String?
+  createdAt                    DateTime       @default(now())
+  updatedAt                    DateTime       @updatedAt
+
+  @@index([workspaceId])
+  @@index([mode])
+  @@index([nextRunAt])
+}
+
+// ============== NOTIFICATIONS ==============
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String?
+  user        User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaceId String
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  title       String
+  body        String?
+  link        String?
+  data        Json?
+  readAt      DateTime?
+  emailedAt   DateTime?
+  createdAt   DateTime         @default(now())
+
+  @@index([userId])
+  @@index([workspaceId])
+  @@index([createdAt])
+}
+
+model NotificationPreference {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailEnabled    Boolean  @default(true)
+  pushEnabled     Boolean  @default(true)
+  types           Json?
+  quietHoursStart Int?
+  quietHoursEnd   Int?
+  timeZone        String   @default("UTC")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============== BILLING / USAGE ==============
+
+model UsageRecord {
+  id            String    @id @default(cuid())
+  workspaceId   String
+  workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  provider      String
+  operation     String
+  model         String?
+  inputTokens   Int       @default(0)
+  outputTokens  Int       @default(0)
+  durationMs    Int       @default(0)
+  charCount     Int       @default(0)
+  sizeBytes     Int       @default(0)
+  estimatedCost Float     @default(0)
+  currency      String    @default("USD")
+  requestId     String?
+  traceId       String?
+  relatedType   String?
+  relatedId     String?
+  status        String    @default("ok")
+  errorCode     String?
+  createdAt     DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([provider])
+  @@index([createdAt])
+  @@index([relatedType, relatedId])
+}
+
+model UsageLimit {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  period      String // daily, monthly
+  metric      String // videos, cost, ai_tokens, tts_chars, render_minutes
+  limit       Float
+  used        Float     @default(0)
+  periodStart DateTime
+  periodEnd   DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([workspaceId, period, metric, periodStart])
+}
+
+model Subscription {
+  id                 String           @id @default(cuid())
+  workspaceId        String           @unique
+  tier               SubscriptionTier
+  stripeSubId        String?          @unique
+  stripeCustomerId   String?
+  status             String           @default("inactive")
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean          @default(false)
+  canceledAt         DateTime?
+  raw                Json?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+model Invoice {
+  id              String        @id @default(cuid())
+  workspaceId     String
+  workspace       Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  stripeInvoiceId String?       @unique
+  number          String?
+  status          InvoiceStatus @default(DRAFT)
+  amountDue       Int           @default(0) // cents
+  amountPaid      Int           @default(0)
+  currency        String        @default("usd")
+  pdfUrl          String?
+  hostedUrl       String?
+  periodStart     DateTime?
+  periodEnd       DateTime?
+  paidAt          DateTime?
+  raw             Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([workspaceId])
+  @@index([status])
+}
+
+// ============== AUDIT / EVENTS / IDEMPOTENCY ==============
+
+model AuditLog {
+  id           String     @id @default(cuid())
+  workspaceId  String?
+  workspace    Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+  userId       String?
+  user         User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action       String
+  resourceType String
+  resourceId   String?
+  ipAddress    String?
+  userAgent    String?
+  before       Json?
+  after        Json?
+  metadata     Json?
+  requestId    String?
+  createdAt    DateTime   @default(now())
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([resourceType, resourceId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model OutboxEvent {
+  id            String    @id @default(cuid())
+  aggregateType String
+  aggregateId   String
+  eventType     String
+  payload       Json
+  metadata      Json?
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  attempts      Int       @default(0)
+  lastError     String?
+  createdAt     DateTime  @default(now())
+  scheduledFor  DateTime  @default(now())
+
+  @@index([published, scheduledFor])
+  @@index([aggregateType, aggregateId])
+  @@index([eventType])
+}
+
+model IdempotencyKey {
+  id           String    @id @default(cuid())
+  workspaceId  String?
+  key          String    @unique
+  resourceType String
+  resourceId   String?
+  requestHash  String?
+  responseCode Int?
+  responseBody Json?
+  expiresAt    DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([workspaceId])
+  @@index([expiresAt])
+}
+
+model ProviderRequest {
+  id            String   @id @default(cuid())
+  provider      String
+  operation     String
+  requestId     String?
+  traceId       String?
+  workspaceId   String?
+  userId        String?
+  model         String?
+  status        String   @default("pending")
+  latencyMs     Int
+  inputTokens   Int      @default(0)
+  outputTokens  Int      @default(0)
+  estimatedCost Float    @default(0)
+  errorCode     String?
+  errorMessage  String?
+  requestMeta   Json?
+  createdAt     DateTime @default(now())
+
+  @@index([provider])
+  @@index([workspaceId])
+  @@index([createdAt])
+  @@index([requestId])
+}
+
+model ProviderUsage {
+  id           String   @id @default(cuid())
+  provider     String
+  operation    String
+  model        String?
+  workspaceId  String?
+  periodStart  DateTime
+  periodEnd    DateTime
+  calls        Int      @default(0)
+  inputTokens  Int      @default(0)
+  outputTokens Int      @default(0)
+  durationMs   Int      @default(0)
+  totalCost    Float    @default(0)
+  errors       Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([provider, operation, model, workspaceId, periodStart])
+  @@index([workspaceId])
+}

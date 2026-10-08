@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   SHORTFORGE — Design Tokens
+   ========================================================================== */
+@layer base {
+  :root {
+    /* Surfaces */
+    --background: 40 12% 97%;          /* #F7F7F5 warm neutral */
+    --surface: 0 0% 100%;              /* #FFFFFF */
+    --surface-subtle: 40 12% 98%;      /* #FAFAF9 */
+    --surface-muted: 40 12% 96%;
+    --surface-elevated: 0 0% 100%;
+    --surface-hover: 40 12% 96%;
+
+    /* Text */
+    --text-primary: 140 6% 10%;        /* deep charcoal */
+    --text-secondary: 140 4% 38%;      /* neutral gray */
+    --text-muted: 140 3% 55%;          /* soft gray */
+    --text-inverse: 0 0% 100%;
+
+    /* Borders */
+    --border: 40 9% 92%;
+    --border-strong: 40 7% 85%;
+    --border-focus: 158 62% 25%;
+
+    /* Accent: deep sophisticated emerald */
+    --accent: 158 65% 25%;             /* #176B57 */
+    --accent-hover: 158 65% 20%;       /* #125542 */
+    --accent-soft: 158 30% 93%;        /* #E8F3EF */
+    --accent-contrast: 0 0% 100%;
+
+    /* Semantic */
+    --success: 152 55% 36%;
+    --success-soft: 152 40% 94%;
+    --warning: 38 85% 44%;
+    --warning-soft: 38 60% 94%;
+    --danger: 0 58% 46%;
+    --danger-soft: 0 40% 96%;
+    --info: 200 70% 44%;
+    --info-soft: 200 50% 95%;
+
+    /* Radii */
+    --radius-xs: 5px;
+    --radius-sm: 7px;
+    --radius: 9px;
+    --radius-md: 11px;
+    --radius-lg: 13px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+
+    /* Shadows — intentionally restrained */
+    --shadow-xs: 0 1px 2px rgb(15 23 20 / 0.04);
+    --shadow-sm: 0 1px 3px rgb(15 23 20 / 0.05), 0 1px 2px rgb(15 23 20 / 0.03);
+    --shadow-md: 0 3px 8px rgb(15 23 20 / 0.05), 0 1px 3px rgb(15 23 20 / 0.04);
+    --shadow-lg: 0 8px 20px rgb(15 23 20 / 0.06), 0 3px 8px rgb(15 23 20 / 0.04);
+    --shadow-xl: 0 16px 40px rgb(15 23 20 / 0.08), 0 6px 16px rgb(15 23 20 / 0.04);
+  }
+
+  .dark {
+    --background: 140 8% 6%;           /* #0F1110 */
+    --surface: 140 7% 9%;              /* #151816 */
+    --surface-subtle: 140 7% 10%;
+    --surface-muted: 140 7% 12%;
+    --surface-elevated: 140 6% 12%;    /* #1B1F1C */
+    --surface-hover: 140 7% 14%;
+
+    --text-primary: 80 8% 96%;         /* #F4F5F3 */
+    --text-secondary: 120 3% 67%;      /* #A8ADA8 */
+    --text-muted: 120 2% 48%;
+    --text-inverse: 140 6% 10%;
+
+    --border: 140 4% 18%;
+    --border-strong: 140 4% 26%;
+    --border-focus: 158 55% 40%;
+
+    --accent: 158 50% 38%;
+    --accent-hover: 158 50% 44%;
+    --accent-soft: 158 25% 16%;
+    --accent-contrast: 0 0% 100%;
+
+    --success: 152 48% 42%;
+    --success-soft: 152 30% 14%;
+    --warning: 38 75% 50%;
+    --warning-soft: 38 30% 15%;
+    --danger: 0 55% 50%;
+    --danger-soft: 0 25% 16%;
+    --info: 200 65% 48%;
+    --info-soft: 200 30% 15%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+
+  body {
+    @apply bg-background text-text-primary font-sans antialiased;
+    font-feature-settings: "cv11", "ss01", "ss03";
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  ::selection {
+    @apply bg-accent/20 text-text-primary;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/30 ring-offset-2 ring-offset-background;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border-strong/60 rounded-full;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-text-muted/40; background-clip: padding-box; border: 2px solid transparent; }
+
+  h1,h2,h3,h4,h5,h6 { @apply text-text-primary font-semibold tracking-tight; }
+  h1 { @apply text-[32px] leading-[1.1] font-bold; }
+  h2 { @apply text-2xl leading-tight; }
+  h3 { @apply text-lg; }
+  h4 { @apply text-base; }
+
+  @media (max-width: 768px) {
+    h1 { @apply text-2xl; }
+    h2 { @apply text-xl; }
+    h3 { @apply text-lg; }
+  }
+}
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+@layer components {
+  /* ----- Button system ----- */
+  .btn-base {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg whitespace-nowrap select-none
+           transition-all duration-150 ease-out will-change-transform
+           disabled:opacity-40 disabled:pointer-events-none
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background
+           active:scale-[0.98];
+  }
+
+  .btn-primary {
+    @apply btn-base bg-accent text-accent-contrast hover:bg-accent-hover shadow-sm
+           h-10 px-4 text-sm;
+  }
+  .btn-lg { @apply h-11 px-5 text-[15px]; }
+  .btn-sm { @apply h-8 px-3 text-xs gap-1.5 rounded-md; }
+  .btn-icon {
+    @apply btn-base h-9 w-9 p-0 text-text-secondary hover:text-text-primary hover:bg-surface-hover rounded-lg;
+  }
+  .btn-icon-sm { @apply h-8 w-8 rounded-md; }
+
+  .btn-secondary {
+    @apply btn-base bg-surface text-text-primary border border-border hover:bg-surface-hover hover:border-border-strong
+           h-10 px-4 text-sm shadow-xs;
+  }
+
+  .btn-tertiary {
+    @apply btn-base text-text-secondary hover:text-text-primary hover:bg-surface-hover h-10 px-3 text-sm;
+  }
+
+  .btn-ghost {
+    @apply btn-base text-text-secondary hover:text-text-primary hover:bg-surface-hover h-9 px-2.5 text-sm rounded-md;
+  }
+
+  .btn-danger {
+    @apply btn-base bg-danger text-white hover:opacity-90 h-10 px-4 text-sm shadow-sm;
+  }
+
+  /* ----- Inputs ----- */
+  .input-field {
+    @apply w-full h-10 rounded-lg border border-border bg-surface px-3.5 text-[14px] text-text-primary
+           placeholder:text-text-muted/80
+           focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/10
+           transition-[border-color,box-shadow] duration-150;
+  }
+  .input-field-sm { @apply h-9 px-3 text-sm rounded-md; }
+  .input-field-lg { @apply h-11 px-4; }
+  .input-error { @apply border-danger focus:border-danger focus:ring-danger/10; }
+
+  .field-label { @apply block text-[12px] font-medium text-text-secondary mb-1.5 tracking-wide; }
+  .field-hint { @apply mt-1.5 text-xs text-text-muted; }
+  .field-error { @apply mt-1.5 text-xs text-danger; }
+
+  /* ----- Card ----- */
+  .card {
+    @apply bg-surface border border-border rounded-xl;
+  }
+  .card-subtle {
+    @apply bg-surface-subtle border border-border/70 rounded-xl;
+  }
+  .card-hover {
+    @apply card hover:border-border-strong hover:shadow-sm transition-all duration-150 cursor-pointer;
+  }
+
+  /* ----- Surface ----- */
+  .divider { @apply h-px w-full bg-border; }
+  .divider-strong { @apply h-px w-full bg-border-strong; }
+
+  /* ----- Badge ----- */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-medium leading-none tracking-wide;
+  }
+  .badge-dot::before {
+    content: '';
+    @apply h-1.5 w-1.5 rounded-full bg-current;
+  }
+
+  /* ----- Skeleton ----- */
+  .skeleton {
+    @apply bg-surface-hover rounded-lg animate-pulse;
+  }
+
+  /* ----- Container ----- */
+  .container-app {
+    @apply mx-auto w-full;
+    max-width: 1440px;
+  }
+
+  /* ----- Scroll container ----- */
+  .scroll-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+
+  /* ----- Truncation ----- */
+  .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* ----- Typography ----- */
+  .text-display { @apply text-[40px] leading-[1.05] font-bold tracking-[-0.02em]; }
+  .text-page-title { @apply text-[30px] leading-[1.15] font-bold tracking-[-0.01em]; }
+  .text-section { @apply text-[20px] leading-[1.3] font-semibold; }
+  .text-card-title { @apply text-[15px] font-semibold leading-snug; }
+  .text-body { @apply text-[14px] leading-relaxed text-text-primary; }
+  .text-body-sm { @apply text-[13px] leading-relaxed; }
+  .text-meta { @apply text-[12px] text-text-muted; }
+  .text-label { @apply text-[11px] font-medium text-text-muted uppercase tracking-[0.08em]; }
+  .text-mono { @apply font-mono text-[12px] tabular-nums; }
+
+  /* ----- KPI ----- */
+  .kpi-value { @apply text-[28px] leading-none font-bold tracking-tight text-text-primary tabular-nums; }
+  .kpi-label { @apply text-[12px] text-text-secondary mt-1; }
+
+  /* ----- Pipeline stage ----- */
+  .stage-chip {
+    @apply flex flex-col items-center justify-center gap-1.5 px-2 py-2 rounded-lg transition-colors cursor-pointer min-w-[72px] relative;
+  }
+
+  /* ----- Nav item ----- */
+  .nav-item {
+    @apply flex items-center gap-3 rounded-lg text-[14px] font-medium text-text-secondary transition-colors duration-100;
+  }
+}
+
+/* ==========================================================================
+   UTILITIES / OVERRIDES
+   ========================================================================== */
+@layer utilities {
+  .content-auto { content-visibility: auto; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
