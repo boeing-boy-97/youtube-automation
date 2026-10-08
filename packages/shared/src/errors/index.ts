@@ -1,1 +1,18 @@
-export {};
+/**
+ * Standard error codes across ShortForge services.
+ */
+
+export const ERROR_CODES = {
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  BAD_REQUEST: 'BAD_REQUEST',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+  CONFLICT: 'CONFLICT',
+  RATE_LIMITED: 'RATE_LIMITED',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  PROVIDER_ERROR: 'PROVIDER_ERROR',
+  INVALID_STATE_TRANSITION: 'INVALID_STATE_TRANSITION',
+} as const;
+
+export type StandardErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
