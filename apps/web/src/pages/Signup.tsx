@@ -5,7 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema } from '../lib/validators';
 import type { SignupInput } from '../lib/validators';
 import { useAuthStore } from '../stores/authStore';
+import { useWorkspaceStore } from '../stores/workspaceStore';
+import { useContentStore } from '../stores/contentStore';
 import { useUIStore } from '../stores/uiStore';
+import { seedContent, seedIdeas, seedNotifications, seedYouTubeChannel } from '../mock/seedData';
+import { storageSet } from '../lib/utils';
+import { STORAGE_KEYS } from '../lib/constants';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Sparkles } from 'lucide-react';
@@ -13,12 +18,14 @@ import { Sparkles } from 'lucide-react';
 export function Signup() {
   const navigate = useNavigate();
   const signup = useAuthStore(s => s.signup);
+  const setOnboardingComplete = useWorkspaceStore(s => s.setOnboardingComplete);
+  const initContent = useContentStore(s => s.init);
   const showToast = useUIStore(s => s.showToast);
   const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
-    defaultValues: { name: 'Vedant', email: 'vedant@shortforge.io', password: 'demo1234' },
+    defaultValues: { name: 'Creator', email: 'creator@shortforge.io', password: 'demo1234' },
   });
 
   const onSubmit = async (data: SignupInput) => {
@@ -29,6 +36,24 @@ export function Signup() {
       navigate('/onboarding');
     } catch {
       showToast({ type: 'error', title: 'Signup failed' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoAccess = async () => {
+    setLoading(true);
+    try {
+      const login = useAuthStore.getState().login;
+      await login('demo@shortforge.io', 'demo1234');
+      storageSet(STORAGE_KEYS.content, seedContent());
+      storageSet(STORAGE_KEYS.ideas, seedIdeas());
+      storageSet(STORAGE_KEYS.notifications, seedNotifications());
+      storageSet(STORAGE_KEYS.youtube, seedYouTubeChannel());
+      setOnboardingComplete();
+      initContent();
+      showToast({ type: 'success', title: 'Demo Mode Activated', message: 'Welcome to ShortForge Studio' });
+      navigate('/dashboard');
     } finally {
       setLoading(false);
     }
@@ -76,6 +101,20 @@ export function Signup() {
               Create Account
             </Button>
           </form>
+
+          <div className="mt-4 pt-4 border-t border-border">
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              disabled={loading}
+              onClick={handleDemoAccess}
+            >
+              <Sparkles className="h-4 w-4 text-accent" />
+              1-Click Demo Access
+            </Button>
+            <p className="text-xs text-text-muted text-center mt-2">Skip signup and explore immediately</p>
+          </div>
         </div>
 
         <p className="text-center text-sm text-text-secondary mt-6">

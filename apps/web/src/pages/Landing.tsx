@@ -1,11 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { useAuthStore } from '../stores/authStore';
+import { useWorkspaceStore } from '../stores/workspaceStore';
+import { useContentStore } from '../stores/contentStore';
+import { useUIStore } from '../stores/uiStore';
+import { seedContent, seedIdeas, seedNotifications, seedYouTubeChannel } from '../mock/seedData';
+import { storageSet, cn } from '../lib/utils';
+import { STORAGE_KEYS } from '../lib/constants';
 import {
   Sparkles,
   ArrowRight,
-  Play,
   Zap,
   Brain,
   Video,
@@ -20,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-function Nav() {
+function Nav({ onDemoClick }: { onDemoClick: () => void }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -37,8 +42,11 @@ function Nav() {
           <a href="#faq" className="hover:text-text-primary transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/login"><Button variant="ghost" size="sm">Log in</Button></Link>
-          <Link to="/signup"><Button size="sm">Start Building</Button></Link>
+          <button type="button" onClick={onDemoClick} className="btn-ghost btn-sm text-text-secondary hover:text-text-primary">
+            Live Demo
+          </button>
+          <Link to="/login" className="btn-ghost btn-sm">Log in</Link>
+          <Link to="/signup" className="btn-primary btn-sm">Start Building</Link>
         </div>
       </div>
     </nav>
@@ -135,7 +143,7 @@ function HeroProductPreview() {
   );
 }
 
-function Feature({ icon: Icon, title, description }: { icon: React.ElementType; title: string; description: string }) {
+function Feature({ icon: Icon, title, description }: { icon: React.ComponentType<{ className?: string }>; title: string; description: string }) {
   return (
     <div className="p-5 rounded-lg border border-border bg-surface hover:border-border-strong transition-colors">
       <div className="h-9 w-9 rounded-md bg-accent/10 flex items-center justify-center mb-3">
@@ -169,9 +177,31 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 export function Landing() {
+  const navigate = useNavigate();
+  const login = useAuthStore(s => s.login);
+  const setOnboardingComplete = useWorkspaceStore(s => s.setOnboardingComplete);
+  const initContent = useContentStore(s => s.init);
+  const showToast = useUIStore(s => s.showToast);
+
+  const handleExploreDemo = async () => {
+    try {
+      await login('demo@shortforge.io', 'demo1234');
+      storageSet(STORAGE_KEYS.content, seedContent());
+      storageSet(STORAGE_KEYS.ideas, seedIdeas());
+      storageSet(STORAGE_KEYS.notifications, seedNotifications());
+      storageSet(STORAGE_KEYS.youtube, seedYouTubeChannel());
+      setOnboardingComplete();
+      initContent();
+      showToast({ type: 'success', title: 'Demo Mode Activated', message: 'Welcome to the ShortForge Studio' });
+      navigate('/dashboard');
+    } catch {
+      navigate('/login');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Nav />
+      <Nav onDemoClick={handleExploreDemo} />
 
       {/* Hero */}
       <section className="pt-32 pb-16 px-6">
@@ -189,16 +219,18 @@ export function Landing() {
               From idea to YouTube publishing — one platform, zero busywork.
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link to="/signup">
-                <Button size="lg">
-                  Start Building
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+              <Link to="/signup" className="btn-primary btn-lg inline-flex items-center gap-2">
+                Start Building Free
+                <ArrowRight className="h-4 w-4" />
               </Link>
-              <Button size="lg" variant="secondary">
-                <Play className="h-4 w-4" />
-                See How It Works
-              </Button>
+              <button
+                type="button"
+                onClick={handleExploreDemo}
+                className="btn-secondary btn-lg inline-flex items-center gap-2"
+              >
+                <Sparkles className="h-4 w-4 text-accent" />
+                Explore Live Demo
+              </button>
             </div>
             <p className="text-xs text-text-muted mt-4">Free Starter plan. No credit card required.</p>
           </motion.div>
@@ -330,8 +362,8 @@ export function Landing() {
                     </li>
                   ))}
                 </ul>
-                <Link to="/signup">
-                  <Button variant={plan.popular ? 'primary' : 'secondary'} className="w-full">{plan.cta}</Button>
+                <Link to="/signup" className={cn(plan.popular ? 'btn-primary' : 'btn-secondary', 'w-full text-center inline-flex items-center justify-center')}>
+                  {plan.cta}
                 </Link>
               </div>
             ))}
@@ -358,12 +390,20 @@ export function Landing() {
           <div className="bg-surface border border-border rounded-2xl p-12">
             <h2 className="text-section-title text-text-primary mb-3">Ready to automate your content?</h2>
             <p className="text-text-secondary mb-6 max-w-md mx-auto">Set up your channel in minutes. Start publishing every day without burning out.</p>
-            <Link to="/signup">
-              <Button size="lg">
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <Link to="/signup" className="btn-primary btn-lg inline-flex items-center gap-2">
                 Start Building Free
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+              <button
+                type="button"
+                onClick={handleExploreDemo}
+                className="btn-secondary btn-lg inline-flex items-center gap-2"
+              >
+                <Sparkles className="h-4 w-4 text-accent" />
+                Explore Live Demo
+              </button>
+            </div>
           </div>
         </div>
       </section>
