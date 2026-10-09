@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "ShortForge — autonomous short-form video platform (monorepo)",
-  "engines": { "node": ">=20.10.0", "npm": ">=10" },
+  "packageManager": "npm@10.8.2",
+  "engines": {
+    "node": ">=20.10.0",
+    "npm": ">=10"
+  },
   "type": "module",
   "workspaces": [
     "apps/*",
@@ -29,5 +33,8 @@
   },
   "prisma": {
     "schema": "prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.7"
   }
 }
