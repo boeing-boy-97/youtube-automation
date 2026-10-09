@@ -11,6 +11,10 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "build:api": "npm run db:generate -w @shortforge/api && npm run build -w @shortforge/api",
+    "build:web": "npm run build -w @shortforge/web",
+    "start:api": "npm run start -w @shortforge/api",
+    "start:worker": "npm run start:worker -w @shortforge/api",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "dev:api": "npm run dev -w @shortforge/api",

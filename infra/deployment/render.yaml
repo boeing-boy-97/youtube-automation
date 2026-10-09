@@ -1,0 +1,96 @@
+# Render Blueprint — ShortForge full-stack deployment
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  # -------------------------------------------------------------
+  # Frontend Static Site
+  # -------------------------------------------------------------
+  - type: web
+    name: shortforge-web
+    runtime: static
+    rootDir: apps/web
+    buildCommand: npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: shortforge-api
+          property: host
+
+  # -------------------------------------------------------------
+  # Backend Fastify API
+  # -------------------------------------------------------------
+  - type: web
+    name: shortforge-api
+    runtime: docker
+    dockerfilePath: infra/docker/Dockerfile.api
+    dockerContext: .
+    plan: standard
+    healthCheckPath: /health/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shortforge-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: shortforge-redis
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: ARGON2_PEPPER
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+
+  # -------------------------------------------------------------
+  # BullMQ Worker
+  # -------------------------------------------------------------
+  - type: worker
+    name: shortforge-worker
+    runtime: docker
+    dockerfilePath: infra/docker/Dockerfile.worker
+    dockerContext: .
+    plan: standard
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shortforge-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: shortforge-redis
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+
+databases:
+  - name: shortforge-postgres
+    plan: standard
+    postgresMajorVersion: 16
