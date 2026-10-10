@@ -159,11 +159,27 @@ export const apiClient = {
       if (params?.cursor) q.append('cursor', params.cursor);
       return apiClient.get<any[]>(`/content?${q.toString()}`);
     },
-    create: (ideaId: string) => apiClient.post<any>('/content', { ideaId }),
+    create: (data: string | { title: string; hook?: string; targetDurationSec?: number; tags?: string[]; ideaId?: string }) => {
+      const body = typeof data === 'string' ? { ideaId: data } : data;
+      return apiClient.post<any>('/content', body);
+    },
     get: (id: string) => apiClient.get<any>(`/content/${id}`),
     generateScript: (id: string) => apiClient.post<any>(`/content/${id}/generate-script`),
     advance: (id: string, to: string) => apiClient.post<any>(`/content/${id}/advance`, { to }),
     publish: (id: string) => apiClient.post<any>(`/content/${id}/publish`),
+  },
+
+  projects: {
+    list: (params?: { limit?: number; cursor?: string }) => {
+      const q = new URLSearchParams();
+      if (params?.limit) q.append('limit', String(params.limit));
+      if (params?.cursor) q.append('cursor', params.cursor);
+      return apiClient.get<any[]>(`/projects?${q.toString()}`);
+    },
+    get: (id: string) => apiClient.get<any>(`/projects/${id}`),
+    create: (data: { contentId: string; width?: number; height?: number; fps?: number; aspectRatio?: string; templateId?: string }) =>
+      apiClient.post<any>('/projects', data),
+    delete: (id: string) => apiClient.delete<any>(`/projects/${id}`),
   },
 
   scripts: {

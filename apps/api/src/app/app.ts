@@ -119,35 +119,35 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // API v1
   await app.register(async (v1) => {
-    await registerAuth(v1);
-    await registerWorkspaces(v1);
-    await registerYoutube(v1);
-    await registerStrategies(v1);
-    await registerIdeas(v1);
-    await registerContent(v1);
-    await registerScripts(v1);
-    await registerVoices(v1);
-    await registerAssets(v1);
-    await registerProjects(v1);
-    await registerRendering(v1);
-    await registerQc(v1);
-    await registerReviews(v1);
-    await registerScheduling(v1);
-    await registerPublishing(v1);
-    await registerAnalytics(v1);
-    await registerIntelligence(v1);
-    await registerWorkflows(v1);
-    await registerAutomation(v1);
-    await registerNotifications(v1);
-    await registerBilling(v1);
-    await registerJobs(v1);
-    await registerSSE(v1);
-    await registerUsers(v1);
-    await registerChannels(v1);
-    await registerScenes(v1);
-    await registerSubtitles(v1);
-    await registerUsage(v1);
-    await registerAudit(v1);
+    await v1.register(registerAuth);
+    await v1.register(registerWorkspaces);
+    await v1.register(registerYoutube);
+    await v1.register(registerStrategies);
+    await v1.register(registerIdeas);
+    await v1.register(registerContent);
+    await v1.register(registerScripts);
+    await v1.register(registerVoices);
+    await v1.register(registerAssets);
+    await v1.register(registerProjects);
+    await v1.register(registerRendering);
+    await v1.register(registerQc);
+    await v1.register(registerReviews);
+    await v1.register(registerScheduling);
+    await v1.register(registerPublishing);
+    await v1.register(registerAnalytics);
+    await v1.register(registerIntelligence);
+    await v1.register(registerWorkflows);
+    await v1.register(registerAutomation);
+    await v1.register(registerNotifications);
+    await v1.register(registerBilling);
+    await v1.register(registerJobs);
+    await v1.register(registerSSE);
+    await v1.register(registerUsers);
+    await v1.register(registerChannels);
+    await v1.register(registerScenes);
+    await v1.register(registerSubtitles);
+    await v1.register(registerUsage);
+    await v1.register(registerAudit);
   }, { prefix: '/api/v1' });
 
   app.setErrorHandler((error: Error, req: FastifyRequest, reply: FastifyReply) => {

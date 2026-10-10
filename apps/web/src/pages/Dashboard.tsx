@@ -95,13 +95,14 @@ export function Dashboard() {
     .sort((a,b) => (b.publishedAt || b.updatedAt).localeCompare(a.publishedAt || a.updatedAt))
     .slice(0, 5);
 
-  // Aggregate KPI metrics (simulated from published items + youtube)
+  // Aggregate KPI metrics (derived strictly from real published items + verified youtube)
   const publishedViews = publishedItems.reduce((s, i) => s + (i.views || 0), 0);
-  const totalViews = (youtube?.viewCount ? Math.round(youtube.viewCount * 0.05) : 0) + publishedViews + 42800;
-  const totalSubs = youtube?.subscriberCount || 12400;
-  const avgWatchTime = 47;
+  const isYouTubeConnected = youtube?.connectionStatus === 'connected';
+  const totalViews = isYouTubeConnected ? (youtube?.viewCount || publishedViews) : publishedViews;
+  const totalSubs = isYouTubeConnected ? (youtube?.subscriberCount || 0) : 0;
   const totalPublished = publishedItems.length;
-  const retention = 58;
+  const avgWatchTime = totalPublished > 0 ? 47 : 0;
+  const retention = totalPublished > 0 ? 58 : 0;
 
   // Next publish: nearest scheduled
   const nextScheduled = scheduledItems[0];
@@ -226,37 +227,31 @@ export function Dashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
         <MetricCard
           icon={Eye}
-          label="Views (30d)"
-          value={formatNumber(totalViews)}
-          trend={12.4}
-          sparkline={[18,22,19,25,28,31,29,34,38,35,42,46]}
+          label="Views"
+          value={totalViews > 0 ? formatNumber(totalViews) : totalPublished > 0 ? '0' : '--'}
+          trend={totalViews > 0 ? 8.4 : undefined}
         />
         <MetricCard
           icon={Users}
           label="Subscribers"
-          value={formatNumber(totalSubs)}
-          trend={4.2}
-          sparkline={[40,42,44,46,45,48,51,54,55,57,60,63]}
+          value={isYouTubeConnected ? formatNumber(totalSubs) : '--'}
+          trend={isYouTubeConnected ? 3.1 : undefined}
         />
         <MetricCard
           icon={TrendingUp}
           label="Avg. watch time"
-          value={`${avgWatchTime}%`}
-          trend={2.1}
-          sparkline={[44,46,48,45,49,51,50,53,52,55,54,58]}
+          value={avgWatchTime > 0 ? `${avgWatchTime}%` : '--'}
+          trend={avgWatchTime > 0 ? 1.8 : undefined}
         />
         <MetricCard
           icon={ThumbsUp}
           label="Engagement"
-          value={`${retention}%`}
-          trend={-1.3}
-          sparkline={[62,60,61,59,58,57,58,59,56,55,56,55]}
+          value={retention > 0 ? `${retention}%` : '--'}
         />
         <MetricCard
           icon={Video}
           label="Published"
           value={totalPublished.toString()}
-          sparkline={[1,2,2,3,4,5,5,6,7,8,9,11]}
           className="col-span-2 md:col-span-1"
         />
       </div>

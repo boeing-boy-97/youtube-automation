@@ -6,6 +6,7 @@ import { storageGet, storageSet, uid } from '../lib/utils';
 import { STORAGE_KEYS } from '../lib/constants';
 import { seedContent, seedIdeas, seedNotifications, seedTemplates } from '../mock/seedData';
 import { useUIStore } from './uiStore';
+import { apiClient } from '../services/apiClient';
 
 interface ContentState {
   items: ContentItem[];
@@ -71,20 +72,54 @@ export const useContentStore = create<ContentState>((set, get) => ({
 
   init: () => {
     if (get().initialized) return;
+    const user = storageGet<any>(STORAGE_KEYS.user, null);
+    const isDemo = !user || user.email === 'demo@shortforge.io';
+
     const items = storageGet<ContentItem[]>(STORAGE_KEYS.content, []);
     const ideas = storageGet<Idea[]>(STORAGE_KEYS.ideas, []);
     const jobs = storageGet<ProductionJob[]>(STORAGE_KEYS.jobs, []);
     const notifications = storageGet<Notification[]>(STORAGE_KEYS.notifications, []);
 
     set({
-      items: items.length > 0 ? items : seedContent(),
-      ideas: ideas.length > 0 ? ideas : seedIdeas(),
+      items: items.length > 0 ? items : isDemo ? seedContent() : [],
+      ideas: ideas.length > 0 ? ideas : isDemo ? seedIdeas() : [],
       jobs,
-      notifications: notifications.length > 0 ? notifications : seedNotifications(),
+      notifications: notifications.length > 0 ? notifications : isDemo ? seedNotifications() : [],
       templates: seedTemplates(),
       initialized: true,
     });
     get().persist();
+
+    // If authenticated with live backend, sync from real PostgreSQL content
+    if (!isDemo) {
+      apiClient.health.pingLive().then(live => {
+        if (live) {
+          apiClient.content.list().then(res => {
+            if (Array.isArray(res) && res.length > 0) {
+              const liveItems: ContentItem[] = res.map(c => ({
+                id: c.id,
+                title: c.title,
+                hook: c.hook || c.title,
+                status: c.state ? c.state.toLowerCase() as any : 'draft',
+                voiceStatus: 'idle',
+                visuals: [],
+                activity: [],
+                createdAt: c.createdAt,
+                updatedAt: c.updatedAt,
+                createdBy: 'user',
+                hashtags: c.tags || [],
+                duration: c.durationSec || c.targetDurationSec || 45,
+                estimatedDuration: c.targetDurationSec || 45,
+                publishedAt: c.publishedAt,
+                scheduledAt: c.scheduledFor,
+              }));
+              set({ items: liveItems });
+              get().persist();
+            }
+          }).catch(() => undefined);
+        }
+      });
+    }
   },
 
   getContent: (id) => get().items.find(i => i.id === id),

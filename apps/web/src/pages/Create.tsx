@@ -125,9 +125,25 @@ export function Create() {
     setWorking(true);
     setProgressStage('Synthesizing content concept...');
     setProgress(30);
-    await new Promise(r => setTimeout(r, 600));
+
+    let serverContentId: string | undefined;
+    try {
+      const isLive = await apiClient.health.pingLive();
+      if (isLive) {
+        const res = await apiClient.content.create({
+          title: form.title,
+          hook: form.hook || form.title,
+          targetDurationSec: 45,
+          tags: [form.niche, form.pillar].filter(Boolean),
+        });
+        if (res?.id) serverContentId = res.id;
+      }
+    } catch {
+      // Local mode fallback
+    }
 
     const newContent = createContent({
+      id: serverContentId,
       title: form.title,
       hook: form.hook || form.title,
       niche: form.niche,

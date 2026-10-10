@@ -40,6 +40,49 @@ export async function createContentFromIdea(workspaceId: string, ideaId: string,
   return result;
 }
 
+export async function createContentDirect(
+  workspaceId: string,
+  data: {
+    title: string;
+    hook?: string;
+    targetDurationSec?: number;
+    tags?: string[];
+    automationMode?: 'MANUAL' | 'ASSISTED' | 'AUTONOMOUS';
+  },
+  userId?: string
+) {
+  const contentId = newId('cnt');
+  const result = await prisma.$transaction(async (tx) => {
+    const content = await tx.content.create({
+      data: {
+        id: contentId,
+        workspaceId,
+        title: data.title,
+        hook: data.hook || undefined,
+        state: 'DRAFT',
+        targetDurationSec: data.targetDurationSec || 45,
+        tags: data.tags || [],
+        automationMode: data.automationMode || 'MANUAL',
+        createdById: userId,
+      },
+    });
+    await tx.contentVersion.create({
+      data: {
+        id: newId('cvr'),
+        contentId,
+        version: 1,
+        snapshot: { initial: true, direct: true } as any,
+        changedById: userId,
+        reason: 'create',
+      },
+    });
+    await enqueueEvent(tx, 'ContentCreated', 'content', contentId, { title: content.title }, { userId });
+    return content;
+  });
+  await dispatchPendingOutbox();
+  return result;
+}
+
 export async function advanceContent(workspaceId: string, contentId: string, to: ContentState, userId?: string, metadata?: Record<string, unknown>) {
   return transitionState(prisma, { contentId, workspaceId, to, metadata, performedById: userId });
 }

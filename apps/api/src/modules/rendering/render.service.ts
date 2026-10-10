@@ -12,13 +12,42 @@ import { NotFoundError, ProviderError } from '../../common/errors/app-error.js';
 import type { SceneInput } from '../../providers/rendering/rendering.provider.js';
 
 export async function renderProject(workspaceId: string, contentId: string, projectId: string, userId?: string, onProgress?: (pct: number, stage: string) => void) {
-  const project = await prisma.videoProject.findUnique({
-    where: { id: projectId },
+  let project = await prisma.videoProject.findFirst({
+    where: { id: projectId, workspaceId },
     include: {
       content: { include: { scenes: { include: { assets: { include: { asset: true } } } } } },
     },
   });
-  if (!project || project.workspaceId !== workspaceId) throw new NotFoundError('VideoProject', projectId);
+
+  if (!project) {
+    project = await prisma.videoProject.findFirst({
+      where: { contentId, workspaceId },
+      include: {
+        content: { include: { scenes: { include: { assets: { include: { asset: true } } } } } },
+      },
+    });
+  }
+
+  if (!project) {
+    const content = await prisma.content.findFirst({
+      where: { id: contentId, workspaceId },
+    });
+    if (!content) throw new NotFoundError('Content', contentId);
+
+    project = await prisma.videoProject.create({
+      data: {
+        workspaceId,
+        contentId,
+        width: 1080,
+        height: 1920,
+        fps: 30,
+        aspectRatio: '9:16',
+      },
+      include: {
+        content: { include: { scenes: { include: { assets: { include: { asset: true } } } } } },
+      },
+    });
+  }
 
   await transitionState(prisma, { contentId, workspaceId, to: 'RENDERING', performedById: userId });
 
@@ -26,7 +55,7 @@ export async function renderProject(workspaceId: string, contentId: string, proj
     data: {
       id: newId('rjb'),
       workspaceId,
-      projectId,
+      projectId: project.id,
       status: 'ACTIVE',
       attempt: 1,
       progress: 0,

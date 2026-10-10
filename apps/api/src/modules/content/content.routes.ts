@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { requireAuth, requireWorkspace, kUser, kWorkspace } from '../../common/authorization/rbac.middleware.js';
-import { createContentFromIdea, listContent, getContent, enqueueScriptGeneration, advanceContent, enqueuePublish } from './content.service.js';
+import { createContentFromIdea, createContentDirect, listContent, getContent, enqueueScriptGeneration, advanceContent, enqueuePublish } from './content.service.js';
 
 export async function registerContent(app: FastifyInstance) {
   app.addHook('preHandler', requireAuth);
@@ -21,9 +21,24 @@ export async function registerContent(app: FastifyInstance) {
   app.post('/content', async (req) => {
     const w = (req as any)[kWorkspace];
     const u = (req as any)[kUser];
-    const body = z.object({ ideaId: z.string() }).parse(req.body);
-    const c = await createContentFromIdea(w.id, body.ideaId, u.id);
-    return { data: c };
+    const body = z.union([
+      z.object({ ideaId: z.string() }),
+      z.object({
+        title: z.string().min(1).max(200),
+        hook: z.string().max(300).optional(),
+        targetDurationSec: z.number().int().min(15).max(180).optional(),
+        tags: z.array(z.string()).optional(),
+        automationMode: z.enum(['MANUAL', 'ASSISTED', 'AUTONOMOUS']).optional(),
+      }),
+    ]).parse(req.body);
+
+    if ('ideaId' in body) {
+      const c = await createContentFromIdea(w.id, body.ideaId, u.id);
+      return { data: c };
+    } else {
+      const c = await createContentDirect(w.id, body, u.id);
+      return { data: c };
+    }
   });
 
   app.get('/content/:id', async (req) => {

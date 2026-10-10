@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useWorkspaceStore } from '../stores/workspaceStore';
+import { useContentStore } from '../stores/contentStore';
 import { useUIStore } from '../stores/uiStore';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
@@ -9,7 +10,6 @@ import { Badge } from '../components/ui/Badge';
 import { apiClient } from '../services/apiClient';
 import type { YouTubeChannel } from '../types/youtube';
 import { formatNumber, formatRelativeTime, formatDuration } from '../lib/utils';
-import { seedRecentUploads } from '../mock/seedData';
 import {
   Play as YoutubeIcon,
   Eye,
@@ -30,11 +30,13 @@ export function YouTubePage() {
   const connectYouTubeOAuth = useWorkspaceStore(s => s.connectYouTubeOAuth);
   const setConnectedChannel = useWorkspaceStore(s => s.setConnectedChannel);
   const disconnectYouTube = useWorkspaceStore(s => s.disconnectYouTube);
+  const items = useContentStore(s => s.items);
   const showToast = useUIStore(s => s.showToast);
 
   const [connecting, setConnecting] = useState(false);
   const [oauthError, setOauthError] = useState<string | null>(null);
-  const recentUploads = seedRecentUploads();
+
+  const publishedVideos = items.filter(i => i.status === 'published');
 
   // Handle incoming OAuth callback query params
   useEffect(() => {
@@ -140,9 +142,9 @@ export function YouTubePage() {
                   </div>
                   <p className="text-sm text-text-secondary mb-4">{youtubeChannel.description || 'AI-generated vertical Shorts and educational content.'}</p>
                   <div className="flex flex-wrap gap-6">
-                    <Stat icon={Users} label="Subscribers" value={formatNumber(youtubeChannel.subscriberCount || 12400)} />
-                    <Stat icon={Eye} label="Total Views" value={formatNumber(youtubeChannel.viewCount || 1420000)} />
-                    <Stat icon={VideoIcon} label="Videos" value={youtubeChannel.videoCount?.toString() || '48'} />
+                    <Stat icon={Users} label="Subscribers" value={formatNumber(youtubeChannel.subscriberCount ?? 0)} />
+                    <Stat icon={Eye} label="Total Views" value={formatNumber(youtubeChannel.viewCount ?? 0)} />
+                    <Stat icon={VideoIcon} label="Videos" value={(youtubeChannel.videoCount ?? 0).toString()} />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
@@ -212,27 +214,35 @@ export function YouTubePage() {
               <CardTitle>Recent Channel Uploads</CardTitle>
               <CardDescription>Recent Shorts published and their current viewer engagement.</CardDescription>
             </CardHeader>
-            <div className="divide-y divide-border">
-              {recentUploads.map(upload => (
-                <div key={upload.id} className="flex items-center gap-4 px-5 py-3 hover:bg-surface-subtle transition-colors">
-                  <div className="h-12 w-20 rounded bg-gradient-to-br from-slate-700 to-slate-900 shrink-0 flex items-center justify-center text-white/50 text-xs">
-                    9:16
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-text-primary truncate">{upload.title}</div>
-                    <div className="flex items-center gap-3 text-xs text-text-muted mt-0.5">
-                      <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{formatNumber(upload.views)}</span>
-                      <span className="flex items-center gap-1"><Heart className="h-3 w-3" />{formatNumber(upload.likes)}</span>
-                      <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDuration(upload.duration)}</span>
-                      <span>{formatRelativeTime(upload.publishedAt)}</span>
+            {publishedVideos.length === 0 ? (
+              <div className="py-8 px-4 text-center text-xs text-text-muted">
+                No uploads published through ShortForge yet.
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                {publishedVideos.map(upload => (
+                  <div key={upload.id} className="flex items-center gap-4 px-5 py-3 hover:bg-surface-subtle transition-colors">
+                    <div className="h-12 w-20 rounded bg-gradient-to-br from-slate-700 to-slate-900 shrink-0 flex items-center justify-center text-white/50 text-xs">
+                      9:16
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-text-primary truncate">{upload.title}</div>
+                      <div className="flex items-center gap-3 text-xs text-text-muted mt-0.5">
+                        <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{formatNumber(upload.views || 0)}</span>
+                        <span className="flex items-center gap-1"><Heart className="h-3 w-3" />{formatNumber(upload.likes || 0)}</span>
+                        <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDuration(upload.estimatedDuration || 60)}</span>
+                        <span>{upload.publishedAt ? formatRelativeTime(upload.publishedAt) : 'Recently'}</span>
+                      </div>
+                    </div>
+                    {upload.youtubeUrl ? (
+                      <a href={upload.youtubeUrl} target="_blank" rel="noreferrer" className="text-text-muted hover:text-text-primary">
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    ) : null}
                   </div>
-                  <Button variant="ghost" size="icon" title="View details on YouTube">
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </Card>
         </>
       )}
