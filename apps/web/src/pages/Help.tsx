@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
-import { Card, CardContent } from '../components/ui/Card';
 import {
   Search,
   ChevronDown,
@@ -9,12 +8,9 @@ import {
   Zap,
   Video,
   Play as YoutubeIcon,
-  BarChart3,
-  HelpCircle,
-  Server,
   ShieldCheck,
-  ExternalLink,
 } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 const SECTIONS = [
   {
@@ -23,7 +19,7 @@ const SECTIONS = [
     items: [
       {
         q: 'How does the ShortForge production pipeline work?',
-        a: 'ShortForge combines a Fastify modular monolith backend, BullMQ Redis job queues, and Prisma PostgreSQL database. It coordinates OpenAI for structured script generation, ElevenLabs for neural voiceover synthesis, and FFmpeg for hardware-accelerated 1080x1920 9:16 vertical video compilation.',
+        a: 'ShortForge combines a Fastify modular monolith backend, BullMQ Redis job queues, and Prisma PostgreSQL database. It coordinates OpenAI for structured 3-act script generation, ElevenLabs for neural voiceover synthesis, and FFmpeg for hardware-accelerated 1080×1920 9:16 vertical video compilation.',
       },
       {
         q: 'Where are API credentials configured?',
@@ -77,7 +73,7 @@ const SECTIONS = [
     items: [
       {
         q: 'What video format and resolution does ShortForge produce?',
-        a: 'Output files are rendered as MP4 containers using H.264 video codec and AAC stereo audio (48kHz) at native 1080x1920 (9:16 vertical aspect ratio), perfectly formatted for YouTube Shorts, Instagram Reels, and TikTok.',
+        a: 'Output files are rendered as MP4 containers using H.264 video codec and AAC stereo audio (48kHz) at native 1080×1920 (9:16 vertical aspect ratio), perfectly formatted for YouTube Shorts, Instagram Reels, and TikTok.',
       },
       {
         q: 'Can I regenerate a single scene without re-rendering the whole video?',
@@ -85,7 +81,7 @@ const SECTIONS = [
       },
       {
         q: 'How do automated captions work?',
-        a: 'Captions are burned into the video stream using FFmpeg filtergraphs with subtitle styling presets (Bold, Minimal, Karaoke, Highlight, Clean). Captions are placed strictly within vertical safe zones so platform UI overlays do not obscure text.',
+        a: 'Captions are burned into the video stream using FFmpeg filtergraphs with subtitle styling presets (Bold, Minimal, Highlight, Clean). Captions are placed strictly within vertical safe zones so platform UI overlays do not obscure text.',
       },
     ],
   },
@@ -110,7 +106,7 @@ export function Help() {
   const [openItems, setOpenItems] = useState<Set<string>>(new Set(['0-0', '1-0', '2-0']));
 
   const toggle = (key: string) => {
-    setOpenItems(prev => {
+    setOpenItems((prev) => {
       const n = new Set(prev);
       if (n.has(key)) n.delete(key);
       else n.add(key);
@@ -118,30 +114,30 @@ export function Help() {
     });
   };
 
-  const filtered = SECTIONS.map(s => ({
+  const filtered = SECTIONS.map((s) => ({
     ...s,
     items: s.items.filter(
-      i =>
+      (i) =>
         !search ||
         i.q.toLowerCase().includes(search.toLowerCase()) ||
         i.a.toLowerCase().includes(search.toLowerCase())
     ),
-  })).filter(s => s.items.length > 0);
+  })).filter((s) => s.items.length > 0);
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <PageHeader
         title="Help & Documentation"
-        description="Comprehensive technical guides, pipeline architecture, and integration troubleshooting."
+        description="Engineering guides, pipeline architecture, and integration troubleshooting."
       />
 
       <div className="relative max-w-lg">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-muted" />
         <input
           placeholder="Search technical documentation, OAuth, or FFmpeg guides..."
           value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 rounded-lg border border-border bg-surface text-xs placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-9 pr-4 py-2 rounded-md border border-border bg-surface text-xs placeholder:text-stone-muted focus:border-vermilion focus:outline-none"
         />
       </div>
 
@@ -149,12 +145,17 @@ export function Help() {
         {filtered.map((section, sIdx) => {
           const Icon = section.icon;
           return (
-            <Card key={section.title} className="overflow-hidden">
-              <div className="p-4 border-b border-border bg-surface-subtle/50 flex items-center gap-2.5">
-                <Icon className="h-4 w-4 text-accent" />
-                <h3 className="font-semibold text-xs text-text-primary uppercase tracking-wider">{section.title}</h3>
+            <div
+              key={section.title}
+              className="rounded-xl border border-border bg-surface shadow-xs overflow-hidden"
+            >
+              <div className="p-4 border-b border-border bg-canvas-subtle/50 flex items-center gap-2.5">
+                <Icon className="h-4 w-4 text-vermilion" />
+                <h3 className="font-semibold text-xs text-ink uppercase tracking-wider">
+                  {section.title}
+                </h3>
               </div>
-              <div className="divide-y divide-border">
+              <div className="divide-y border-border">
                 {section.items.map((item, iIdx) => {
                   const key = `${sIdx}-${iIdx}`;
                   const isOpen = openItems.has(key);
@@ -165,15 +166,15 @@ export function Help() {
                         onClick={() => toggle(key)}
                         className="w-full flex items-center justify-between text-left gap-4"
                       >
-                        <span className="text-xs font-semibold text-text-primary">{item.q}</span>
+                        <span className="text-xs font-semibold text-ink">{item.q}</span>
                         {isOpen ? (
-                          <ChevronDown className="h-4 w-4 text-accent shrink-0" />
+                          <ChevronDown className="h-3.5 w-3.5 text-vermilion shrink-0" />
                         ) : (
-                          <ChevronRight className="h-4 w-4 text-text-muted shrink-0" />
+                          <ChevronRight className="h-3.5 w-3.5 text-stone-muted shrink-0" />
                         )}
                       </button>
                       {isOpen && (
-                        <p className="text-xs text-text-secondary mt-2.5 leading-relaxed bg-surface-subtle p-3 rounded-md border border-border/60">
+                        <p className="text-xs text-stone mt-2.5 leading-relaxed bg-canvas-subtle p-3 rounded-md border border-border">
                           {item.a}
                         </p>
                       )}
@@ -181,7 +182,7 @@ export function Help() {
                   );
                 })}
               </div>
-            </Card>
+            </div>
           );
         })}
       </div>

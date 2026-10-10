@@ -91,7 +91,7 @@ export function Onboarding() {
     voiceSpeed: 1,
     voicePitch: 1,
     brandName: workspace?.brand?.name || 'AI Explained',
-    primaryAccent: '#1a7d4c',
+    primaryAccent: '#EC5A3A',
     captionStyle: 'bold',
     captionPosition: 'bottom',
     font: 'Inter',

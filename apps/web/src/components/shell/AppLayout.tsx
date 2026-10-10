@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileNav } from './MobileNav';
@@ -9,7 +9,6 @@ import { Drawer } from '../ui/Drawer';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
 import { cn } from '../../lib/utils';
-import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Lightbulb,
@@ -24,7 +23,6 @@ import {
   Bell,
   Palette,
   HelpCircle,
-  Sparkles,
 } from 'lucide-react';
 
 const mobileItems = [
@@ -51,7 +49,11 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement).tagName;
-      const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target as HTMLElement).isContentEditable;
+      const isInput =
+        tag === 'INPUT' ||
+        tag === 'TEXTAREA' ||
+        tag === 'SELECT' ||
+        (e.target as HTMLElement).isContentEditable;
 
       // Cmd/Ctrl+K
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -84,15 +86,17 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-canvas text-ink">
       <Sidebar />
-      <div className={cn(
-        'transition-all duration-200',
-        'lg:pl-[252px]',
-        sidebarCollapsed && 'lg:pl-[72px]'
-      )}>
+      <div
+        className={cn(
+          'transition-all duration-200',
+          'lg:pl-[240px]',
+          sidebarCollapsed && 'lg:pl-[68px]'
+        )}
+      >
         <Header />
-        <main className={cn('px-4 py-5 sm:px-6 lg:px-8 pb-24 lg:pb-10 min-h-[calc(100vh-4rem)] max-w-[1440px] mx-auto')}>
+        <main className="px-4 py-5 sm:px-6 lg:px-8 pb-24 lg:pb-10 min-h-[calc(100vh-3.5rem)] max-w-7xl mx-auto">
           {children || <Outlet />}
         </main>
       </div>
@@ -103,31 +107,42 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       {/* Mobile menu drawer */}
       <Drawer open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} side="left" size="sm">
-        <div className="p-4">
-          <div className="flex items-center gap-2.5 mb-6 pb-4 border-b border-border">
-            <div className="h-8 w-8 rounded-md bg-accent flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-white" />
+        <div className="p-4 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-border">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-md bg-ink flex items-center justify-center text-canvas font-mono font-bold text-xs">
+                SF
+              </div>
+              <span className="font-bold text-ink text-base">ShortForge</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
             </div>
-            <span className="font-bold text-text-primary text-lg">ShortForge</span>
-            <button onClick={() => setMobileMenuOpen(false)} className="ml-auto text-text-muted">
-              <X className="h-5 w-5" />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-1 rounded-md text-stone hover:text-ink"
+            >
+              <X className="h-4 w-4" />
             </button>
           </div>
+
           <nav className="space-y-1">
-            {mobileItems.map(item => {
+            {mobileItems.map((item) => {
               const Icon = item.icon;
               return (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) => cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors',
-                    isActive ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:bg-surface-subtle hover:text-text-primary'
-                  )}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors',
+                      isActive
+                        ? 'bg-vermilion-soft text-vermilion font-semibold'
+                        : 'text-stone hover:bg-canvas-subtle hover:text-ink'
+                    )
+                  }
                 >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
+                  <Icon className="h-4 w-4" />
+                  <span>{item.label}</span>
                 </NavLink>
               );
             })}

@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { PageHeader } from '../components/common/PageHeader';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
 import { useContentStore } from '../stores/contentStore';
 import { useUIStore } from '../stores/uiStore';
 import { apiClient } from '../services/apiClient';
@@ -21,12 +19,9 @@ import {
   MessageSquare,
   History,
   ArrowRight,
-  Loader2,
   FileText,
   Copy,
   Check,
-  Download,
-  Layers,
   Undo,
 } from 'lucide-react';
 
@@ -39,34 +34,32 @@ interface ScriptVersionItem {
 }
 
 const AI_ACTIONS = [
-  { label: 'Improve Hook', icon: Zap, desc: 'Make first 3 seconds scroll-stopping' },
-  { label: 'Make Shorter', icon: Type, desc: 'Cut 20% of words for faster pacing' },
-  { label: 'More Viral', icon: TrendingUp, desc: 'Add curiosity gaps and twists' },
-  { label: 'More Professional', icon: BookOpen, desc: 'Authoritative, polished tone' },
-  { label: 'Simplify', icon: RotateCcw, desc: 'Shorter sentences under 12 words' },
-  { label: 'Add Story Arc', icon: MessageSquare, desc: 'Problem -> Struggle -> Payoff' },
-  { label: 'Generate Strong CTA', icon: Wand2, desc: 'Compelling retention/follow CTA' },
+  { label: 'Improve Hook', icon: Zap, desc: 'Strengthen the opening 3-second line' },
+  { label: 'Make Shorter', icon: Type, desc: 'Trim filler words to increase pacing' },
+  { label: 'More Direct', icon: TrendingUp, desc: 'Cut preamble and state findings directly' },
+  { label: 'Technical Precision', icon: BookOpen, desc: 'Accurate architectural terms' },
+  { label: 'Simplify Phrasing', icon: RotateCcw, desc: 'Shorter sentences under 12 words' },
+  { label: 'Add Outro Loop', icon: Wand2, desc: 'Seamless loop cue connecting back to hook' },
 ];
 
 export function ScriptLab() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const content = useContentStore(s => s.items.find(i => i.id === id));
-  const updateContent = useContentStore(s => s.updateContent);
-  const showToast = useUIStore(s => s.showToast);
+  const content = useContentStore((s) => s.items.find((i) => i.id === id));
+  const updateContent = useContentStore((s) => s.updateContent);
+  const showToast = useUIStore((s) => s.showToast);
 
   const [scriptText, setScriptText] = useState(content?.script?.content || '');
   const [activeTab, setActiveTab] = useState<'text' | 'scenes'>('text');
   const [generating, setGenerating] = useState(false);
-  const [genStage, setGenStage] = useState('');
   const [copied, setCopied] = useState(false);
 
-  // Revisions & Version History
+  // Version History
   const [versions, setVersions] = useState<ScriptVersionItem[]>([
     {
       id: 'v1',
       version: 1,
-      content: content?.script?.content || 'Stop scrolling if you want to save 10 hours this week...',
+      content: content?.script?.content || 'If you are building vertical video in 2026, stop multi-tool switching...',
       action: 'Initial draft',
       timestamp: 'Just now',
     },
@@ -93,12 +86,14 @@ export function ScriptLab() {
   if (!content) {
     return (
       <div className="space-y-5">
-        <PageHeader title="Script Lab" description="Select a piece of content to write." />
-        <Card className="p-12 text-center">
-          <FileText className="h-12 w-12 text-text-muted mx-auto mb-4" />
-          <p className="text-text-secondary mb-4">Open a draft or create new content to start writing.</p>
-          <Button onClick={() => navigate('/create')}>Create Content</Button>
-        </Card>
+        <PageHeader title="Script Lab" description="Select a short from the library to draft narration." />
+        <div className="p-12 text-center bg-surface border border-border rounded-xl space-y-3">
+          <FileText className="h-10 w-10 text-stone-muted mx-auto" />
+          <p className="text-xs text-stone">Open a draft or create a new short to begin screenplay writing.</p>
+          <Button onClick={() => navigate('/create')} className="btn-primary h-9 px-4 text-xs">
+            Create Short
+          </Button>
+        </div>
       </div>
     );
   }
@@ -106,17 +101,16 @@ export function ScriptLab() {
   const wordCount = scriptText.trim().split(/\s+/).filter(Boolean).length;
   const charCount = scriptText.length;
   const estDuration = Math.max(15, Math.round(wordCount / 2.5));
-  const hookStrength = Math.min(98, 70 + (scriptText.includes('?') ? 12 : 0) + (scriptText.toLowerCase().includes('stop') || scriptText.toLowerCase().includes('why') ? 14 : 0));
-  const ctaStrength = Math.min(95, scriptText.toLowerCase().includes('follow') || scriptText.toLowerCase().includes('subscribe') || scriptText.toLowerCase().includes('bookmark') ? 88 : 45);
-  const readability = Math.min(96, 68 + (wordCount < 140 ? 18 : 0) + (sentenceAvgLength(scriptText) < 14 ? 10 : 0));
 
   function sentenceAvgLength(text: string) {
-    const sents = text.split(/[.!?]+/).filter(s => s.trim());
-    if (sents.length === 0) return 20;
-    return sents.reduce((sum, s) => sum + s.trim().split(/\s+/).length, 0) / sents.length;
+    const sents = text.split(/[.!?]+/).filter((s) => s.trim());
+    if (sents.length === 0) return 12;
+    return Number(
+      (sents.reduce((sum, s) => sum + s.trim().split(/\s+/).length, 0) / sents.length).toFixed(1)
+    );
   }
 
-  // Derive scene structure from narration text
+  const avgWordsPerSent = sentenceAvgLength(scriptText);
   const scenes = parseScriptScenes(scriptText, content.title);
 
   const recordNewVersion = (newContent: string, action: string) => {
@@ -128,7 +122,7 @@ export function ScriptLab() {
       action,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-    setVersions(prev => [newItem, ...prev]);
+    setVersions((prev) => [newItem, ...prev]);
     setCurrentVersionIndex(0);
   };
 
@@ -139,9 +133,9 @@ export function ScriptLab() {
         content: scriptText,
         wordCount,
         charCount,
-        hookStrength,
-        ctaStrength,
-        readability,
+        hookStrength: 90,
+        ctaStrength: 85,
+        readability: 88,
         estimatedDuration: estDuration,
         versions: (content.script?.versions || []).concat({
           id: `svr_${Date.now()}`,
@@ -183,12 +177,11 @@ export function ScriptLab() {
       // Local mode fallback
     }
 
-    showToast({ type: 'success', title: 'Script saved', message: 'Content script updated and synced.' });
+    showToast({ type: 'success', title: 'Script saved', message: 'Script and scenes updated.' });
   };
 
   const handleGenerateScript = async () => {
     setGenerating(true);
-    setGenStage('Connecting to AI scriptwriter...');
     try {
       const res = await apiClient.scripts.generate(content.id);
       if (res?.body) {
@@ -202,14 +195,14 @@ export function ScriptLab() {
             content: res.body,
             wordCount: res.body.trim().split(/\s+/).length,
             charCount: res.body.length,
-            hookStrength: 88,
-            ctaStrength: 82,
-            readability: 85,
-            estimatedDuration: res.estimatedDurationSec || 60,
+            hookStrength: 90,
+            ctaStrength: 85,
+            readability: 88,
+            estimatedDuration: res.estimatedDurationSec || 45,
             versions: [],
           },
         });
-        showToast({ type: 'success', title: 'Script generated', message: 'AI generated new script & scene breakdown.' });
+        showToast({ type: 'success', title: 'Script generated' });
       }
     } catch (err: any) {
       showToast({
@@ -227,300 +220,229 @@ export function ScriptLab() {
     const sentences = scriptText.split(/(?<=[.?!])\s+/).filter(Boolean);
 
     if (actionLabel === 'Improve Hook') {
-      const dynamicHooks = [
-        `If you are still doing this manually in 2026, you're wasting 10 hours a week.`,
-        `Stop scrolling: 95% of creators are approaching this completely wrong.`,
-        `Here is the one AI secret nobody is talking about yet.`,
-        `You won't believe what happens when you combine these two tools.`,
-      ];
-      const pick = dynamicHooks[Math.floor(Math.random() * dynamicHooks.length)];
+      const pick = `Stop scrolling if you write code: 95% of developers are approaching this completely wrong.`;
       if (sentences.length > 0) {
         sentences[0] = pick;
         modified = sentences.join(' ');
       } else {
-        modified = `${pick} Here's everything you need to know.`;
+        modified = `${pick} Here is what actually happens.`;
       }
     } else if (actionLabel === 'Make Shorter') {
       modified = sentences
         .slice(0, Math.max(3, Math.ceil(sentences.length * 0.75)))
-        .map(s => s.replace(/\b(actually|basically|literally|honestly|just|very)\b\s*/gi, ''))
+        .map((s) => s.replace(/\b(actually|basically|literally|honestly|just|very)\b\s*/gi, ''))
         .join(' ');
-    } else if (actionLabel === 'More Viral') {
-      modified = `Wait, look at this. ${sentences.join(' ')} And the craziest part? It works every single time.`;
-    } else if (actionLabel === 'More Professional') {
-      modified = sentences
-        .map(s => s.replace(/\bcool\b/gi, 'effective').replace(/\bcrazy\b/gi, 'extraordinary').replace(/\bstuff\b/gi, 'architecture'))
-        .join(' ');
-    } else if (actionLabel === 'Simplify') {
-      modified = scriptText
-        .replace(/;,/g, '.')
-        .split(/(?<=[.?!])\s+/)
-        .map(s => s.trim())
-        .join('\n');
-    } else if (actionLabel === 'Add Story Arc') {
-      modified = `I used to struggle with this constantly. Every single day, hours vanished into thin air.\nUntil I discovered a single shift in workflow.\n${sentences.slice(1).join(' ')}`;
-    } else if (actionLabel === 'Generate Strong CTA') {
-      const ctas = [
-        'Bookmark this before you lose it, and subscribe for tomorrow’s automation breakdown.',
-        'Follow ShortForge for more vertical video workflows tested in production.',
-        'Save this post and drop your biggest challenge in the comments.',
-      ];
-      const ctaPick = ctas[Math.floor(Math.random() * ctas.length)];
-      modified = `${scriptText.trim()}\n\n${ctaPick}`;
+    } else if (actionLabel === 'More Direct') {
+      modified = `Here is the architectural reality. ${sentences.join(' ')}`;
+    } else if (actionLabel === 'Technical Precision') {
+      modified = scriptText.replace(/code/g, 'system architecture').replace(/tool/g, 'pipeline module');
+    } else if (actionLabel === 'Simplify Phrasing') {
+      modified = sentences.map((s) => (s.length > 80 ? s.slice(0, 80) + '.' : s)).join(' ');
+    } else if (actionLabel === 'Add Outro Loop') {
+      modified = `${scriptText} Follow for daily engineering breakdowns.`;
     }
 
     setScriptText(modified);
     recordNewVersion(modified, actionLabel);
-    showToast({ type: 'success', title: actionLabel, message: 'Script adapted successfully.' });
+    showToast({ type: 'info', title: actionLabel, message: 'Script modified.' });
   };
 
-  const handleCopy = () => {
+  const copyToClipboard = () => {
     navigator.clipboard.writeText(scriptText);
     setCopied(true);
-    showToast({ type: 'info', title: 'Copied to clipboard' });
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDownloadMarkdown = () => {
-    const md = `# ${content.title}\n\n**Hook:** ${scenes[0]?.script || ''}\n**Estimated Duration:** ${estDuration}s\n**Word Count:** ${wordCount}\n\n---\n\n${scriptText}\n\n---\n## Scenes Breakdown\n${scenes.map((s, i) => `### Scene ${i + 1} (${s.duration}s)\n- **Narration:** ${s.script}\n- **Visual Prompt:** ${s.visualPrompt}\n`).join('\n')}`;
-    const blob = new Blob([md], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${content.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-script.md`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleRestoreVersion = (ver: ScriptVersionItem) => {
-    setScriptText(ver.content);
-    recordNewVersion(ver.content, `Restored version ${ver.version}`);
-    showToast({ type: 'info', title: 'Version restored', message: `Restored version ${ver.version}.` });
-  };
-
   return (
-    <div className="h-[calc(100vh-7rem)] flex flex-col space-y-4">
+    <div className="space-y-6">
       <PageHeader
         title={content.title}
-        description="Structured script lab: pacing analysis, AI prompt transforms, and scene storyboard."
+        description="3-Act Screenplay Studio • Word-level pacing for vertical shorts"
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleCopy} title="Copy to clipboard">
-              {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
-              {copied ? 'Copied' : 'Copy'}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={copyToClipboard}
+              className="btn-secondary h-8 px-3 text-xs"
+            >
+              {copied ? <Check className="h-3.5 w-3.5 text-moss" /> : <Copy className="h-3.5 w-3.5" />}
+              <span>{copied ? 'Copied' : 'Copy'}</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleDownloadMarkdown} title="Export Markdown">
-              <Download className="h-4 w-4" />Export
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleGenerateScript}
+              loading={generating}
+              className="btn-secondary h-8 px-3 text-xs"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-vermilion" />
+              <span>Regenerate</span>
             </Button>
-            <Button variant="secondary" size="sm" onClick={handleSaveScript}>
-              <Save className="h-4 w-4" />Save
-            </Button>
-            <Button size="sm" onClick={() => { handleSaveScript(); navigate(`/studio/${content.id}`); }}>
-              Studio <ArrowRight className="h-4 w-4" />
+            <Button
+              size="sm"
+              onClick={handleSaveScript}
+              className="btn-primary h-8 px-4 text-xs"
+            >
+              <Save className="h-3.5 w-3.5" />
+              <span>Save Script</span>
             </Button>
           </div>
         }
       />
 
-      {generating && (
-        <Card className="p-4 bg-accent-soft/40 border-accent/20">
-          <div className="flex items-center gap-3">
-            <Loader2 className="h-5 w-5 text-accent animate-spin" />
-            <div>
-              <div className="text-sm font-medium text-text-primary">{genStage}</div>
-              <div className="text-xs text-text-muted">Drafting vertical video script with retention pacing...</div>
-            </div>
+      {/* Main 2-Column Writing Workspace */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Script Editor & Act Breakdown */}
+        <div className="lg:col-span-8 space-y-4">
+          <div className="flex items-center gap-2 border-b border-border pb-2">
+            <button
+              onClick={() => setActiveTab('text')}
+              className={cn(
+                'px-3 py-1 rounded-md text-xs font-medium transition-colors',
+                activeTab === 'text'
+                  ? 'bg-surface text-ink font-semibold border border-border shadow-xs'
+                  : 'text-stone hover:text-ink'
+              )}
+            >
+              Narration Editor
+            </button>
+            <button
+              onClick={() => setActiveTab('scenes')}
+              className={cn(
+                'px-3 py-1 rounded-md text-xs font-medium transition-colors',
+                activeTab === 'scenes'
+                  ? 'bg-surface text-ink font-semibold border border-border shadow-xs'
+                  : 'text-stone hover:text-ink'
+              )}
+            >
+              Scene Directing ({scenes.length} beats)
+            </button>
           </div>
-        </Card>
-      )}
 
-      <div className="grid lg:grid-cols-[1fr_320px] gap-5 flex-1 min-h-0">
-        {/* Main Editor / Scene Panel */}
-        <Card className="flex flex-col min-h-0">
-          <CardHeader className="pb-2 border-b border-border flex flex-row items-center justify-between">
-            <div className="flex items-center gap-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <FileText className="h-4 w-4 text-accent" />
-                Script Workspace
-              </CardTitle>
-            </div>
-            <div className="flex items-center rounded-md border border-border p-0.5 bg-surface-subtle">
-              <button
-                type="button"
-                onClick={() => setActiveTab('text')}
-                className={cn('px-2.5 py-1 text-xs font-medium rounded', activeTab === 'text' ? 'bg-surface text-text-primary shadow-xs' : 'text-text-muted')}
-              >
-                Narration Text
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('scenes')}
-                className={cn('px-2.5 py-1 text-xs font-medium rounded', activeTab === 'scenes' ? 'bg-surface text-text-primary shadow-xs' : 'text-text-muted')}
-              >
-                Scene Breakdown ({scenes.length})
-              </button>
-            </div>
-          </CardHeader>
+          {activeTab === 'text' ? (
+            <div className="p-4 rounded-xl bg-surface border border-border shadow-xs space-y-4">
+              <textarea
+                rows={12}
+                value={scriptText}
+                onChange={(e) => setScriptText(e.target.value)}
+                placeholder="Write your spoken screenplay narration here..."
+                className="w-full bg-transparent font-sans text-xs sm:text-sm text-ink placeholder:text-stone-muted leading-relaxed outline-none resize-none border-0 p-0"
+              />
 
-          <CardContent className="flex-1 flex flex-col p-0 min-h-0">
-            {activeTab === 'text' ? (
-              <div className="flex-1 flex flex-col p-4 min-h-0">
-                {!scriptText ? (
-                  <div className="flex-1 flex items-center justify-center p-8">
-                    <div className="text-center max-w-sm">
-                      <Sparkles className="h-10 w-10 text-accent mx-auto mb-3" />
-                      <h4 className="text-sm font-semibold text-text-primary mb-1">Generate AI Script</h4>
-                      <p className="text-xs text-text-secondary mb-4">
-                        Generate a vertical short script structured specifically for 45-60s retention.
-                      </p>
-                      <Button onClick={handleGenerateScript} loading={generating}>
-                        <Sparkles className="h-4 w-4" />Generate Script
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <textarea
-                    value={scriptText}
-                    onChange={e => setScriptText(e.target.value)}
-                    className="flex-1 w-full bg-transparent text-text-primary text-sm leading-relaxed resize-none focus:outline-none font-mono"
-                    placeholder="Enter script narration..."
-                  />
-                )}
+              {/* Real Pacing Metrics Bar */}
+              <div className="pt-3 border-t border-border grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                <div className="p-2 rounded bg-canvas-subtle border border-border">
+                  <span className="text-stone-muted block text-[10px]">WORDS:</span>
+                  <span className="font-semibold text-ink">{wordCount} words</span>
+                </div>
+                <div className="p-2 rounded bg-canvas-subtle border border-border">
+                  <span className="text-stone-muted block text-[10px]">EST. RUNTIME:</span>
+                  <span className="font-semibold text-vermilion">~{estDuration}s</span>
+                </div>
+                <div className="p-2 rounded bg-canvas-subtle border border-border">
+                  <span className="text-stone-muted block text-[10px]">AVG SENTENCE:</span>
+                  <span className="font-semibold text-ink">{avgWordsPerSent} words</span>
+                </div>
+                <div className="p-2 rounded bg-canvas-subtle border border-border">
+                  <span className="text-stone-muted block text-[10px]">PACING:</span>
+                  <span className="font-semibold text-moss">~150 WPM</span>
+                </div>
               </div>
-            ) : (
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {scenes.map((sc, idx) => (
-                  <div key={idx} className="p-3 rounded-lg border border-border bg-surface-subtle space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-text-primary flex items-center gap-1.5">
-                        <span className="h-5 w-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold">
-                          {idx + 1}
-                        </span>
-                        {sc.title}
-                      </span>
-                      <Badge variant="neutral">{sc.duration}s</Badge>
-                    </div>
-                    <div className="text-xs text-text-primary bg-surface p-2.5 rounded border border-border">
-                      <span className="text-[10px] font-semibold text-text-muted uppercase block mb-0.5">Spoken Narration</span>
-                      "{sc.script}"
-                    </div>
-                    <div className="text-xs text-text-secondary flex items-start gap-1.5 pt-1">
-                      <Layers className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-semibold text-text-primary text-[11px]">Visual Prompt (9:16): </span>
-                        <span>{sc.visualPrompt}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-
-          <div className="px-5 py-3 border-t border-border flex items-center justify-between text-xs text-text-muted">
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1"><Type className="h-3.5 w-3.5" /><strong>{wordCount}</strong> words</span>
-              <span><strong>{charCount}</strong> characters</span>
-              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />Est. <strong>{estDuration}s</strong></span>
             </div>
-            <div className="text-text-secondary font-mono text-[11px]">Pacing: ~2.5 wps</div>
-          </div>
-        </Card>
-
-        {/* Sidebar: AI Transformations, Metrics, Version History */}
-        <div className="space-y-4 overflow-y-auto">
-          {/* AI Actions */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-accent" />
-                AI Enhancements
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-3 space-y-1.5">
-              {AI_ACTIONS.map(a => (
-                <button
-                  key={a.label}
-                  type="button"
-                  onClick={() => handleAIAction(a.label)}
-                  className="w-full flex items-center justify-between p-2 rounded hover:bg-surface-subtle transition-colors text-left border border-border/50 text-xs"
+          ) : (
+            <div className="space-y-3">
+              {scenes.map((scene, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl bg-surface border border-border shadow-xs space-y-2"
                 >
-                  <div className="flex items-center gap-2">
-                    <a.icon className="h-3.5 w-3.5 text-accent" />
-                    <span className="font-medium text-text-primary">{a.label}</span>
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="font-bold text-vermilion">{scene.title}</span>
+                    <span className="px-2 py-0.5 rounded bg-canvas-subtle border border-border text-stone">
+                      ~{scene.duration}s
+                    </span>
                   </div>
-                  <Wand2 className="h-3 w-3 text-text-muted" />
+                  <p className="text-xs text-ink font-sans leading-relaxed">"{scene.script}"</p>
+                  <div className="p-2.5 rounded bg-canvas-subtle border border-border text-[11px] font-mono text-stone">
+                    <strong>9:16 Art Direction:</strong> {scene.visualPrompt}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Quick AI Editing Actions */}
+          <div className="p-4 rounded-xl bg-surface border border-border shadow-xs space-y-2">
+            <span className="text-xs font-mono font-bold text-stone uppercase tracking-wide block">
+              Quick Stylistic Adjustments
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {AI_ACTIONS.map((action, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleAIAction(action.label)}
+                  className="p-2.5 rounded-lg border border-border bg-canvas-subtle hover:bg-surface hover:border-vermilion/50 transition-all text-left space-y-1"
+                >
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-ink">
+                    <action.icon className="h-3.5 w-3.5 text-vermilion" />
+                    <span>{action.label}</span>
+                  </div>
+                  <div className="text-[10px] text-stone leading-tight">{action.desc}</div>
                 </button>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+        </div>
 
-          {/* Retention Metrics */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Retention Quality Scores</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 p-4">
-              <Metric label="Hook Strength (0-3s)" value={hookStrength} />
-              <Metric label="CTA Conversion Score" value={ctaStrength} />
-              <Metric label="Pacing & Readability" value={readability} />
-            </CardContent>
-          </Card>
+        {/* Right Column: Version History & Next Steps */}
+        <div className="lg:col-span-4 space-y-4">
+          <div className="p-5 rounded-xl bg-surface border border-border shadow-xs space-y-3">
+            <div className="flex items-center justify-between border-b border-border pb-2.5">
+              <span className="text-xs font-bold text-ink">Revision History</span>
+              <span className="text-[10px] font-mono text-stone">{versions.length} versions</span>
+            </div>
 
-          {/* Version History */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-1.5">
-                <History className="h-3.5 w-3.5 text-accent" />
-                Version History ({versions.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-3 space-y-1.5 max-h-48 overflow-y-auto">
+            <div className="space-y-2 max-h-60 overflow-y-auto">
               {versions.map((ver, idx) => (
                 <div
                   key={ver.id}
+                  onClick={() => {
+                    setScriptText(ver.content);
+                    setCurrentVersionIndex(idx);
+                  }}
                   className={cn(
-                    'p-2 rounded border text-xs flex items-center justify-between transition-colors',
-                    idx === currentVersionIndex ? 'border-accent bg-accent/5' : 'border-border bg-surface-subtle/50'
+                    'p-2.5 rounded-md border text-left cursor-pointer transition-all space-y-1',
+                    currentVersionIndex === idx
+                      ? 'bg-vermilion-soft border-vermilion/40 shadow-xs'
+                      : 'bg-canvas-subtle border-border hover:border-border-strong'
                   )}
                 >
-                  <div>
-                    <div className="font-semibold text-text-primary">v{ver.version}: {ver.action}</div>
-                    <div className="text-[10px] text-text-muted">{ver.timestamp}</div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-ink">Version {ver.version}</span>
+                    <span className="text-[10px] font-mono text-stone-muted">{ver.timestamp}</span>
                   </div>
-                  {idx !== currentVersionIndex && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRestoreVersion(ver)}
-                      className="text-[10px] h-7 px-2"
-                      title="Revert to this version"
-                    >
-                      <Undo className="h-3 w-3 mr-1" /> Restore
-                    </Button>
-                  )}
+                  <div className="text-[11px] text-stone truncate">{ver.action}</div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
-}
+            </div>
+          </div>
 
-function Metric({ label, value }: { label: string; value: number }) {
-  return (
-    <div>
-      <div className="flex items-center justify-between text-xs mb-1">
-        <span className="text-text-muted">{label}</span>
-        <span className="font-medium text-text-primary">{value}%</span>
-      </div>
-      <div className="h-1.5 bg-surface-subtle rounded-full overflow-hidden">
-        <div
-          className={cn('h-full rounded-full transition-all duration-300', value >= 80 ? 'bg-success' : value >= 60 ? 'bg-warning' : 'bg-danger')}
-          style={{ width: `${value}%` }}
-        />
+          <div className="p-5 rounded-xl bg-surface border border-border shadow-xs space-y-3">
+            <span className="text-xs font-bold text-ink block">Next Production Step</span>
+            <p className="text-xs text-stone leading-relaxed">
+              Once narration is finalized, proceed to Video Studio to synthesize neural audio and preview kinetic subtitles.
+            </p>
+            <Button
+              onClick={() => navigate(`/studio/${content.id}`)}
+              className="btn-primary w-full h-9 text-xs"
+            >
+              <span>Launch Video Studio</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -530,27 +452,40 @@ function parseScriptScenes(text: string, title: string) {
   const sentences = text.split(/(?<=[.?!])\s+/).filter(Boolean);
   if (sentences.length === 0) {
     return [
-      { title: 'Hook Scene', duration: 3, script: 'Hook line to stop the scroll.', visualPrompt: `Cinematic vertical opening showing ${title}` },
-      { title: 'Core Demonstration', duration: 35, script: 'Explanation and value delivery.', visualPrompt: 'Clear demonstration of the core workflow' },
-      { title: 'Call to Action', duration: 7, script: 'Subscribe and follow for daily videos.', visualPrompt: 'Dynamic logo outro and social handles' },
+      {
+        title: 'Act I: The Hook',
+        script: text || 'Opening premise hook.',
+        duration: 4,
+        visualPrompt: `Vertical 9:16 cinematic establishing frame for ${title}`,
+      },
     ];
   }
 
-  if (sentences.length <= 2) {
-    return [
-      { title: 'Opening Hook', duration: 5, script: sentences[0], visualPrompt: `Dynamic visual introducing ${title}` },
-      { title: 'Core Insight', duration: 35, script: sentences[1] || sentences[0], visualPrompt: 'Clear engaging presentation of main idea' },
+  const chunkCount = Math.min(4, Math.max(2, Math.ceil(sentences.length / 2)));
+  const chunkSize = Math.ceil(sentences.length / chunkCount);
+  const result = [];
+
+  for (let i = 0; i < chunkCount; i++) {
+    const chunkSentences = sentences.slice(i * chunkSize, (i + 1) * chunkSize);
+    if (chunkSentences.length === 0) continue;
+    const narration = chunkSentences.join(' ');
+    const words = narration.split(/\s+/).length;
+    const duration = Math.max(3, Math.round(words / 2.5));
+
+    const labels = [
+      'Act I: Curiosity Hook',
+      'Act II: The Mechanism',
+      'Act II: Pacing Shift',
+      'Act III: Loop Outro',
     ];
+
+    result.push({
+      title: labels[i] || `Scene 0${i + 1}`,
+      script: narration,
+      duration,
+      visualPrompt: `High-contrast 9:16 vertical scene illustrating: ${chunkSentences[0]}`,
+    });
   }
 
-  const hook = sentences[0];
-  const cta = sentences[sentences.length - 1];
-  const body = sentences.slice(1, -1);
-
-  return [
-    { title: 'Hook (0-3s)', duration: 4, script: hook, visualPrompt: `Scroll-stopping close-up visual representing ${title}` },
-    { title: 'Problem & Context', duration: 12, script: body.slice(0, Math.ceil(body.length / 2)).join(' '), visualPrompt: 'Visual depicting workflow friction and common mistakes' },
-    { title: 'Solution & Breakthrough', duration: 22, script: body.slice(Math.ceil(body.length / 2)).join(' '), visualPrompt: 'Clean modern interface demonstrating the solution' },
-    { title: 'Call to Action', duration: 7, script: cta, visualPrompt: 'Engaging prompt asking viewer to follow and save' },
-  ];
+  return result;
 }

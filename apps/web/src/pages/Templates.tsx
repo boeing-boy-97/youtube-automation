@@ -3,103 +3,97 @@ import { useNavigate } from 'react-router-dom';
 import { useContentStore } from '../stores/contentStore';
 import { useUIStore } from '../stores/uiStore';
 import { PageHeader } from '../components/common/PageHeader';
-import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
 import { seedTemplates } from '../mock/seedData';
-import { FileText, Play, Copy, Archive, Check } from 'lucide-react';
+import { FileText, Copy, Check, ArrowRight } from 'lucide-react';
 
 export function Templates() {
   const navigate = useNavigate();
-  const createContent = useContentStore(s => s.createContent);
-  const showToast = useUIStore(s => s.showToast);
+  const createContent = useContentStore((s) => s.createContent);
+  const showToast = useUIStore((s) => s.showToast);
   const [templates, setTemplates] = useState(seedTemplates());
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const handleUse = (template: typeof templates[0]) => {
-    const content = createContent({
+  const handleUse = (template: (typeof templates)[0]) => {
+    createContent({
       title: `${template.name} Draft`,
       status: 'draft',
       pillar: template.category,
       estimatedDuration: template.duration,
       hook: template.hook,
       cta: template.cta,
-      thumbnailGradient: 'from-emerald-900 via-emerald-800 to-teal-700',
+      thumbnailGradient: 'from-stone-900 via-stone-800 to-black',
     });
-    showToast({ type: 'success', title: 'Template Applied', message: `Created project from ${template.name}` });
+    showToast({
+      type: 'success',
+      title: 'Template Applied',
+      message: `Created project from ${template.name}`,
+    });
     navigate(`/create`);
   };
 
-  const handleCopyTemplate = (t: typeof templates[0]) => {
+  const handleCopyTemplate = (t: (typeof templates)[0]) => {
     const text = `Template: ${t.name}\nCategory: ${t.category}\nDuration: ${t.duration}s\nHook: ${t.hook}\nCTA: ${t.cta}`;
     navigator.clipboard.writeText(text);
     setCopiedId(t.id);
-    showToast({ type: 'info', title: 'Copied to Clipboard', message: `${t.name} outline copied.` });
+    showToast({ type: 'info', title: 'Copied', message: `${t.name} outline copied.` });
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleArchiveTemplate = (id: string, name: string) => {
-    setTemplates(prev => prev.filter(t => t.id !== id));
-    showToast({ type: 'info', title: 'Template Archived', message: `${name} moved to archive.` });
-  };
-
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
-        title="Content Templates"
-        description="Pre-tested structural frameworks engineered for 45-60s retention on vertical algorithms."
+        title="Screenplay Templates"
+        description="Structural 3-act narrative frameworks calibrated for 45-60s retention on vertical algorithms."
       />
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {templates.map(t => (
-          <Card key={t.id} className="p-5 flex flex-col justify-between border border-border">
-            <div>
-              <div className="h-28 rounded-lg bg-surface-subtle border border-border flex items-center justify-center mb-3">
-                <FileText className="h-7 w-7 text-accent" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {templates.map((t) => (
+          <div
+            key={t.id}
+            className="p-5 rounded-xl bg-surface border border-border shadow-xs hover:border-vermilion/50 transition-all flex flex-col justify-between space-y-4"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="px-2 py-0.5 rounded bg-canvas-subtle border border-border text-[10px] font-mono text-stone">
+                  {t.category}
+                </span>
+                <span className="font-mono text-xs text-vermilion font-bold">{t.duration}s</span>
               </div>
-              <div className="flex items-start justify-between mb-1">
-                <h3 className="font-semibold text-xs text-text-primary">{t.name}</h3>
-                {t.isDefault && <Badge variant="accent">Standard</Badge>}
+
+              <div>
+                <h3 className="font-bold text-sm text-ink">{t.name}</h3>
+                <p className="text-xs text-stone mt-1 line-clamp-2">{t.description}</p>
               </div>
-              <p className="text-[11px] text-text-secondary mb-3">{t.description}</p>
-              <div className="space-y-1 text-xs border-t border-border pt-2 mb-4">
-                <div className="flex justify-between text-text-muted">
-                  <span>Category</span>
-                  <span className="text-text-primary font-medium">{t.category}</span>
-                </div>
-                <div className="flex justify-between text-text-muted">
-                  <span>Target Time</span>
-                  <span className="text-text-primary font-mono">{t.duration}s</span>
-                </div>
-                <div className="flex justify-between text-text-muted">
-                  <span>Tested Pacing</span>
-                  <span className="text-text-primary font-mono">{t.usageCount} productions</span>
-                </div>
+
+              <div className="p-3 rounded-md bg-canvas-subtle border border-border space-y-1">
+                <span className="text-[10px] font-mono font-bold text-vermilion uppercase block">
+                  Hook Structure
+                </span>
+                <p className="text-xs text-stone italic leading-relaxed">"{t.hook}"</p>
               </div>
             </div>
 
-            <div className="flex gap-1.5 pt-2">
-              <Button size="sm" className="flex-1" onClick={() => handleUse(t)}>
-                <Play className="h-3 w-3" /> Apply
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
+            <div className="pt-3 border-t border-border flex items-center justify-between gap-2">
+              <button
+                type="button"
                 onClick={() => handleCopyTemplate(t)}
-                title="Copy template text"
+                className="btn-ghost h-8 px-2 text-xs text-stone hover:text-ink"
+                title="Copy framework"
               >
-                {copiedId === t.id ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
-              </Button>
+                {copiedId === t.id ? <Check className="h-3.5 w-3.5 text-moss" /> : <Copy className="h-3.5 w-3.5" />}
+              </button>
+
               <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleArchiveTemplate(t.id, t.name)}
-                title="Archive template"
+                size="sm"
+                onClick={() => handleUse(t)}
+                className="btn-primary h-8 px-3 text-xs"
               >
-                <Archive className="h-3.5 w-3.5" />
+                <span>Use Template</span>
+                <ArrowRight className="h-3 w-3" />
               </Button>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
     </div>

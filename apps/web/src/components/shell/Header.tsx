@@ -5,9 +5,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useContentStore } from '../../stores/contentStore';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { Avatar } from '../ui/Avatar';
-import { Badge } from '../ui/Badge';
 import { Tooltip } from '../ui/Tooltip';
-import { Button } from '../ui/Button';
 import {
   Search,
   Bell,
@@ -19,39 +17,38 @@ import {
   Command,
   Play as YoutubeIcon,
   AlertCircle,
-  ChevronRight,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const PAGE_TITLES: Record<string, { title?: string; subtitle?: string }> = {
-  '/dashboard': { subtitle: 'Your content engine is healthy' },
-  '/ideas': { title: 'Ideas', subtitle: 'Discover, generate and refine content concepts' },
-  '/content': { title: 'Content Library', subtitle: 'Manage your entire production pipeline' },
-  '/create': { title: 'Create Content', subtitle: 'Guided production workspace' },
-  '/queue': { title: 'Production Queue', subtitle: 'Active jobs and rendering progress' },
-  '/calendar': { title: 'Calendar', subtitle: 'Schedule and publishing plan' },
-  '/templates': { title: 'Templates', subtitle: 'Reusable content frameworks' },
-  '/assets': { title: 'Assets', subtitle: 'Images, video, audio and brand files' },
-  '/automation': { title: 'Automation', subtitle: 'Control your autonomous content engine' },
-  '/workflow': { title: 'Workflow', subtitle: 'Design your content pipeline' },
-  '/analytics': { title: 'Analytics', subtitle: 'Performance intelligence' },
-  '/youtube': { title: 'YouTube', subtitle: 'Channel management' },
+  '/dashboard': { subtitle: 'Creative Studio command center' },
+  '/ideas': { title: 'Ideas', subtitle: 'Discover, score, and refine vertical video concepts' },
+  '/content': { title: 'Content Library', subtitle: 'Manage your entire vertical production catalogue' },
+  '/create': { title: 'Create Short', subtitle: 'Guided script-to-screen production workspace' },
+  '/queue': { title: 'Production Queue', subtitle: 'Active background workers and FFmpeg jobs' },
+  '/calendar': { title: 'Publishing Calendar', subtitle: 'Scheduled slots and YouTube delivery cadence' },
+  '/templates': { title: 'Templates', subtitle: 'Reusable 3-act vertical frameworks' },
+  '/assets': { title: 'Assets & Media', subtitle: 'Scene graphics, audio stems, and brand files' },
+  '/automation': { title: 'Automation Rules', subtitle: 'Configure assisted and autonomous publishing limits' },
+  '/workflow': { title: 'Workflow Engine', subtitle: 'State-machine pipeline definitions' },
+  '/analytics': { title: 'Analytics', subtitle: 'Audience retention and performance intelligence' },
+  '/youtube': { title: 'YouTube Channel', subtitle: 'Google OAuth v3 connection & upload status' },
   '/notifications': { title: 'Notifications' },
-  '/brand-kit': { title: 'Brand Kit', subtitle: 'Consistent visual identity' },
-  '/settings': { title: 'Settings', subtitle: 'Workspace and configuration' },
-  '/help': { title: 'Help Center', subtitle: 'Documentation and guides' },
-  '/script-lab': { title: 'Script Lab', subtitle: 'Professional writing environment' },
-  '/studio': { title: 'Video Studio', subtitle: 'Edit, preview and finalize' },
+  '/brand-kit': { title: 'Brand Kit', subtitle: 'Typography presets, safe zones, and palettes' },
+  '/settings': { title: 'Settings', subtitle: 'Workspace members, credentials, and API keys' },
+  '/help': { title: 'Documentation & Guides', subtitle: 'Architecture guides and studio tutorials' },
+  '/script-lab': { title: 'Script Lab', subtitle: '3-Act vertical screenplay drafting' },
+  '/studio': { title: 'Video Studio', subtitle: 'Multi-track timeline preview and subtitle safe zones' },
 };
 
 export function Header() {
   const location = useLocation();
-  const { theme, toggleTheme, openCommandPalette, setMobileMenuOpen, sidebarCollapsed } = useUIStore();
+  const { theme, toggleTheme, openCommandPalette, setMobileMenuOpen } = useUIStore();
   const { user } = useAuthStore();
-  const unreadCount = useContentStore(s => s.getUnreadCount());
-  const youtube = useWorkspaceStore(s => s.youtubeChannel);
-  const workspace = useWorkspaceStore(s => s.workspace);
-  const failedCount = useContentStore(s => s.items.filter(i => i.status === 'failed').length);
+  const unreadCount = useContentStore((s) => s.getUnreadCount());
+  const youtube = useWorkspaceStore((s) => s.youtubeChannel);
+  const workspace = useWorkspaceStore((s) => s.workspace);
+  const failedCount = useContentStore((s) => s.items.filter((i) => i.status === 'failed').length);
   const [greeting, setGreeting] = useState('Good morning');
 
   useEffect(() => {
@@ -61,11 +58,14 @@ export function Header() {
     else setGreeting('Good evening');
   }, []);
 
-  let currentPage: { title: string; subtitle?: string } = { title: 'ShortForge' };
+  let currentPage: { title: string; subtitle?: string } = { title: 'ShortForge Studio' };
   for (const [path, info] of Object.entries(PAGE_TITLES)) {
     if (location.pathname === path || location.pathname.startsWith(path + '/')) {
       if (location.pathname === '/dashboard') {
-        currentPage = { title: `${greeting}, ${user?.name?.split(' ')[0] || 'Creator'}`, subtitle: info.subtitle };
+        currentPage = {
+          title: `${greeting}, ${user?.name?.split(' ')[0] || 'Creator'}`,
+          subtitle: info.subtitle,
+        };
       } else {
         currentPage = { title: info.title || path.split('/').pop() || '', subtitle: info.subtitle };
       }
@@ -74,93 +74,110 @@ export function Header() {
   }
 
   const isDashboard = location.pathname === '/dashboard' || location.pathname === '/';
-  const pageTitle = isDashboard ? currentPage.title : currentPage.title;
   const showSubtitle = !isDashboard || location.pathname === '/dashboard';
 
   return (
-    <header className="h-16 border-b border-border bg-surface/80 backdrop-blur-md sticky top-0 z-20">
-      <div className="h-full flex items-center px-5 lg:px-8 gap-4">
-        {/* Mobile menu */}
-        <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden -ml-2 h-9 w-9 flex items-center justify-center rounded-lg hover:bg-surface-hover text-text-secondary" aria-label="Menu">
-          <Menu className="h-5 w-5" />
-        </button>
+    <header className="h-14 border-b border-border bg-surface/90 backdrop-blur-md sticky top-0 z-20">
+      <div className="h-full flex items-center px-4 sm:px-6 lg:px-8 gap-4 justify-between">
+        {/* Left: Mobile Toggle & Page Title */}
+        <div className="flex items-center gap-3 min-w-0">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden p-1.5 rounded-md hover:bg-canvas-subtle text-stone"
+            aria-label="Open navigation menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
 
-        {/* Page title area */}
-        <div className="flex-1 min-w-0">
-          <h1 className={cn(
-            'font-bold tracking-tight text-text-primary truncate',
-            isDashboard ? 'text-[22px] lg:text-[26px]' : 'text-[22px] lg:text-[24px]'
-          )}>
-            {pageTitle}
-          </h1>
-          {showSubtitle && currentPage.subtitle && (
-            <p className="text-[13px] text-text-secondary hidden sm:block truncate mt-0.5">{currentPage.subtitle}</p>
-          )}
+          <div className="min-w-0">
+            <h1 className="font-bold tracking-tight text-ink truncate text-sm sm:text-base">
+              {currentPage.title}
+            </h1>
+            {showSubtitle && currentPage.subtitle && (
+              <p className="text-[11px] text-stone hidden md:block truncate">
+                {currentPage.subtitle}
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Status chips (desktop only) */}
-        <div className="hidden md:flex items-center gap-2">
-          {workspace?.automationMode === 'autonomous' && (
-            <Badge variant="success" dot className="hidden lg:inline-flex"><Zap className="h-3 w-3" />Autonomous</Badge>
-          )}
-          {failedCount > 0 && (
-            <Tooltip content={`${failedCount} failed job${failedCount > 1 ? 's' : ''}`}>
-              <Badge variant="danger" className="cursor-pointer hidden lg:inline-flex"><AlertCircle className="h-3 w-3" />{failedCount} failed</Badge>
-            </Tooltip>
-          )}
-        </div>
-
-        {/* Search command */}
+        {/* Center: Search Command Bar */}
         <button
           onClick={openCommandPalette}
-          className="hidden md:flex items-center gap-2 text-[13px] text-text-muted bg-surface-subtle hover:bg-surface-hover rounded-lg px-3 h-9 border border-border/70 transition-colors w-[240px]"
+          className="hidden md:flex items-center gap-2 text-xs text-stone-muted bg-canvas-subtle hover:bg-canvas rounded-md px-3 h-8 border border-border transition-colors w-56 lg:w-64"
         >
-          <Search className="h-4 w-4 shrink-0" />
+          <Search className="h-3.5 w-3.5 shrink-0" />
           <span className="flex-1 text-left truncate">Search or run command...</span>
-          <kbd className="text-[10px] text-text-muted bg-surface border border-border rounded px-1.5 py-0.5 flex items-center font-mono">
+          <kbd className="text-[10px] text-stone bg-surface border border-border rounded px-1 flex items-center font-mono">
             <Command className="h-2.5 w-2.5 mr-0.5" />K
           </kbd>
         </button>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-0.5">
-          <Tooltip content="Quick search (/)">
-            <button onClick={openCommandPalette} className="btn-icon md:hidden" aria-label="Search"><Search className="h-[18px] w-[18px]" /></button>
+        {/* Right Actions */}
+        <div className="flex items-center gap-1 sm:gap-2">
+          {/* Status Indicators */}
+          {workspace?.automationMode === 'autonomous' && (
+            <span className="hidden xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-vermilion-soft text-vermilion border border-vermilion/20">
+              <Zap className="h-3 w-3" />
+              <span>Autonomous</span>
+            </span>
+          )}
+
+          {failedCount > 0 && (
+            <NavLink
+              to="/queue"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-danger/10 text-danger border border-danger/20"
+            >
+              <AlertCircle className="h-3 w-3" />
+              <span>{failedCount} failed</span>
+            </NavLink>
+          )}
+
+          {/* New Short Button */}
+          <NavLink
+            to="/create"
+            className="btn-primary h-8 px-3 text-xs hidden sm:inline-flex"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Create</span>
+          </NavLink>
+
+          {/* YouTube Connection Indicator */}
+          <Tooltip content={youtube?.connectionStatus === 'connected' ? 'YouTube Connected' : 'Connect YouTube'}>
+            <NavLink
+              to="/youtube"
+              className="p-1.5 rounded-md text-stone hover:text-ink hover:bg-canvas-subtle transition-colors"
+              aria-label="YouTube integration"
+            >
+              <YoutubeIcon
+                className={cn(
+                  'h-4 w-4',
+                  youtube?.connectionStatus === 'connected' ? 'text-vermilion' : 'text-stone-muted'
+                )}
+              />
+            </NavLink>
           </Tooltip>
 
-          <Tooltip content="Create content (C)">
-            <Button variant="ghost" size="icon" onClick={() => window.location.href = '/create'} className="hidden sm:flex">
-              <Plus className="h-[18px] w-[18px]" />
-            </Button>
-          </Tooltip>
-
-          <Tooltip content="Toggle theme">
-            <button onClick={toggleTheme} className="btn-icon" aria-label="Toggle theme">
-              {theme === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
-            </button>
-          </Tooltip>
-
-          <Tooltip content={youtube?.connectionStatus === 'connected' ? 'YouTube connected' : 'Connect YouTube'}>
-            <button className="btn-icon hidden sm:flex" onClick={() => window.location.href = '/youtube'} aria-label="YouTube">
-              <YoutubeIcon className={cn('h-[18px] w-[18px]', youtube?.connectionStatus === 'connected' ? 'text-success' : 'text-text-muted')} />
-            </button>
-          </Tooltip>
-
+          {/* Notifications */}
           <Tooltip content="Notifications">
-            <button onClick={() => window.location.href = '/notifications'} className="btn-icon relative">
-              <Bell className="h-[18px] w-[18px]" />
+            <NavLink
+              to="/notifications"
+              className="p-1.5 rounded-md text-stone hover:text-ink hover:bg-canvas-subtle transition-colors relative"
+              aria-label="Notifications"
+            >
+              <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 h-4 min-w-[16px] rounded-full bg-danger text-white text-[9px] font-semibold flex items-center justify-center px-0.5">
+                <span className="absolute top-1 right-1 h-3.5 min-w-[14px] rounded-full bg-vermilion text-white text-[9px] font-mono font-bold flex items-center justify-center px-0.5">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
-            </button>
+            </NavLink>
           </Tooltip>
 
-          <div className="w-px h-6 bg-border mx-1 hidden sm:block" />
-
-          <NavLink to="/settings" className="ml-1">
-            <Avatar name={user?.name || 'User'} size="sm" />
+          {/* User Profile */}
+          <div className="w-px h-5 bg-border mx-1" />
+          <NavLink to="/settings" className="flex items-center">
+            <Avatar name={user?.name || 'Creator'} size="sm" />
           </NavLink>
         </div>
       </div>

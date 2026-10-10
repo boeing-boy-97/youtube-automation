@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   Film,
   Type,
@@ -8,229 +7,190 @@ import {
   Play,
   Pause,
   Layers,
-  Sparkles,
-  Cpu,
-  Monitor,
-  Maximize2,
-  Square,
   Smartphone,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export function VideoStudioWorkspaceSection() {
-  const [aspectRatio, setAspectRatio] = useState<'9:16' | '16:9' | '1:1'>('9:16');
-  const [captionPreset, setCaptionPreset] = useState<'viral' | 'minimal' | 'cyber'>('viral');
+  const [captionPreset, setCaptionPreset] = useState<'clean' | 'impact' | 'editorial'>('clean');
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState<'video' | 'audio' | 'captions'>('video');
 
   return (
-    <section id="studio" className="py-24 px-4 sm:px-6 lg:px-8 bg-paper-subtle border-t border-paper-border">
+    <section id="studio-env" className="py-20 px-4 sm:px-6 lg:px-8 bg-canvas-subtle border-t border-border text-ink">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-soft border border-forest/20 text-forest text-xs font-semibold tracking-wider uppercase font-mono mb-3">
-            <Film className="h-3.5 w-3.5" />
-            <span>Studio Production Environment</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
-            The creative workspace you actually enjoy using.
+        <div className="max-w-2xl space-y-3">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+            Studio Production Environment
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
+            A creative workstation <br />
+            <span className="font-editorial italic font-normal text-vermilion">built for vertical flow.</span>
           </h2>
-          <p className="text-base sm:text-lg text-stone-muted mt-3 leading-relaxed">
-            A full-fidelity video workstation designed exclusively for high-velocity vertical shorts.
-            Fine-tune scene durations, switch typography presets, and re-order storyboard blocks without bloated desktop software.
+          <p className="text-base text-stone leading-relaxed">
+            Fine-tune scene durations, switch typography presets, and re-order storyboard blocks without switching between heavyweight desktop software.
           </p>
         </div>
 
-        {/* Studio Shell Mockup */}
-        <div className="bg-ink text-paper rounded-3xl border border-ink-border p-4 sm:p-6 lg:p-8 shadow-2xl space-y-6">
+        {/* Studio Shell */}
+        <div className="bg-surface rounded-xl border border-border p-4 sm:p-6 shadow-xs space-y-6">
           {/* Top Control Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-ink-border">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono font-bold text-lime">WORKSPACE / STUDIO</span>
-              <span className="text-xs text-stone-muted hidden sm:inline">|</span>
-              <span className="text-xs text-paper font-semibold hidden sm:inline">
-                Project: 5 AI Automation Secrets
-              </span>
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-border">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-vermilion">STUDIO WORKSPACE</span>
+              <span className="text-border">•</span>
+              <span className="text-xs text-ink font-medium">9:16 Vertical Master</span>
             </div>
 
-            {/* Controls: Aspect Ratio + Caption Style Switchers */}
-            <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="text-stone-muted mr-1 hidden sm:inline">CANVAS:</span>
-              {(['9:16', '16:9', '1:1'] as const).map((ratio) => (
-                <button
-                  key={ratio}
-                  type="button"
-                  onClick={() => setAspectRatio(ratio)}
-                  className={cn(
-                    'px-2.5 py-1 rounded border transition-colors',
-                    aspectRatio === ratio
-                      ? 'bg-lime text-ink border-lime font-bold'
-                      : 'bg-ink-surface text-stone-muted border-ink-border hover:text-paper'
-                  )}
-                >
-                  {ratio}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Main Visualizer Area: Canvas + Layer Inspector */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            {/* Left: Dynamic Aspect Ratio Canvas */}
-            <div className="lg:col-span-5 flex items-center justify-center p-4 bg-ink-subtle rounded-2xl border border-ink-border min-h-[380px]">
-              <div
-                className={cn(
-                  'rounded-xl border border-ink-border bg-gradient-to-b from-emerald-950 via-ink to-black flex flex-col justify-between p-4 relative overflow-hidden shadow-xl transition-all duration-300',
-                  aspectRatio === '9:16'
-                    ? 'w-56 aspect-[9/16]'
-                    : aspectRatio === '16:9'
-                    ? 'w-full max-w-sm aspect-[16/9]'
-                    : 'w-64 aspect-square'
-                )}
-              >
-                {/* Safe zone overlay */}
-                <div className="flex items-center justify-between text-[10px] font-mono text-stone-muted">
-                  <span className="bg-ink/80 px-2 py-0.5 rounded border border-ink-border">1080×1920</span>
-                  <span className="text-lime font-bold">60 FPS</span>
-                </div>
-
-                {/* Subtitle demonstration */}
-                <div className="my-auto text-center px-2 space-y-2">
-                  <div
+            {/* Subtitle Presets */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-stone hidden sm:inline">Caption Style:</span>
+              <div className="flex p-1 bg-canvas-subtle border border-border rounded-md">
+                {(['clean', 'impact', 'editorial'] as const).map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setCaptionPreset(preset)}
                     className={cn(
-                      'text-sm sm:text-base font-bold transition-all duration-200',
-                      captionPreset === 'viral' && 'text-paper uppercase tracking-tight drop-shadow-md',
-                      captionPreset === 'minimal' && 'text-paper tracking-normal font-medium',
-                      captionPreset === 'cyber' && 'text-lime font-mono tracking-wider'
+                      'px-2.5 py-1 text-xs rounded capitalize transition-all',
+                      captionPreset === preset
+                        ? 'bg-surface text-ink font-semibold shadow-xs border border-border'
+                        : 'text-stone hover:text-ink'
                     )}
                   >
-                    "This single line of code automated my entire week."
-                  </div>
-                  <div className="text-[10px] font-mono text-stone-muted">
-                    Active Preset: {captionPreset.toUpperCase()}
-                  </div>
-                </div>
-
-                {/* Bottom audio indicator */}
-                <div className="flex items-center justify-between pt-2 border-t border-ink-border/40 text-[10px] font-mono text-stone-muted">
-                  <span>AUDIO: -14.2 LUFS</span>
-                  <span className="text-lime">VOICE: ADAM</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Studio Controls & Caption Customizer */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="bg-ink-subtle rounded-2xl border border-ink-border p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-semibold text-lime uppercase tracking-wider">
-                    CAPTIONS & TYPOGRAPHY
-                  </span>
-                  <span className="text-[10px] text-stone-muted font-mono">SUBTITLE BURN-IN</span>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 text-xs font-mono">
-                  {[
-                    { id: 'viral', label: 'Viral Punch', desc: 'High-contrast bold font with bright accents' },
-                    { id: 'minimal', label: 'Minimalist', desc: 'Understated editorial font with subtle shadow' },
-                    { id: 'cyber', label: 'Cyber Neon', desc: 'Monospace terminal typography with glow' },
-                  ].map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setCaptionPreset(p.id as any)}
-                      className={cn(
-                        'p-3 rounded-xl border text-left transition-all',
-                        captionPreset === p.id
-                          ? 'bg-ink-surface border-lime text-paper'
-                          : 'bg-ink border-ink-border text-stone-muted hover:border-ink-border/80'
-                      )}
-                    >
-                      <div className={cn('font-bold mb-1', captionPreset === p.id ? 'text-lime' : 'text-paper')}>
-                        {p.label}
-                      </div>
-                      <div className="text-[10px] text-stone-muted line-clamp-2">{p.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Hardware Render Specification */}
-              <div className="bg-ink-subtle rounded-2xl border border-ink-border p-5 space-y-3 font-mono text-xs">
-                <div className="flex items-center justify-between text-stone-muted">
-                  <span className="flex items-center gap-2 text-paper font-semibold">
-                    <Cpu className="h-4 w-4 text-forest" />
-                    FFMPEG HARDWARE PIPELINE
-                  </span>
-                  <span className="text-lime">READY TO DISPATCH</span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
-                  <div className="p-2.5 rounded bg-ink border border-ink-border">
-                    <span className="text-stone-muted block">CODEC</span>
-                    <span className="text-paper font-bold">libx264</span>
-                  </div>
-                  <div className="p-2.5 rounded bg-ink border border-ink-border">
-                    <span className="text-stone-muted block">PIXEL FORMAT</span>
-                    <span className="text-paper font-bold">yuv420p</span>
-                  </div>
-                  <div className="p-2.5 rounded bg-ink border border-ink-border">
-                    <span className="text-stone-muted block">COLOR SPACE</span>
-                    <span className="text-paper font-bold">bt709</span>
-                  </div>
-                  <div className="p-2.5 rounded bg-ink border border-ink-border">
-                    <span className="text-stone-muted block">AUDIO PEAK</span>
-                    <span className="text-lime font-bold">-0.5 dB TP</span>
-                  </div>
-                </div>
+                    {preset}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Interactive Multi-Track Timeline */}
-          <div className="space-y-2 pt-2 border-t border-ink-border">
-            <div className="flex items-center justify-between text-xs font-mono text-stone-muted mb-1">
-              <span>MULTITRACK TIMELINE</span>
-              <span>TOTAL RUNTIME: 00:42.00</span>
-            </div>
+          {/* Main 2-Column Studio Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left: 9:16 Video Stage Monitor */}
+            <div className="lg:col-span-5 flex flex-col items-center">
+              <div className="w-full max-w-xs aspect-[9/16] bg-ink rounded-lg relative overflow-hidden flex flex-col justify-between p-4 shadow-sm">
+                <div className="flex items-center justify-between text-[11px] font-mono text-white/70">
+                  <span className="bg-black/40 px-2 py-0.5 rounded">Preview Frame</span>
+                  <span className="text-vermilion">1080×1920</span>
+                </div>
 
-            {/* Video track */}
-            <div className="flex items-center gap-3 bg-ink-subtle p-2.5 rounded-xl border border-ink-border text-xs font-mono">
-              <span className="w-20 text-lime flex items-center gap-1.5 font-bold">
-                <Film className="h-3.5 w-3.5" /> VIDEO
-              </span>
-              <div className="flex-1 grid grid-cols-4 gap-1.5 h-7">
-                <div className="bg-forest/40 border border-forest/60 rounded flex items-center px-2 text-[10px] text-paper truncate">
-                  01. Hook Beat (3.2s)
+                <div className="text-center space-y-2 my-auto px-4">
+                  <div className="text-white text-xs font-mono opacity-80">
+                    Scene 02: Pacing Shift
+                  </div>
+                  <div className="inline-block p-2 bg-black/60 rounded text-[11px] text-white/90 font-mono">
+                    Macro lens tracking movement
+                  </div>
                 </div>
-                <div className="bg-forest/40 border border-forest/60 rounded flex items-center px-2 text-[10px] text-paper truncate">
-                  02. Problem Setup (11.6s)
+
+                <div className="space-y-2">
+                  <div className="p-2.5 bg-black/80 rounded border border-white/10 text-center">
+                    <p className="text-xs font-bold text-white">
+                      "Why 90% of creators fail before second four."
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] font-mono text-white/50">
+                    <span>H.264 / AAC</span>
+                    <span>0:14 / 0:45</span>
+                  </div>
                 </div>
-                <div className="bg-forest/40 border border-forest/60 rounded flex items-center px-2 text-[10px] text-paper truncate">
-                  03. Solution Demo (19.2s)
-                </div>
-                <div className="bg-forest/40 border border-forest/60 rounded flex items-center px-2 text-[10px] text-paper truncate">
-                  04. Viral CTA (8.0s)
-                </div>
+              </div>
+
+              {/* Scrubber Playback Controls */}
+              <div className="w-full max-w-xs flex items-center justify-between pt-3 text-xs text-stone">
+                <button
+                  type="button"
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="btn-primary h-8 px-3 text-xs"
+                >
+                  {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 fill-current" />}
+                  <span>{isPlaying ? 'Pause' : 'Play'}</span>
+                </button>
+                <span className="font-mono text-xs text-ink">00:14 / 00:45</span>
               </div>
             </div>
 
-            {/* Voice track */}
-            <div className="flex items-center gap-3 bg-ink-subtle p-2.5 rounded-xl border border-ink-border text-xs font-mono">
-              <span className="w-20 text-lime flex items-center gap-1.5 font-bold">
-                <Volume2 className="h-3.5 w-3.5" /> VOICE
-              </span>
-              <div className="flex-1 bg-lime/15 border border-lime/30 rounded h-7 flex items-center px-3 text-[10px] text-lime">
-                ElevenLabs Adam • Expressive Pacing (48kHz AAC Stereo)
+            {/* Right: Multi-Track Timeline & Beat Inspector */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="flex items-center justify-between text-xs text-stone border-b border-border pb-2">
+                <span className="font-semibold text-ink">Timeline Tracks</span>
+                <span className="font-mono text-[11px]">3 Synced Layers</span>
               </div>
-            </div>
 
-            {/* Captions track */}
-            <div className="flex items-center gap-3 bg-ink-subtle p-2.5 rounded-xl border border-ink-border text-xs font-mono">
-              <span className="w-20 text-lime flex items-center gap-1.5 font-bold">
-                <Type className="h-3.5 w-3.5" /> CUES
-              </span>
-              <div className="flex-1 bg-indigo-950/40 border border-indigo-700/40 rounded h-7 flex items-center px-3 text-[10px] text-indigo-300">
-                114 Subtitle Cues • Synchronized to True Word Timestamps
+              {/* Track 1: Visual Scene Track */}
+              <div
+                onClick={() => setSelectedTrack('video')}
+                className={cn(
+                  'p-3.5 rounded-lg border transition-all cursor-pointer space-y-2',
+                  selectedTrack === 'video'
+                    ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                    : 'bg-surface border-border hover:border-border-strong'
+                )}
+              >
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-ink flex items-center gap-1.5">
+                    <Film className="h-3.5 w-3.5 text-vermilion" />
+                    Visual Track (3 Scenes)
+                  </span>
+                  <span className="font-mono text-[11px] text-stone">1080×1920</span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5 text-[11px] font-mono text-center">
+                  <div className="p-2 rounded bg-surface border border-border text-ink">
+                    Scene 1 (4s)
+                  </div>
+                  <div className="p-2 rounded bg-vermilion-soft border border-vermilion/30 text-vermilion font-semibold">
+                    Scene 2 (20s)
+                  </div>
+                  <div className="p-2 rounded bg-surface border border-border text-ink">
+                    Scene 3 (21s)
+                  </div>
+                </div>
+              </div>
+
+              {/* Track 2: Voiceover Track */}
+              <div
+                onClick={() => setSelectedTrack('audio')}
+                className={cn(
+                  'p-3.5 rounded-lg border transition-all cursor-pointer space-y-2',
+                  selectedTrack === 'audio'
+                    ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                    : 'bg-surface border-border hover:border-border-strong'
+                )}
+              >
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-ink flex items-center gap-1.5">
+                    <Volume2 className="h-3.5 w-3.5 text-vermilion" />
+                    Speech Track (ElevenLabs)
+                  </span>
+                  <span className="font-mono text-[11px] text-stone">48kHz Master</span>
+                </div>
+                <div className="p-2 rounded bg-surface border border-border text-xs text-stone font-mono">
+                  Adam (Authoritative Tech) • 145 words/minute • -14.2 LUFS
+                </div>
+              </div>
+
+              {/* Track 3: Subtitles Track */}
+              <div
+                onClick={() => setSelectedTrack('captions')}
+                className={cn(
+                  'p-3.5 rounded-lg border transition-all cursor-pointer space-y-2',
+                  selectedTrack === 'captions'
+                    ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                    : 'bg-surface border-border hover:border-border-strong'
+                )}
+              >
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-ink flex items-center gap-1.5">
+                    <Type className="h-3.5 w-3.5 text-vermilion" />
+                    Subtitles (Safe-Zone Burned)
+                  </span>
+                  <span className="font-mono text-[11px] text-stone">WebVTT Synced</span>
+                </div>
+                <div className="p-2 rounded bg-surface border border-border text-xs text-stone font-mono">
+                  Word cues synchronized with zero drift.
+                </div>
               </div>
             </div>
           </div>

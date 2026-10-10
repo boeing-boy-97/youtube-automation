@@ -269,19 +269,21 @@ export function Settings() {
       {/* Settings Navigation */}
       <nav className="space-y-1">
         <PageHeader title="Settings" description="Platform configuration" className="lg:hidden" />
-        {SECTIONS.map(s => {
+        {SECTIONS.map((s) => {
           const Icon = s.icon;
           return (
             <button
               key={s.key}
               onClick={() => setActiveSection(s.key)}
               className={cn(
-                'w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-left',
-                activeSection === s.key ? 'bg-accent/10 text-accent font-semibold' : 'text-text-secondary hover:bg-surface-subtle hover:text-text-primary'
+                'w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors text-left',
+                activeSection === s.key
+                  ? 'bg-vermilion-soft text-vermilion font-semibold'
+                  : 'text-stone hover:bg-canvas-subtle hover:text-ink'
               )}
             >
               <Icon className="h-4 w-4" />
-              {s.label}
+              <span>{s.label}</span>
             </button>
           );
         })}

@@ -43,7 +43,7 @@ export function Landing() {
       showToast({
         type: 'success',
         title: 'Studio Tour Activated',
-        message: 'Welcome to your ShortForge Creative Command Center.',
+        message: 'Welcome to your ShortForge Creative Studio.',
       });
       navigate('/dashboard');
     } catch {
@@ -52,47 +52,47 @@ export function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-paper text-ink font-sans selection:bg-lime/30 selection:text-ink">
-      {/* 1. Refined Sticky Header */}
+    <div className="min-h-screen bg-canvas text-ink font-sans selection:bg-vermilion-soft selection:text-ink">
+      {/* 1. Header Navigation */}
       <LandingNav onDemoClick={handleExploreDemo} />
 
-      {/* 2. Section 1: Cinematic Asymmetric Hero & Scrubbable 9:16 Video Player */}
+      {/* 2. Asymmetric Hero & Scrubbable 9:16 Video Player */}
       <HeroSection onDemoClick={handleExploreDemo} />
 
-      {/* 3. Section 2: The Creative Problem & Friction of Short-Form Video */}
+      {/* 3. The Creative Problem & Friction of Short-Form Video */}
       <CreativeProblemSection />
 
-      {/* 4. Section 3: The Connected 7-Stage Production Pipeline */}
+      {/* 4. Connected 7-Stage Production Pipeline */}
       <ProductProofSection />
 
-      {/* 5. Section 4: Screenplay & Story Architecture (Script Studio) */}
+      {/* 5. Screenplay & Story Architecture (Script Studio) */}
       <ScriptStoryWorkspaceSection />
 
-      {/* 6. Section 5: Interactive 6-Stage Studio Engine Showcase */}
+      {/* 6. Interactive Studio Engine Showcase */}
       <InteractiveShowcaseSection />
 
-      {/* 7. Section 6: Editorial Feature Storytelling */}
+      {/* 7. Editorial Feature Storytelling */}
       <FeatureStorytellingSection />
 
-      {/* 8. Section 7: Studio Workspace Deep-Dive (Multi-Track Compositor) */}
+      {/* 8. Studio Workspace Deep-Dive */}
       <VideoStudioWorkspaceSection />
 
-      {/* 9. Section 8: Automation Execution Graph & Governance */}
+      {/* 9. Automation Execution Graph & Governance */}
       <AutomationFlowSection />
 
-      {/* 10. Section 9: Curated Output Gallery */}
+      {/* 10. Curated Output Gallery */}
       <OutputGallerySection />
 
-      {/* 11. Section 10: Architectural Trust & Security Standards */}
+      {/* 11. Architectural Trust & Security Standards */}
       <TrustSecuritySection />
 
-      {/* 12. Section 11: Transparent Pricing Plans */}
+      {/* 12. Transparent Pricing Plans */}
       <PricingSection />
 
-      {/* 13. Section 12: Creator & Engineering FAQ */}
+      {/* 13. Creator & Engineering FAQ */}
       <FAQSection />
 
-      {/* 14. Section 13: Final Conversion CTA */}
+      {/* 14. Final Conversion CTA */}
       <FinalCTASection onDemoClick={handleExploreDemo} />
 
       {/* 15. Comprehensive Legal & Operational Footer */}

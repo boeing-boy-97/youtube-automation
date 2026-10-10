@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles, Zap, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface FinalCTASectionProps {
   onDemoClick: () => void;
@@ -7,56 +7,50 @@ interface FinalCTASectionProps {
 
 export function FinalCTASection({ onDemoClick }: FinalCTASectionProps) {
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-paper">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-canvas border-t border-border">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-ink text-paper rounded-3xl p-8 sm:p-14 lg:p-20 border border-ink-border shadow-2xl relative overflow-hidden text-center space-y-8">
-          {/* Subtle lime glow background */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-forest/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-ink text-canvas rounded-xl p-8 sm:p-12 lg:p-16 border border-ink/10 shadow-lg text-center space-y-6">
+          <div className="max-w-2xl mx-auto space-y-3">
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+              ShortForge Creative Studio
+            </span>
 
-          <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-soft border border-forest/30 text-lime text-xs font-semibold tracking-wider uppercase font-mono">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Scale Your Vertical Audience</span>
-            </div>
-
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-paper leading-[1.08] text-balance">
-              Your audience is scrolling.{' '}
-              <span className="text-lime">Start publishing tomorrow.</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+              Ready to turn ideas into <br />
+              <span className="font-editorial italic font-normal text-marigold">continuous output?</span>
             </h2>
 
-            <p className="text-base sm:text-lg text-stone-muted max-w-xl mx-auto text-balance leading-relaxed">
-              Eliminate the 8-hour editing grind. Set your content strategy once and let ShortForge
-              produce high-retention vertical shorts on your schedule.
+            <p className="text-sm sm:text-base text-canvas/70 max-w-lg mx-auto leading-relaxed">
+              Step away from tool-switching fatigue. Direct scripts, voices, scenes, and YouTube Shorts from one studio.
             </p>
           </div>
 
-          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link
               to="/signup"
-              className="w-full sm:w-auto h-12 px-8 rounded-xl bg-lime text-ink font-bold text-sm hover:bg-lime-hover transition-all duration-150 shadow-md flex items-center justify-center gap-2 group"
+              className="btn-primary h-11 px-7 text-sm"
             >
-              <span>Start Building Free</span>
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+              <span>Start creating free</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
             <button
               type="button"
               onClick={onDemoClick}
-              className="w-full sm:w-auto h-12 px-7 rounded-xl bg-ink-surface text-paper font-semibold text-sm border border-ink-border hover:bg-ink-subtle transition-all duration-150 flex items-center justify-center gap-2"
+              className="h-11 px-6 rounded-md bg-white/10 text-white font-medium text-sm hover:bg-white/15 transition-all border border-white/20"
             >
-              <Zap className="h-4 w-4 text-forest" />
-              <span>Launch Live Studio</span>
+              Explore Studio Tour
             </button>
           </div>
 
-          <div className="relative z-10 flex flex-wrap items-center justify-center gap-6 pt-6 text-xs text-stone-muted font-mono">
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-xs text-canvas/60">
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-lime" /> Free community plan
+              <CheckCircle2 className="h-3.5 w-3.5 text-vermilion" /> Free community plan
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-lime" /> No credit card required
+              <CheckCircle2 className="h-3.5 w-3.5 text-vermilion" /> No credit card required
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-lime" /> 5-minute initial setup
+              <CheckCircle2 className="h-3.5 w-3.5 text-vermilion" /> 5-minute setup
             </span>
           </div>
         </div>

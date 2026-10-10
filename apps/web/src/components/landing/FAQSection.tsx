@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface FAQ {
@@ -19,15 +18,15 @@ const FAQS: FAQ[] = [
   },
   {
     q: 'Can I review and approve videos before they are scheduled or published?',
-    a: 'Absolutely. By default, ShortForge operates in Assisted Mode. The platform discovers ideas, drafts scripts, records voices, and renders videos, then pauses at the Review checkpoint. You inspect the 9:16 preview in Video Studio, make any manual edits if desired, and approve publication with one click.',
+    a: 'Yes. By default, ShortForge operates in Assisted Mode. The platform discovers ideas, drafts scripts, records voices, and renders videos, then pauses at the Review checkpoint. You inspect the 9:16 preview in Video Studio, make any manual edits if desired, and approve publication with one click.',
   },
   {
     q: 'What happens if an upstream provider (OpenAI or ElevenLabs) experiences a temporary outage?',
-    a: 'Our modular architecture uses transactional Outbox event tables and BullMQ retry queues with exponential backoff. If a provider call fails due to rate limits or an outage, the job is automatically retried safely. No work is lost, and failed jobs are clearly flagged on your Queue dashboard.',
+    a: 'Our modular architecture uses transactional Outbox event tables and BullMQ retry queues with exponential backoff. If a provider call fails due to rate limits or an outage, the job is retried safely. No work is lost, and failed jobs are clearly flagged on your Queue dashboard.',
   },
   {
     q: 'Can I use custom ElevenLabs voice clones or bring my own OpenAI API keys?',
-    a: 'Yes. You can supply your own ElevenLabs API key in Settings to access your custom voice clones. You can also configure custom OpenAI models (e.g. GPT-4o, Claude) and S3/R2 storage buckets.',
+    a: 'Yes. You can supply your own ElevenLabs API key in Settings to access your custom voice clones. You can also configure custom OpenAI models and S3/R2 storage buckets in workspace settings.',
   },
   {
     q: 'How are my Google and YouTube channel credentials secured?',
@@ -43,71 +42,50 @@ export function FAQSection() {
   };
 
   return (
-    <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-paper border-t border-paper-border">
-      <div className="max-w-4xl mx-auto space-y-12">
+    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 bg-canvas border-t border-border text-ink">
+      <div className="max-w-3xl mx-auto space-y-12">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-soft border border-forest/20 text-forest text-xs font-semibold tracking-wider uppercase font-mono">
-            <HelpCircle className="h-3.5 w-3.5" />
-            <span>Frequently Asked Questions</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
-            Clear answers to common questions.
+        <div className="text-center space-y-3">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+            Frequently Asked Questions
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
+            Clear answers to <br />
+            <span className="font-editorial italic font-normal text-vermilion">common questions.</span>
           </h2>
-          <p className="text-base text-stone-muted leading-relaxed">
-            Everything you need to know about the pipeline, commercial rights, safety, and publishing mechanics.
+          <p className="text-base text-stone leading-relaxed">
+            Everything you need to know about ownership, architecture, and YouTube integration.
           </p>
         </div>
 
-        {/* Accordion */}
+        {/* FAQ Accordion List */}
         <div className="space-y-3">
           {FAQS.map((faq, idx) => {
             const isOpen = openIndex === idx;
-
             return (
               <div
                 key={idx}
-                className={cn(
-                  'rounded-2xl border transition-all duration-150 overflow-hidden',
-                  isOpen
-                    ? 'bg-paper-subtle border-forest/40 shadow-xs'
-                    : 'bg-paper border-paper-border hover:border-paper-border-strong'
-                )}
+                className="bg-surface border border-border rounded-lg overflow-hidden transition-all shadow-xs"
               >
                 <button
                   type="button"
                   onClick={() => toggle(idx)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none"
-                  aria-expanded={isOpen}
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-sm text-ink hover:text-vermilion transition-colors"
                 >
-                  <span className="font-bold text-base sm:text-lg text-ink">
-                    {faq.q}
-                  </span>
-                  <div
+                  <span>{faq.q}</span>
+                  <ChevronDown
                     className={cn(
-                      'h-8 w-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200',
-                      isOpen ? 'bg-ink text-paper rotate-180' : 'bg-paper-muted text-stone-muted'
+                      'h-4 w-4 text-stone shrink-0 transition-transform duration-200',
+                      isOpen && 'rotate-180 text-vermilion'
                     )}
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </div>
+                  />
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-stone-muted leading-relaxed border-t border-paper-border/60 pt-4">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {isOpen && (
+                  <div className="px-5 pb-5 pt-0 text-xs text-stone leading-relaxed border-t border-border mt-1">
+                    <p className="pt-3">{faq.a}</p>
+                  </div>
+                )}
               </div>
             );
           })}

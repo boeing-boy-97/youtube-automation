@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Sparkles, Clock, Type, Zap, CheckCircle2, Sliders, ArrowRight } from 'lucide-react';
+import { FileText, Clock, ArrowRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface ScriptSample {
@@ -20,7 +20,7 @@ interface ScriptSample {
 const SAMPLE_SCRIPTS: ScriptSample[] = [
   {
     id: 'autonomous-pipelines',
-    niche: 'Engineering & AI',
+    niche: 'Engineering & Architecture',
     title: 'The Architecture of Autonomous Pipelines',
     hook: 'If your dev team is still assembling short-form videos by hand in 2026, stop immediately.',
     wordCount: 118,
@@ -30,7 +30,7 @@ const SAMPLE_SCRIPTS: ScriptSample[] = [
         beat: 'ACT I: THE HOOK',
         time: '0:00 – 0:04',
         dialogue: 'If your dev team is still assembling short-form videos by hand in 2026, stop immediately.',
-        visualDirection: 'Rapid push-in on dual vertical terminal showing concurrent BullMQ worker threads.',
+        visualDirection: 'Rapid push-in on clean terminal showing concurrent BullMQ worker threads.',
       },
       {
         beat: 'ACT II: THE CONTRARIAN TRUTH',
@@ -49,247 +49,182 @@ const SAMPLE_SCRIPTS: ScriptSample[] = [
     ],
   },
   {
-    id: 'retention-science',
-    niche: 'Creator Economy',
-    title: 'The 3-Second Retention Law',
-    hook: 'Why 90% of vertical shorts fail before the viewer even hears the premise.',
+    id: 'database-indexing',
+    niche: 'Software Development',
+    title: 'PostgreSQL Indexing: The Hidden Performance Killer',
+    hook: 'Why adding more indexes to your database is actually slowing down your writes by 400%.',
     wordCount: 112,
     estDuration: '42s',
     scenes: [
       {
         beat: 'ACT I: THE HOOK',
         time: '0:00 – 0:03',
-        dialogue: 'The first three seconds decide whether your short gets five hundred views or five hundred thousand.',
-        visualDirection: 'Dramatic countdown timer with retention curve dropping steeply at second 2.8.',
+        dialogue: 'Adding more indexes to your database is secretly destroying your write throughput.',
+        visualDirection: 'High-contrast query plan graphic highlighting B-tree update amplification.',
       },
       {
-        beat: 'ACT II: PACING MECHANICS',
-        time: '0:03 – 0:22',
+        beat: 'ACT II: THE CONTRARIAN TRUTH',
+        time: '0:03 – 0:20',
         dialogue:
-          'Never start with "Hey guys" or your logo. Open mid-action with a curiosity gap. Use kinetic subtitle pop-ins every one-point-two seconds to reset viewer cognitive attention.',
-        visualDirection: 'Side-by-side retention graph showing talking-head dropoff vs kinetic visual pacing.',
+          'Every index you create forces PostgreSQL to lock pages on every insert and update. For high-velocity event queues, partial indexes and BRIN indexes deliver 10x throughput with 90% less disk footprint.',
+        visualDirection: 'Comparison chart of heap memory writes between standard B-tree and BRIN blocks.',
       },
       {
-        beat: 'ACT III: THE SEAMLESS LOOP',
-        time: '0:22 – 0:42',
+        beat: 'ACT III: THE PAYOFF & LOOP',
+        time: '0:20 – 0:42',
         dialogue:
-          'Finally, end on an incomplete cadence that feeds directly back into the opening sentence for an endless replay loop.',
-        visualDirection: 'Infinite Möbius strip animation seamlessly matching the opening frame.',
+          'Run this simple SQL snippet in our docs to identify your 5 most expensive unused indexes before your next deployment.',
+        visualDirection: 'Actionable SQL code snippet centered with highlighted drop statement and loop cue.',
       },
     ],
   },
   {
-    id: 'quantum-computing',
-    niche: 'Science & Education',
-    title: 'Quantum Superposition in 45 Seconds',
-    hook: 'A coin spinning in mid-air is the simplest way to understand quantum computing.',
+    id: 'creator-monetization',
+    niche: 'Media Strategy',
+    title: 'The Single-Format Trap for Vertical Creators',
+    hook: 'The biggest mistake creators make on YouTube Shorts is treating it like a miniature long-form video.',
     wordCount: 124,
     estDuration: '46s',
     scenes: [
       {
         beat: 'ACT I: THE HOOK',
         time: '0:00 – 0:04',
-        dialogue: 'A coin spinning in mid-air is the simplest way to understand quantum computing.',
-        visualDirection: 'Ultra slow-motion spinning metallic coin suspended in a laser-illuminated laboratory.',
+        dialogue: 'Treating a YouTube Short like a mini long-form video is the fastest way to kill retention.',
+        visualDirection: 'Dramatic red downward retention curve transitioning to a flat 95% retention line.',
       },
       {
-        beat: 'ACT II: THE INTELLECTUAL LIFT',
-        time: '0:04 – 0:24',
+        beat: 'ACT II: THE CONTRARIAN TRUTH',
+        time: '0:04 – 0:22',
         dialogue:
-          'While spinning, it is not heads and it is not tails. It is a mathematical blend of both possibilities at once. That is quantum superposition. Instead of binary bits, quantum computers use qubits.',
-        visualDirection: 'Bloch sphere 3D wireframe rotating with probability amplitude vectors.',
+          'Long-form is built on buildup and trust. Vertical video is built on pattern interruption and immediate payoff. If your viewer has not learned something surprising by second four, they have already swiped.',
+        visualDirection: 'Dynamic swipe velocity animation showing viewer drop-off window in under 800ms.',
       },
       {
-        beat: 'ACT III: REAL-WORLD IMPACT',
-        time: '0:24 – 0:46',
+        beat: 'ACT III: THE PAYOFF & LOOP',
+        time: '0:22 – 0:46',
         dialogue:
-          'This allows them to test millions of molecular combinations simultaneously, solving drug discovery in hours rather than decades.',
-        visualDirection: 'Complex protein folding simulation resolving into a stable synthetic antibody.',
+          'Structure your ending so the final sentence answers the question asked in the opening second. That creates the infinite loop that drives algorithm distribution.',
+        visualDirection: 'Circular loop visual connecting the outro subtitle seamlessly into Act I opening.',
       },
     ],
   },
 ];
 
 export function ScriptStoryWorkspaceSection() {
-  const [selectedScriptId, setSelectedScriptId] = useState('autonomous-pipelines');
-  const [viewMode, setViewMode] = useState<'screenplay' | 'director'>('screenplay');
-
-  const activeScript = SAMPLE_SCRIPTS.find((s) => s.id === selectedScriptId) || SAMPLE_SCRIPTS[0];
+  const [selectedScriptIndex, setSelectedScriptIndex] = useState(0);
+  const activeScript = SAMPLE_SCRIPTS[selectedScriptIndex];
 
   return (
-    <section id="scripts" className="py-24 px-4 sm:px-6 lg:px-8 bg-paper text-ink border-t border-paper-border">
-      <div className="max-w-7xl mx-auto space-y-16">
+    <section id="scripts" className="py-20 px-4 sm:px-6 lg:px-8 bg-canvas text-ink border-t border-border">
+      <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-paper-border pb-8">
-          <div className="space-y-3 max-w-2xl">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-forest">
-              04 // Screenplay & Story Architecture
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
-              Screenplays engineered <br />
-              <span className="font-editorial italic font-normal text-forest">for vertical retention.</span>
-            </h2>
-            <p className="text-base text-stone-muted leading-relaxed">
-              Every vertical video lives or dies by its first three seconds. ShortForge’s Script Studio structures raw premises into rigorous 3-act scripts with calculated word pacing and frame-specific visual directions.
-            </p>
-          </div>
-
-          {/* Script Switcher Pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            {SAMPLE_SCRIPTS.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setSelectedScriptId(s.id)}
-                className={cn(
-                  'px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all',
-                  selectedScriptId === s.id
-                    ? 'bg-ink text-lime shadow-xs font-semibold'
-                    : 'bg-paper-subtle border border-paper-border text-stone-muted hover:text-ink'
-                )}
-              >
-                {s.niche}
-              </button>
-            ))}
-          </div>
+        <div className="max-w-2xl space-y-3">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+            The Script Story Architecture
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
+            Vertical writing engineered <br />
+            <span className="font-editorial italic font-normal text-vermilion">for retention.</span>
+          </h2>
+          <p className="text-base text-stone leading-relaxed">
+            Short-form scripts must balance spoken cadence, breath timing, and instant curiosity. ShortForge writes in structured beats calibrated for 140–160 words per minute.
+          </p>
         </div>
 
-        {/* Workspace Mockup Studio Canvas */}
-        <div className="bg-paper-subtle rounded-2xl border border-paper-border p-6 lg:p-8 space-y-6 shadow-sm">
-          {/* Editor Header Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-paper-border pb-4 text-xs font-mono">
-            <div className="flex items-center gap-3">
-              <FileText className="h-4 w-4 text-forest" />
-              <span className="font-bold text-ink uppercase">{activeScript.title}</span>
-              <span className="text-stone-muted">({activeScript.niche})</span>
+        {/* Niche Selector Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          {SAMPLE_SCRIPTS.map((s, idx) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setSelectedScriptIndex(idx)}
+              className={cn(
+                'px-4 py-2 rounded-md text-xs font-medium transition-all whitespace-nowrap border',
+                selectedScriptIndex === idx
+                  ? 'bg-surface border-vermilion text-vermilion shadow-xs font-semibold'
+                  : 'bg-canvas-subtle border-border text-stone hover:text-ink'
+              )}
+            >
+              {s.niche}
+            </button>
+          ))}
+        </div>
+
+        {/* Script & Storyboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Script Metadata & Full Narration Text */}
+          <div className="lg:col-span-5 bg-surface border border-border rounded-xl p-6 space-y-5 shadow-xs">
+            <div className="space-y-2 border-b border-border pb-4">
+              <span className="text-xs font-mono text-vermilion">{activeScript.niche}</span>
+              <h3 className="text-lg font-bold text-ink leading-snug">{activeScript.title}</h3>
+              <div className="flex items-center gap-4 text-xs text-stone font-mono pt-1">
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3.5 w-3.5" />
+                  {activeScript.estDuration}
+                </span>
+                <span className="flex items-center gap-1">
+                  <FileText className="h-3.5 w-3.5" />
+                  {activeScript.wordCount} words
+                </span>
+                <span>~2.6 words/sec</span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-4 text-stone-muted text-[11px]">
-              <span className="flex items-center gap-1">
-                <Type className="h-3.5 w-3.5 text-forest" />
-                <span>{activeScript.wordCount} words</span>
+            {/* Opening Hook Highlight */}
+            <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-1.5">
+              <span className="text-[11px] font-mono font-bold text-vermilion uppercase tracking-wide">
+                First-3-Second Hook
               </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5 text-forest" />
-                <span>Target: {activeScript.estDuration} (145 WPM)</span>
+              <p className="text-xs sm:text-sm text-ink font-medium leading-relaxed">
+                "{activeScript.hook}"
+              </p>
+            </div>
+
+            {/* Complete Narration Flow */}
+            <div className="space-y-3">
+              <span className="text-xs font-semibold text-stone uppercase tracking-wide font-mono">
+                Full Screenplay Text
               </span>
-              <div className="flex items-center bg-paper rounded border border-paper-border p-0.5">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('screenplay')}
-                  className={cn(
-                    'px-2 py-0.5 rounded text-[10px] transition-colors',
-                    viewMode === 'screenplay' ? 'bg-ink text-paper font-semibold' : 'text-stone-muted'
-                  )}
-                >
-                  Screenplay View
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('director')}
-                  className={cn(
-                    'px-2 py-0.5 rounded text-[10px] transition-colors',
-                    viewMode === 'director' ? 'bg-ink text-paper font-semibold' : 'text-stone-muted'
-                  )}
-                >
-                  Director Cues
-                </button>
+              <div className="space-y-2.5 text-xs text-stone font-sans leading-relaxed">
+                {activeScript.scenes.map((scene, i) => (
+                  <p key={i} className="p-3 rounded-md bg-canvas-subtle/50 border border-border">
+                    <strong className="text-ink font-mono text-[11px] block mb-1">{scene.beat}:</strong>
+                    "{scene.dialogue}"
+                  </p>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Script Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left: Screenplay Beats */}
-            <div className="lg:col-span-8 space-y-4 font-mono text-xs">
-              {activeScript.scenes.map((scene, idx) => (
-                <div
-                  key={idx}
-                  className="p-5 rounded-xl bg-paper border border-paper-border space-y-3 hover:border-forest/30 transition-colors"
-                >
-                  <div className="flex items-center justify-between text-[11px] text-stone-muted border-b border-paper-border pb-2">
-                    <span className="font-bold text-forest">{scene.beat}</span>
-                    <span className="text-stone-muted">{scene.time}</span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="text-[10px] text-stone-muted uppercase tracking-wider font-semibold">
-                      VOICEOVER DIALOGUE (NEURAL NARRATION)
-                    </div>
-                    <p className="text-sm font-sans font-medium text-ink leading-relaxed">
-                      "{scene.dialogue}"
-                    </p>
-                  </div>
-
-                  <div className="pt-2 border-t border-paper-border/60 flex items-start gap-2 text-[11px] text-stone-muted">
-                    <span className="text-forest font-bold shrink-0">DIRECTOR:</span>
-                    <span className="font-mono text-ink/80">{scene.visualDirection}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Right: Retention Science Telemetry */}
-            <div className="lg:col-span-4 space-y-4">
-              <div className="p-5 rounded-xl bg-ink text-paper border border-ink-border space-y-4 font-mono text-xs">
-                <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                  <span className="text-stone-subtle uppercase">Retention Diagnostics</span>
-                  <span className="text-lime">VERIFIED</span>
+          {/* Right Column: Act Breakdown and Visual Direction */}
+          <div className="lg:col-span-7 space-y-3">
+            {activeScript.scenes.map((scene, idx) => (
+              <div
+                key={idx}
+                className="bg-surface border border-border rounded-xl p-5 space-y-3 shadow-xs"
+              >
+                <div className="flex items-center justify-between border-b border-border pb-2.5">
+                  <span className="text-xs font-mono font-bold text-vermilion">{scene.beat}</span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-canvas-subtle border border-border text-stone">
+                    {scene.time}
+                  </span>
                 </div>
 
-                <div className="space-y-3 text-[11px]">
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-white/70">Hook Intrigue Rating</span>
-                      <span className="text-lime font-bold">92 / 100</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-lime rounded-full w-[92%]" />
-                    </div>
+                <div className="space-y-2">
+                  <div className="text-xs text-ink font-medium leading-relaxed">
+                    <span className="text-stone-muted block text-[11px] font-mono">VOICEOVER:</span>
+                    "{scene.dialogue}"
                   </div>
 
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-white/70">Pacing Velocity (WPM)</span>
-                      <span className="text-white font-bold">148 WPM (Optimal)</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-forest rounded-full w-[85%]" />
-                    </div>
+                  <div className="p-3 rounded-md bg-canvas-subtle border border-border text-xs text-stone space-y-1">
+                    <span className="text-[11px] font-mono font-semibold text-ink block">
+                      VISUAL ART DIRECTION (9:16):
+                    </span>
+                    <p className="leading-relaxed font-mono">{scene.visualDirection}</p>
                   </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-white/70">Replay Loop Potential</span>
-                      <span className="text-lime font-bold">High (Cadence Loop)</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-lime rounded-full w-[88%]" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-white/10 text-[10px] text-white/60 space-y-1">
-                  <div className="font-semibold text-paper">STRUCTURE ADHERENCE:</div>
-                  <p>3-Act micro-drama designed to eliminate mid-video retention dropoff on vertical feeds.</p>
                 </div>
               </div>
-
-              <div className="p-4 rounded-xl bg-paper border border-paper-border text-xs text-stone-muted space-y-2">
-                <div className="font-semibold text-ink flex items-center gap-1.5 font-mono">
-                  <Sparkles className="h-3.5 w-3.5 text-forest" />
-                  <span>Real Script Lab Integration</span>
-                </div>
-                <p className="leading-relaxed">
-                  Every script generated in ShortForge can be edited, versioned, or regenerated line-by-line in the authenticated Script Lab.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Label */}
-          <div className="text-center text-xs text-stone-muted font-mono pt-2">
-            Illustrative screenplay demonstrator. Real production scripts are managed in the ShortForge Script Lab.
+            ))}
           </div>
         </div>
       </div>
