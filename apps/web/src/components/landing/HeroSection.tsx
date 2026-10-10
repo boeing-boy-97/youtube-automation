@@ -1,9 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, Pause, ArrowRight, RotateCcw, Volume2, VolumeX, Sparkles, CheckCircle2 } from 'lucide-react';
+import {
+  Play,
+  Pause,
+  ArrowRight,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+  Sparkles,
+  FileText,
+  Mic,
+  Film,
+  CheckCircle2,
+  Sliders,
+} from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useMotionSafe, motionTokens, fadeInUpVariants } from '../../lib/motion';
+import { useMotionSafe, motionTokens } from '../../lib/motion';
 
 interface HeroSectionProps {
   onDemoClick: () => void;
@@ -26,17 +39,17 @@ const SAMPLE_BEATS: SceneBeat[] = [
     startTime: 0,
     endTime: 4,
     title: 'The Curiosity Hook',
-    subtitle: 'Why do 90% of short-form videos lose viewers in the first three seconds?',
-    visualNote: 'Dynamic macro focus on a mechanical lens adjusting aperture in warm studio light.',
+    subtitle: 'Stop scrolling if you write code.',
+    visualNote: 'Macro aperture focus on live code architecture with warm studio lighting.',
   },
   {
     index: 2,
     timeRange: '0:04 – 0:22',
     startTime: 4,
     endTime: 22,
-    title: 'The Pacing Shift',
-    subtitle: 'It is rarely the topic. It is the friction of disconnected tools causing lifeless, unpaced cuts.',
-    visualNote: 'Fast split comparison: chaotic multi-app editing vs. one continuous script-to-timeline pipeline.',
+    title: 'The Friction Problem',
+    subtitle: 'Most developers prompt like it is 2023, losing 90% of architectural reasoning.',
+    visualNote: 'Split benchmark screen comparing unstructured prompts against constrained diff outputs.',
   },
   {
     index: 3,
@@ -44,14 +57,14 @@ const SAMPLE_BEATS: SceneBeat[] = [
     startTime: 22,
     endTime: 45,
     title: 'The Seamless Loop',
-    subtitle: 'ShortForge synchronizes voice syllables to video frames in a single unified studio.',
+    subtitle: 'ShortForge synchronizes voice syllables to video frames in one continuous pipeline.',
     visualNote: 'Clean 9:16 vertical composition with kinetic typography leading into the replay cadence.',
   },
 ];
 
 export function HeroSection({ onDemoClick }: HeroSectionProps) {
   const [isPlaying, setIsPlaying] = useState(true);
-  const [currentTime, setCurrentTime] = useState(8);
+  const [currentTime, setCurrentTime] = useState(6);
   const [isMuted, setIsMuted] = useState(true);
   const totalDuration = 45;
   const { shouldReduce } = useMotionSafe();
@@ -91,13 +104,13 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
           transition={{ duration: motionTokens.duration.standard }}
           className="flex items-center gap-2 text-xs font-medium text-stone tracking-wide"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+          <span className="h-1.5 w-1.5 rounded-full bg-coral" />
           <span className="uppercase text-stone-muted font-mono tracking-wider">Independent Creative Technology</span>
           <span className="text-border">•</span>
           <span>ShortForge Studio 2026</span>
         </motion.div>
 
-        {/* Asymmetrical Editorial Composition */}
+        {/* Asymmetrical Editorial Composition with Floating Creative Product Objects */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
           {/* Left Column: Headline & Purpose */}
           <motion.div
@@ -107,12 +120,12 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
             className="lg:col-span-7 space-y-6"
           >
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-ink tracking-tight leading-[1.08] text-balance">
-              Turn the idea into <br />
-              <span className="font-editorial italic font-normal text-vermilion">the finished video.</span>
+              From first thought <br />
+              <span className="font-editorial italic font-normal text-coral">to finished frame.</span>
             </h1>
 
             <p className="text-base sm:text-lg text-stone leading-relaxed max-w-xl text-balance">
-              ShortForge brings scriptwriting, voiceover, scene generation, and automated editing into one continuous studio. From a rough concept to a broadcast-grade 9:16 short ready for YouTube—without tool switching.
+              ShortForge brings scriptwriting, voiceover, scene directing, and automated editing into one continuous studio. From a raw concept to a broadcast-grade 9:16 vertical short ready for YouTube—without tool switching.
             </p>
 
             {/* Call To Actions */}
@@ -127,48 +140,96 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
               </button>
             </div>
 
-            {/* Concrete Value Propositions */}
+            {/* Value Propositions */}
             <div className="pt-4 border-t border-border flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-stone font-medium">
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-moss" />
+                <span className="h-1.5 w-1.5 rounded-full bg-green" />
                 No multi-app switching
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-moss" />
+                <span className="h-1.5 w-1.5 rounded-full bg-green" />
                 Real FFmpeg rendering
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-moss" />
+                <span className="h-1.5 w-1.5 rounded-full bg-green" />
                 Authorized YouTube OAuth upload
               </span>
             </div>
           </motion.div>
 
-          {/* Right Column: Genuine 9:16 Portrait Media Showcase */}
-          <motion.div
-            initial={shouldReduce ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: motionTokens.duration.spatial, ease: motionTokens.ease.editorial, delay: 0.1 }}
-            className="lg:col-span-5 flex justify-center"
-          >
-            <div className="w-full max-w-sm bg-surface rounded-xl border border-border shadow-md p-4 space-y-4">
+          {/* Right Column: Cinematic 9:16 Media Preview with Floating Creative Objects */}
+          <div className="lg:col-span-5 relative flex justify-center py-4">
+            {/* Floating Object 1: Screenplay Beat Card (Top-Left Desktop) */}
+            <motion.div
+              initial={shouldReduce ? { opacity: 1 } : { opacity: 0, x: -20, y: -10, rotate: -3 }}
+              animate={shouldReduce ? { opacity: 1 } : { opacity: 1, x: 0, y: 0, rotate: -3 }}
+              transition={{ duration: motionTokens.duration.spatial, delay: 0.15 }}
+              className="hidden sm:block absolute -top-4 -left-10 z-20 w-48 p-3 rounded-lg bg-surface border border-border shadow-md select-none pointer-events-none"
+            >
+              <div className="flex items-center justify-between text-[10px] font-mono text-stone-muted mb-1">
+                <span className="text-coral font-bold uppercase">Beat 01</span>
+                <span>0-3s Hook</span>
+              </div>
+              <p className="text-[11px] font-semibold text-ink line-clamp-2 leading-tight">
+                "Stop scrolling if you write code."
+              </p>
+              <div className="flex items-center justify-between text-[10px] text-stone-muted mt-2 pt-1.5 border-t border-border font-mono">
+                <span>160 WPM</span>
+                <span className="text-green font-medium">92% retention</span>
+              </div>
+            </motion.div>
+
+            {/* Floating Object 2: Audio Master Waveform Tile (Bottom-Right Desktop) */}
+            <motion.div
+              initial={shouldReduce ? { opacity: 1 } : { opacity: 0, x: 20, y: 15, rotate: 3 }}
+              animate={shouldReduce ? { opacity: 1 } : { opacity: 1, x: 0, y: 0, rotate: 3 }}
+              transition={{ duration: motionTokens.duration.spatial, delay: 0.25 }}
+              className="hidden sm:block absolute -bottom-4 -right-8 z-20 w-52 p-3 rounded-lg bg-surface border border-border shadow-md select-none pointer-events-none"
+            >
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="h-5 w-5 rounded bg-coral-soft flex items-center justify-center text-coral">
+                  <Mic className="h-3 w-3" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[11px] font-bold text-ink block truncate leading-none">Adam • Neural TTS</span>
+                  <span className="text-[9px] font-mono text-stone-muted">48 kHz • -14 LUFS</span>
+                </div>
+              </div>
+              <div className="h-4 flex items-end gap-0.5 px-1 py-0.5 bg-canvas-subtle rounded">
+                {[40, 75, 30, 90, 60, 45, 80, 100, 70, 50, 85, 40, 65, 95, 55, 30].map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 bg-coral/70 rounded-xs transition-all duration-300"
+                    style={{ height: `${h}%` }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Main 9:16 Video Player Container */}
+            <motion.div
+              initial={shouldReduce ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: motionTokens.duration.spatial, ease: motionTokens.ease.editorial, delay: 0.1 }}
+              className="w-full max-w-sm bg-surface rounded-xl border border-border shadow-lg p-4 space-y-4 relative z-10"
+            >
               {/* Studio Canvas Status Bar */}
               <div className="flex items-center justify-between text-xs text-stone border-b border-border pb-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-moss" />
-                  <span className="font-semibold text-ink text-xs">Video Preview</span>
+                  <span className="h-2 w-2 rounded-full bg-green" />
+                  <span className="font-semibold text-ink text-xs">Studio Output Preview</span>
                 </div>
-                <span className="text-[11px] font-mono text-stone-muted">9:16 Vertical • 1080×1920</span>
+                <span className="text-[11px] font-mono text-stone-muted">1080×1920 • 9:16</span>
               </div>
 
-              {/* 9:16 Video Player Container */}
+              {/* 9:16 Video Player Screen */}
               <div className="relative aspect-[9/16] rounded-lg overflow-hidden bg-ink text-white flex flex-col justify-between p-4 shadow-inner">
-                {/* Background Ambient Lighting */}
+                {/* Background Ambient Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-b from-stone-900/60 via-ink to-black pointer-events-none" />
 
                 {/* Top Player Status */}
                 <div className="relative z-10 flex items-center justify-between text-[11px] font-mono text-white/70">
-                  <span className="px-2 py-0.5 rounded bg-black/50 backdrop-blur-xs">
+                  <span className="px-2 py-0.5 rounded bg-black/50 backdrop-blur-xs text-butter">
                     Scene 0{activeBeat.index} of 03
                   </span>
                   <button
@@ -176,13 +237,13 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
                     onClick={() => setIsMuted(!isMuted)}
                     className="h-6 w-6 rounded bg-black/50 flex items-center justify-center text-white/80 hover:text-white"
                   >
-                    {isMuted ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3 text-vermilion" />}
+                    {isMuted ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3 text-coral" />}
                   </button>
                 </div>
 
-                {/* Center Visual Art Direction */}
+                {/* Center Visual Direction */}
                 <div className="relative z-10 text-center space-y-2 my-auto px-3">
-                  <div className="inline-block px-2.5 py-1 rounded bg-black/60 text-[10px] font-mono tracking-widest text-marigold uppercase">
+                  <div className="inline-block px-2.5 py-1 rounded bg-black/60 text-[10px] font-mono tracking-widest text-butter uppercase">
                     {activeBeat.title}
                   </div>
                   <p className="text-xs text-white/60 line-clamp-3 leading-relaxed">
@@ -233,7 +294,7 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
                     step={0.5}
                     value={currentTime}
                     onChange={(e) => handleSeek(Number(e.target.value))}
-                    className="flex-1 accent-vermilion h-1.5 bg-canvas-muted rounded cursor-pointer"
+                    className="flex-1 accent-coral h-1.5 bg-canvas-muted rounded cursor-pointer"
                   />
 
                   <span className="text-xs font-mono text-ink tabular-nums">
@@ -251,7 +312,7 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
                       className={cn(
                         'p-1.5 text-center rounded text-[11px] font-mono transition-colors border',
                         activeBeat.index === beat.index
-                          ? 'bg-vermilion-soft border-vermilion text-vermilion font-semibold'
+                          ? 'bg-coral-soft border-coral text-coral font-semibold'
                           : 'bg-canvas-subtle border-border text-stone hover:text-ink'
                       )}
                     >
@@ -261,12 +322,12 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
                 </div>
               </div>
 
-              {/* Sample Label Note */}
+              {/* Sample Note */}
               <div className="text-[11px] text-center text-stone-muted pt-1 border-t border-border">
                 Sample composition demonstrating synchronous subtitle alignment.
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
 
         {/* Workflow Progression Strip */}
@@ -281,7 +342,7 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
               { step: '06', title: 'YouTube Shorts', desc: 'Direct authorized publishing' },
             ].map((item) => (
               <div key={item.step} className="p-3 bg-surface rounded-md border border-border space-y-1">
-                <div className="font-mono text-vermilion font-bold text-xs">{item.step}</div>
+                <div className="font-mono text-coral font-bold text-xs">{item.step}</div>
                 <div className="font-semibold text-ink text-xs">{item.title}</div>
                 <div className="text-[11px] text-stone-muted leading-tight">{item.desc}</div>
               </div>

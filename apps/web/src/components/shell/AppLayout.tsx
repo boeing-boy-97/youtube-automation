@@ -1,5 +1,6 @@
 import { ReactNode, useEffect } from 'react';
-import { Outlet, useNavigate, NavLink } from 'react-router-dom';
+import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileNav } from './MobileNav';
@@ -8,6 +9,7 @@ import { ToastContainer } from '../ui/Toast';
 import { Drawer } from '../ui/Drawer';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
+import { useMotionSafe } from '../../lib/motion';
 import { cn } from '../../lib/utils';
 import {
   LayoutDashboard,
@@ -44,6 +46,8 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   const { sidebarCollapsed, mobileMenuOpen, setMobileMenuOpen, openCommandPalette } = useUIStore();
   const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { shouldReduce } = useMotionSafe();
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -97,7 +101,14 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       >
         <Header />
         <main className="px-4 py-5 sm:px-6 lg:px-8 pb-24 lg:pb-10 min-h-[calc(100vh-3.5rem)] max-w-7xl mx-auto">
-          {children || <Outlet />}
+          <motion.div
+            key={location.pathname}
+            initial={shouldReduce ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {children || <Outlet />}
+          </motion.div>
         </main>
       </div>
 
@@ -114,7 +125,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                 SF
               </div>
               <span className="font-bold text-ink text-base">ShortForge</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+              <span className="h-1.5 w-1.5 rounded-full bg-coral" />
             </div>
             <button
               onClick={() => setMobileMenuOpen(false)}
@@ -136,7 +147,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                     cn(
                       'flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors',
                       isActive
-                        ? 'bg-vermilion-soft text-vermilion font-semibold'
+                        ? 'bg-coral-soft text-coral font-semibold'
                         : 'text-stone hover:bg-canvas-subtle hover:text-ink'
                     )
                   }
