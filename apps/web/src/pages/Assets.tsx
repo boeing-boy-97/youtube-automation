@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/common/EmptyState';
 import { useUIStore } from '../stores/uiStore';
+import { apiClient } from '../services/apiClient';
 import { cn } from '../lib/utils';
 import { formatFileSize } from '../lib/formatters';
 import {
@@ -50,8 +51,34 @@ export function Assets() {
   const [activeTab, setActiveTab] = useState<typeof TABS[number]['key']>('images');
   const [search, setSearch] = useState('');
   const [assets, setAssets] = useState<AssetItem[]>(INITIAL_ASSETS);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const showToast = useUIStore(s => s.showToast);
+
+  useEffect(() => {
+    apiClient.get<any[]>('/assets')
+      .then((items) => {
+        if (Array.isArray(items) && items.length > 0) {
+          const mapped: AssetItem[] = items.map((it: any) => {
+            let t: 'images' | 'videos' | 'audio' | 'music' = 'images';
+            if (it.type === 'VIDEO') t = 'videos';
+            else if (it.type === 'AUDIO') {
+              t = it.kind === 'MUSIC' ? 'music' : 'audio';
+            }
+            return {
+              id: it.id,
+              name: it.filename || 'asset.bin',
+              type: t,
+              size: it.sizeBytes || 0,
+              createdAt: it.createdAt ? new Date(it.createdAt).toLocaleDateString() : 'Recent',
+              gradient: 'from-slate-800 to-zinc-900',
+            };
+          });
+          setAssets(mapped);
+        }
+      })
+      .catch(() => undefined);
+  }, []);
 
   const filtered = assets.filter(
     a => a.type === activeTab && (!search || a.name.toLowerCase().includes(search.toLowerCase()))
@@ -65,7 +92,7 @@ export function Assets() {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -75,23 +102,60 @@ export function Assets() {
     if (mime.startsWith('video/')) type = 'videos';
     else if (mime.startsWith('audio/')) type = 'audio';
 
-    const newAsset: AssetItem = {
-      id: `ast_${Date.now()}`,
-      name: file.name,
-      type,
-      size: file.size,
-      gradient: 'from-emerald-800 to-slate-900',
-      createdAt: 'Just now',
-    };
+    setUploading(true);
+    showToast({ type: 'info', title: 'Uploading', message: `Uploading ${file.name}...` });
 
-    setAssets(prev => [newAsset, ...prev]);
-    setActiveTab(type);
-    showToast({ type: 'success', title: 'File Uploaded', message: `${file.name} saved to asset library.` });
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const token = localStorage.getItem('sf_auth_token');
+      const wsId = localStorage.getItem('sf_active_workspace_id');
+
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      if (wsId) headers['X-Workspace-Id'] = wsId;
+
+      const res = await fetch('/api/v1/assets/upload', {
+        method: 'POST',
+        headers,
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        const created = json.data;
+        const newAsset: AssetItem = {
+          id: created.id,
+          name: created.filename || file.name,
+          type,
+          size: created.sizeBytes || file.size,
+          gradient: 'from-emerald-800 to-slate-900',
+          createdAt: 'Just now',
+        };
+        setAssets(prev => [newAsset, ...prev]);
+        setActiveTab(type);
+        showToast({ type: 'success', title: 'Upload complete', message: `${file.name} saved to workspace.` });
+      } else {
+        throw new Error('Upload rejected by server');
+      }
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Upload failed', message: err.message || 'File upload failed.' });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
-  const handleDeleteAsset = (id: string) => {
-    setAssets(prev => prev.filter(a => a.id !== id));
-    showToast({ type: 'info', title: 'Asset removed' });
+  const handleDeleteAsset = async (id: string) => {
+    try {
+      await apiClient.delete(`/assets/${id}`);
+      setAssets(prev => prev.filter(a => a.id !== id));
+      showToast({ type: 'info', title: 'Asset removed' });
+    } catch {
+      setAssets(prev => prev.filter(a => a.id !== id));
+      showToast({ type: 'info', title: 'Asset removed from view' });
+    }
   };
 
   return (

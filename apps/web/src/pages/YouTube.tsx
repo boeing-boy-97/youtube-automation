@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useWorkspaceStore } from '../stores/workspaceStore';
 import { useUIStore } from '../stores/uiStore';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { apiClient } from '../services/apiClient';
+import type { YouTubeChannel } from '../types/youtube';
 import { formatNumber, formatRelativeTime, formatDuration } from '../lib/utils';
 import { seedRecentUploads } from '../mock/seedData';
 import {
@@ -22,15 +25,51 @@ import {
 } from 'lucide-react';
 
 export function YouTubePage() {
+  const [searchParams] = useSearchParams();
   const youtubeChannel = useWorkspaceStore(s => s.youtubeChannel);
-  const connectYouTube = useWorkspaceStore(s => s.connectYouTube);
   const connectYouTubeOAuth = useWorkspaceStore(s => s.connectYouTubeOAuth);
+  const setConnectedChannel = useWorkspaceStore(s => s.setConnectedChannel);
   const disconnectYouTube = useWorkspaceStore(s => s.disconnectYouTube);
   const showToast = useUIStore(s => s.showToast);
 
   const [connecting, setConnecting] = useState(false);
   const [oauthError, setOauthError] = useState<string | null>(null);
   const recentUploads = seedRecentUploads();
+
+  // Handle incoming OAuth callback query params
+  useEffect(() => {
+    const code = searchParams.get('code');
+    const state = searchParams.get('state');
+    if (code && state) {
+      setConnecting(true);
+      apiClient.youtube.callback(code, state)
+        .then((res) => {
+          if (res?.channels && res.channels.length > 0) {
+            const ch = res.channels[0];
+            const liveChannel: YouTubeChannel = {
+              id: ch.id || ch.providerChannelId,
+              channelId: ch.id || ch.providerChannelId,
+              title: ch.title,
+              description: ch.description,
+              avatarUrl: ch.thumbnailUrl,
+              subscriberCount: ch.subscriberCount,
+              viewCount: ch.viewCount,
+              videoCount: ch.videoCount,
+              connectionStatus: 'connected',
+              lastUpload: ch.connectedAt || new Date().toISOString(),
+            };
+            setConnectedChannel(liveChannel);
+            showToast({ type: 'success', title: 'YouTube Connected', message: `Connected channel: ${ch.title}` });
+          }
+          window.history.replaceState({}, '', window.location.pathname);
+        })
+        .catch((err) => {
+          setOauthError(err.message || 'Failed to complete OAuth callback');
+          showToast({ type: 'error', title: 'Connection failed', message: err.message });
+        })
+        .finally(() => setConnecting(false));
+    }
+  }, [searchParams, setConnectedChannel, showToast]);
 
   const handleOAuthConnect = async () => {
     setConnecting(true);
@@ -44,16 +83,6 @@ export function YouTubePage() {
       }
     } catch (err: any) {
       setOauthError(err.message || 'OAuth error');
-    } finally {
-      setConnecting(false);
-    }
-  };
-
-  const handleSimulatedConnect = async () => {
-    setConnecting(true);
-    try {
-      await connectYouTube();
-      showToast({ type: 'success', title: 'Channel connected', message: 'Channel profile linked to workspace.' });
     } finally {
       setConnecting(false);
     }
@@ -73,16 +102,13 @@ export function YouTubePage() {
           </div>
           <h3 className="text-xl font-bold text-text-primary mb-2">Connect Your YouTube Channel</h3>
           <p className="text-sm text-text-secondary max-w-md mx-auto mb-6">
-            Link your channel to enable automated publishing of vertical Shorts, metadata synchronization, and retention analytics.
+            Link your verified channel to enable automated publishing of vertical Shorts, metadata synchronization, and real retention analytics.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button onClick={handleOAuthConnect} loading={connecting}>
               <YoutubeIcon className="h-4 w-4" />
               Connect with Google OAuth
-            </Button>
-            <Button variant="secondary" onClick={handleSimulatedConnect} disabled={connecting}>
-              Link Development Channel
             </Button>
           </div>
 
@@ -94,7 +120,7 @@ export function YouTubePage() {
               </div>
               <p className="text-text-secondary">{oauthError}</p>
               <div className="text-text-muted">
-                To connect a real channel, set <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> in <code>apps/api/.env</code>.
+                To connect a real channel, configure <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> in the backend environment.
               </div>
             </div>
           )}

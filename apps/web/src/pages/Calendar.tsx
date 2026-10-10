@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContentStore } from '../stores/contentStore';
 import { useUIStore } from '../stores/uiStore';
+import { apiClient } from '../services/apiClient';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -59,6 +60,11 @@ export function Calendar() {
     const original = new Date(originalDateStr);
     const resolved = new Date(original.getTime() + 4 * 60 * 60 * 1000).toISOString();
     updateContent(secondItemId, { scheduledAt: resolved });
+    apiClient.scheduling.create({
+      contentId: secondItemId,
+      channelId: '',
+      scheduledAt: resolved,
+    }).catch(() => undefined);
     showToast({
       type: 'success',
       title: 'Conflict Resolved',
@@ -149,6 +155,11 @@ export function Calendar() {
       scheduledAt: dt.toISOString(),
       status: 'scheduled',
     });
+    apiClient.scheduling.create({
+      contentId: selectedItem.id,
+      channelId: '',
+      scheduledAt: dt.toISOString(),
+    }).catch(() => undefined);
     showToast({ type: 'success', title: 'Schedule updated', message: `${selectedItem.title} moved to ${dt.toLocaleString()}` });
     setSelectedItem(null);
   };

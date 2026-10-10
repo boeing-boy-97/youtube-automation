@@ -63,8 +63,23 @@ export async function requireAuth(req: FastifyRequest, _reply: FastifyReply) {
 export async function requireWorkspace(req: FastifyRequest, _reply: FastifyReply) {
   if (!req[kUser]) await requireAuth(req, _reply);
   const wsHeader = req.headers['x-workspace-id'];
-  const workspaceId = typeof wsHeader === 'string' ? wsHeader : undefined;
-  if (!workspaceId) throw new ForbiddenError('Workspace header required (x-workspace-id)');
+  let workspaceId = typeof wsHeader === 'string' && wsHeader.trim().length > 0 ? wsHeader.trim() : undefined;
+  if (!workspaceId) {
+    const firstMembership = await prisma.workspaceMember.findFirst({
+      where: { userId: req[kUser]!.id },
+      include: { workspace: true },
+      orderBy: { createdAt: 'asc' },
+    });
+    if (!firstMembership) throw new ForbiddenError('No active workspace found for user');
+    req[kMembership] = firstMembership;
+    req[kWorkspace] = {
+      id: firstMembership.workspace.id,
+      name: firstMembership.workspace.name,
+      slug: firstMembership.workspace.slug,
+      tier: firstMembership.workspace.tier,
+    };
+    return;
+  }
   const membership = await loadMembership(req[kUser]!.id, workspaceId);
   req[kMembership] = membership;
   req[kWorkspace] = { id: membership.workspace.id, name: membership.workspace.name, slug: membership.workspace.slug, tier: membership.workspace.tier };

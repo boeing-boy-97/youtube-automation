@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useContentStore } from '../stores/contentStore';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card } from '../components/ui/Card';
@@ -36,16 +36,30 @@ const FILTERS: { key: ContentStatus | 'all'; label: string }[] = [
 
 export function ContentLibrary() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const items = useContentStore(s => s.items);
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [filter, setFilter] = useState<ContentStatus | 'all'>('all');
+  const [filter, setFilter] = useState<ContentStatus | 'all' | 'needs_attention'>('all');
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'views' | 'retention'>('newest');
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
+  useEffect(() => {
+    const qf = searchParams.get('filter');
+    if (qf === 'needs_attention') {
+      setFilter('needs_attention');
+    } else if (qf && FILTERS.some(f => f.key === qf)) {
+      setFilter(qf as any);
+    }
+  }, [searchParams]);
+
   const filtered = useMemo(() => {
     let result = items;
-    if (filter !== 'all') result = result.filter(i => i.status === filter);
+    if (filter === 'needs_attention') {
+      result = result.filter(i => i.status === 'review' || i.status === 'failed');
+    } else if (filter !== 'all') {
+      result = result.filter(i => i.status === filter);
+    }
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(i => i.title.toLowerCase().includes(q) || (i.pillar && i.pillar.toLowerCase().includes(q)));
@@ -120,12 +134,21 @@ export function ContentLibrary() {
 
       {/* Filter tabs */}
       <div className="flex items-center gap-1 overflow-x-auto no-scrollbar -mx-1 px-1">
+        {filter === 'needs_attention' && (
+          <button
+            onClick={() => { setFilter('all'); setSearchParams({}); }}
+            className="px-3 py-1.5 rounded-md text-[13px] font-medium whitespace-nowrap transition-colors bg-warning/15 text-warning border border-warning/30 flex items-center gap-1.5"
+          >
+            <span>Needs Attention ({items.filter(i => i.status === 'review' || i.status === 'failed').length})</span>
+            <span className="text-xs opacity-70">✕</span>
+          </button>
+        )}
         {FILTERS.map(f => {
           const count = f.key === 'all' ? items.length : items.filter(i => i.status === f.key).length;
           return (
             <button
               key={f.key}
-              onClick={() => setFilter(f.key)}
+              onClick={() => { setFilter(f.key); setSearchParams({}); }}
               className={cn(
                 'px-3 py-1.5 rounded-md text-[13px] font-medium whitespace-nowrap transition-colors border border-transparent',
                 filter === f.key ? 'bg-surface-subtle text-text-primary border-border' : 'text-text-secondary hover:text-text-primary hover:bg-surface-hover'

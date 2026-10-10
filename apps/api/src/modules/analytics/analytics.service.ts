@@ -61,3 +61,30 @@ export async function listAnalyticsForContent(workspaceId: string, contentId: st
     take: 90,
   });
 }
+
+export async function getWorkspaceAnalyticsSummary(workspaceId: string) {
+  const records = await prisma.videoAnalytics.findMany({
+    where: { workspaceId },
+    orderBy: { periodEnd: 'desc' },
+    take: 100,
+  });
+
+  const totals = records.reduce((acc, r) => ({
+    views: acc.views + r.views,
+    likes: acc.likes + r.likes,
+    comments: acc.comments + r.comments,
+    shares: acc.shares + (r.shares || 0),
+    watchTimeMinutes: acc.watchTimeMinutes + (r.watchTimeMinutes || 0),
+    subscribersGained: acc.subscribersGained + (r.subscribersGained || 0),
+  }), { views: 0, likes: 0, comments: 0, shares: 0, watchTimeMinutes: 0, subscribersGained: 0 });
+
+  const publishedCount = await prisma.content.count({
+    where: { workspaceId, state: 'PUBLISHED', deletedAt: null },
+  });
+
+  return {
+    totals,
+    publishedCount,
+    recent: records.slice(0, 10),
+  };
+}

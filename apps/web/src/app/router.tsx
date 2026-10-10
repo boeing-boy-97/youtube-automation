@@ -75,11 +75,7 @@ export function AppRouter() {
     <Suspense fallback={<PageLoader />}>
       <Routes>
         {/* Public */}
-        <Route path="/" element={
-          <AuthenticatedRedirect>
-            <Landing />
-          </AuthenticatedRedirect>
-        } />
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={
           <AuthenticatedRedirect>
             <Login />

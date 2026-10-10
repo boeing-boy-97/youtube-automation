@@ -8,7 +8,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Progress } from '../components/ui/Progress';
 import { NotFound } from './NotFound';
-import { demoEngine } from '../services/demoEngine';
+import { apiClient } from '../services/apiClient';
 import { cn, formatNumber, formatRelativeTime, formatDuration } from '../lib/utils';
 import { statusLabels, statusColors } from '../lib/formatters';
 import {
@@ -43,6 +43,7 @@ export function ContentDetails() {
   const content = useContentStore(s => s.items.find(i => i.id === id));
   
   const duplicateContent = useContentStore(s => s.duplicateContent);
+  const updateContent = useContentStore(s => s.updateContent);
   const showToast = useUIStore(s => s.showToast);
   const [publishing, setPublishing] = useState(false);
   const [publishProgress, setPublishProgress] = useState(0);
@@ -56,33 +57,81 @@ export function ContentDetails() {
   const canEdit = ['draft', 'script_ready'].includes(content.status);
 
   const handleRender = async () => {
-    await demoEngine.simulateRendering(content.id);
+    try {
+      showToast({ type: 'info', title: 'Dispatching Render', message: 'Queuing FFmpeg render job...' });
+      const res = await apiClient.rendering.render(content.id, content.id);
+      updateContent(content.id, {
+        status: 'rendered',
+        videoUrl: res?.assetUrl || res?.outputPath || content.videoUrl,
+      });
+      showToast({ type: 'success', title: 'Render complete', message: 'Video rendered successfully.' });
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Render failed', message: err.message || 'Rendering failed' });
+    }
   };
 
   const handleQC = async () => {
-    await demoEngine.simulateQualityCheck(content.id);
+    try {
+      showToast({ type: 'info', title: 'Running QC', message: 'Analyzing resolution, audio levels, and captions...' });
+      await apiClient.qc.get(content.id);
+      updateContent(content.id, { status: 'review' });
+      showToast({ type: 'success', title: 'QC completed', message: 'Content moved to review status.' });
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'QC check failed', message: err.message });
+    }
   };
 
   const handleApprove = async () => {
-    await demoEngine.simulateApproval(content.id);
-    showToast({ type: 'success', title: 'Approved', message: 'Ready to schedule' });
+    try {
+      await apiClient.content.advance(content.id, 'APPROVED');
+      updateContent(content.id, { status: 'approved' });
+      showToast({ type: 'success', title: 'Approved', message: 'Ready to schedule' });
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Approval failed', message: err.message });
+    }
   };
 
   const handleSchedule = async () => {
     const tomorrow = new Date(Date.now() + 86400000).toISOString();
-    await demoEngine.simulateScheduling(content.id, tomorrow);
-    navigate('/calendar');
+    try {
+      await apiClient.content.advance(content.id, 'SCHEDULED');
+      updateContent(content.id, { status: 'scheduled', scheduledAt: tomorrow });
+      showToast({ type: 'success', title: 'Scheduled', message: `Scheduled for tomorrow at ${new Date(tomorrow).toLocaleTimeString()}` });
+      navigate('/calendar');
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Scheduling failed', message: err.message });
+    }
   };
 
   const handlePublish = async () => {
     setPublishing(true);
-    setPublishProgress(0);
-    await demoEngine.simulateYouTubeUpload(content.id, (p) => setPublishProgress(p));
-    setPublishing(false);
+    setPublishProgress(25);
+    try {
+      showToast({ type: 'info', title: 'Publishing', message: 'Uploading video to YouTube Shorts...' });
+      const res = await apiClient.content.publish(content.id);
+      setPublishProgress(100);
+      updateContent(content.id, {
+        status: 'published',
+        publishedAt: new Date().toISOString(),
+        youtubeUrl: res?.videoUrl,
+      });
+      showToast({ type: 'success', title: 'Published', message: 'Short published live to YouTube.' });
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Publishing failed', message: err.message });
+    } finally {
+      setPublishing(false);
+    }
   };
 
-  const handleRetry = () => {
-    demoEngine.retryJob(content.id);
+  const handleRetry = async () => {
+    try {
+      showToast({ type: 'info', title: 'Retrying pipeline', message: 'Re-dispatching failed operation...' });
+      await apiClient.rendering.render(content.id, content.id);
+      updateContent(content.id, { status: 'rendered' });
+      showToast({ type: 'success', title: 'Retry successful', message: 'Asset regenerated.' });
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Retry failed', message: err.message });
+    }
   };
 
   const statusFlow = [

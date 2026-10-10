@@ -42,6 +42,12 @@ import { registerNotifications } from '../modules/notifications/notifications.ro
 import { registerBilling } from '../modules/billing/billing.routes.js';
 import { registerJobs } from '../modules/jobs/jobs.routes.js';
 import { registerSSE } from '../modules/jobs/sse.js';
+import { registerUsers } from '../modules/users/users.routes.js';
+import { registerChannels } from '../modules/channels/channels.routes.js';
+import { registerScenes } from '../modules/scenes/scenes.routes.js';
+import { registerSubtitles } from '../modules/subtitles/subtitles.routes.js';
+import { registerUsage } from '../modules/usage/usage.routes.js';
+import { registerAudit } from '../modules/audit/audit.routes.js';
 import { startWorkers } from '../jobs/index.js';
 
 function parseCorsOrigins(s: string): string[] | boolean {
@@ -134,9 +140,15 @@ export async function buildApp(): Promise<FastifyInstance> {
     await registerAutomation(v1);
     await registerNotifications(v1);
     await registerBilling(v1);
-  await registerJobs(v1);
-  await registerSSE(v1);
-}, { prefix: '/api/v1' });
+    await registerJobs(v1);
+    await registerSSE(v1);
+    await registerUsers(v1);
+    await registerChannels(v1);
+    await registerScenes(v1);
+    await registerSubtitles(v1);
+    await registerUsage(v1);
+    await registerAudit(v1);
+  }, { prefix: '/api/v1' });
 
   app.setErrorHandler((error: Error, req: FastifyRequest, reply: FastifyReply) => {
     const requestId = req[kRequestId] || 'unknown';

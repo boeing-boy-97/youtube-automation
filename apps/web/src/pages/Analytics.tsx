@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useContentStore } from '../stores/contentStore';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
+import { apiClient } from '../services/apiClient';
 import { seedAnalytics, seedViewsSeries, seedWatchTimeSeries, seedSubscribersSeries, seedTopics, seedInsights, seedLearnedPreferences, seedHeatmap, seedContentPerformance } from '../mock/seedData';
 import { cn, formatNumber } from '../lib/utils';
 import {
@@ -24,9 +25,21 @@ import { LineChart, Line, XAxis, YAxis, Tooltip as ReTooltip, ResponsiveContaine
 
 export function Analytics() {
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d');
+  const [liveTotals, setLiveTotals] = useState<{ views?: number; likes?: number; comments?: number; watchTimeMinutes?: number } | null>(null);
   const items = useContentStore(s => s.items);
   const published = items.filter(i => i.status === 'published');
   const analytics = seedAnalytics();
+
+  useEffect(() => {
+    apiClient.get<any>('/analytics/summary')
+      .then((res) => {
+        if (res?.totals && res.totals.views > 0) {
+          setLiveTotals(res.totals);
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
   const rawViewsData = seedViewsSeries();
   const rawWatchTimeData = seedWatchTimeSeries();
   const rawSubsData = seedSubscribersSeries();
@@ -42,12 +55,12 @@ export function Analytics() {
   const contentPerf = seedContentPerformance();
 
   const kpis = [
-    { label: 'Views', value: formatNumber(analytics.views), change: analytics.viewsChange, icon: Eye },
-    { label: 'Watch Time', value: formatNumber(Math.round(analytics.watchTime / 3600)) + ' hrs', change: analytics.watchTimeChange, icon: Clock },
+    { label: 'Views', value: formatNumber(liveTotals?.views ?? analytics.views), change: analytics.viewsChange, icon: Eye },
+    { label: 'Watch Time', value: formatNumber(Math.round((liveTotals?.watchTimeMinutes ? liveTotals.watchTimeMinutes * 60 : analytics.watchTime) / 3600)) + ' hrs', change: analytics.watchTimeChange, icon: Clock },
     { label: 'Subscribers', value: formatNumber(analytics.subscribers + 46000), change: analytics.subscribersChange, icon: Users },
     { label: 'Avg. Retention', value: analytics.retention + '%', change: analytics.retentionChange, icon: TrendingUp },
-    { label: 'Likes', value: formatNumber(analytics.likes + published.reduce((s,i)=>s+(i.likes||0),0)), change: analytics.likesChange, icon: Heart },
-    { label: 'Comments', value: formatNumber(analytics.comments + published.reduce((s,i)=>s+(i.comments||0),0)), change: analytics.commentsChange, icon: MessageSquare },
+    { label: 'Likes', value: formatNumber((liveTotals?.likes ?? analytics.likes) + published.reduce((s,i)=>s+(i.likes||0),0)), change: analytics.likesChange, icon: Heart },
+    { label: 'Comments', value: formatNumber((liveTotals?.comments ?? analytics.comments) + published.reduce((s,i)=>s+(i.comments||0),0)), change: analytics.commentsChange, icon: MessageSquare },
     { label: 'Shares', value: formatNumber(analytics.shares), change: analytics.sharesChange, icon: Share2 },
     { label: 'Consistency', value: analytics.publishingConsistency + '%', change: analytics.consistencyChange, icon: CalendarIcon },
   ];

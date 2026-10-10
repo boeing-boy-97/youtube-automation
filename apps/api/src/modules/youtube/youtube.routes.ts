@@ -28,6 +28,18 @@ export async function registerYoutube(app: FastifyInstance) {
     reply.send({ data: { authUrl: url } });
   });
 
+  app.get('/youtube/callback', async (req, reply) => {
+    const q = req.query as { code?: string; state?: string; error?: string };
+    const webBase = env.APP_BASE_URL || 'http://localhost:5173';
+    if (q.error) {
+      return reply.redirect(`${webBase}/youtube?error=${encodeURIComponent(q.error)}`);
+    }
+    if (q.code && q.state) {
+      return reply.redirect(`${webBase}/youtube?code=${encodeURIComponent(q.code)}&state=${encodeURIComponent(q.state)}`);
+    }
+    return reply.redirect(`${webBase}/youtube`);
+  });
+
   app.post('/youtube/callback', { preHandler: [requireAuth, requireWorkspace] }, async (req, reply) => {
     const user = (req as any)[kUser];
     const workspace = (req as any)[kWorkspace];

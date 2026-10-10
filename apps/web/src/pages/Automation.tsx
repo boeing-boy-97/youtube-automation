@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogFooter, DialogDescription } from '../components/ui/Dialog';
-import { demoEngine } from '../services/demoEngine';
+import { apiClient } from '../services/apiClient';
 import { cn } from '../lib/utils';
 import {
   Zap,
@@ -73,12 +73,19 @@ export function Automation() {
 
   const handleRunNow = async () => {
     if (!youtube || youtube.connectionStatus !== 'connected') {
-      showToast({ type: 'error', title: 'Cannot run', message: 'Connect YouTube first' });
+      showToast({ type: 'error', title: 'Cannot run', message: 'Connect YouTube first in Settings or YouTube page.' });
       return;
     }
     setRunning(true);
-    await demoEngine.runFullAutomation();
-    setRunning(false);
+    try {
+      showToast({ type: 'info', title: 'Starting Automation', message: 'Executing end-to-end production cycle...' });
+      const res = await apiClient.post<any>('/automation/run');
+      showToast({ type: 'success', title: 'Automation Cycle Finished', message: res?.title ? `Created and staged "${res.title}".` : 'Content generated and staged.' });
+    } catch (err: any) {
+      showToast({ type: 'error', title: 'Automation Run Failed', message: err.message || 'Pipeline failed. Check provider credentials.' });
+    } finally {
+      setRunning(false);
+    }
   };
 
   const handleTestWorkflow = async () => {

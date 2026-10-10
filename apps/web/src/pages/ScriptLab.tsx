@@ -4,7 +4,6 @@ import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
-import { demoEngine } from '../services/demoEngine';
 import { useContentStore } from '../stores/contentStore';
 import { useUIStore } from '../stores/uiStore';
 import { apiClient } from '../services/apiClient';
@@ -189,13 +188,38 @@ export function ScriptLab() {
 
   const handleGenerateScript = async () => {
     setGenerating(true);
-    await demoEngine.simulateScriptGeneration(content.id, (_, stage) => setGenStage(stage));
-    const updated = useContentStore.getState().getContent(content.id);
-    if (updated?.script) {
-      setScriptText(updated.script.content);
-      recordNewVersion(updated.script.content, 'AI Generated');
+    setGenStage('Connecting to AI scriptwriter...');
+    try {
+      const res = await apiClient.scripts.generate(content.id);
+      if (res?.body) {
+        setScriptText(res.body);
+        recordNewVersion(res.body, 'AI Generated');
+        useContentStore.getState().updateContent(content.id, {
+          status: 'script_ready',
+          hook: res.hook || content.hook,
+          script: {
+            id: `scr_${Date.now()}`,
+            content: res.body,
+            wordCount: res.body.trim().split(/\s+/).length,
+            charCount: res.body.length,
+            hookStrength: 88,
+            ctaStrength: 82,
+            readability: 85,
+            estimatedDuration: res.estimatedDurationSec || 60,
+            versions: [],
+          },
+        });
+        showToast({ type: 'success', title: 'Script generated', message: 'AI generated new script & scene breakdown.' });
+      }
+    } catch (err: any) {
+      showToast({
+        type: 'error',
+        title: 'Script generation failed',
+        message: err.message || 'Failed to generate script. Check OPENAI_API_KEY in settings.',
+      });
+    } finally {
+      setGenerating(false);
     }
-    setGenerating(false);
   };
 
   const handleAIAction = (actionLabel: string) => {

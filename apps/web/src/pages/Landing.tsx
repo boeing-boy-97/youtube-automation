@@ -33,6 +33,8 @@ import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 
 function Nav({ onDemoClick }: { onDemoClick: () => void }) {
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -49,11 +51,20 @@ function Nav({ onDemoClick }: { onDemoClick: () => void }) {
           <a href="#faq" className="hover:text-text-primary transition-colors">FAQ</a>
         </div>
         <div className="flex items-center gap-2">
-          <button type="button" onClick={onDemoClick} className="btn-ghost btn-sm text-text-secondary hover:text-text-primary">
-            Live Demo
-          </button>
-          <Link to="/login" className="btn-ghost btn-sm">Log in</Link>
-          <Link to="/signup" className="btn-primary btn-sm">Start Building</Link>
+          {isAuthenticated ? (
+            <Link to="/dashboard" className="btn-primary btn-sm flex items-center gap-1.5">
+              <span>Go to Dashboard</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          ) : (
+            <>
+              <button type="button" onClick={onDemoClick} className="btn-ghost btn-sm text-text-secondary hover:text-text-primary">
+                Live Demo
+              </button>
+              <Link to="/login" className="btn-ghost btn-sm">Log in</Link>
+              <Link to="/signup" className="btn-primary btn-sm">Start Building</Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

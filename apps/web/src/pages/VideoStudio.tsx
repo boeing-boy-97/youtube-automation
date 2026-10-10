@@ -6,7 +6,6 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { useContentStore } from '../stores/contentStore';
 import { useUIStore } from '../stores/uiStore';
-import { demoEngine } from '../services/demoEngine';
 import { apiClient } from '../services/apiClient';
 import { cn } from '../lib/utils';
 import {
@@ -178,32 +177,26 @@ export function VideoStudio() {
   // Real render dispatch
   const handleRender = async () => {
     setRendering(true);
-    setRenderProgress(10);
-    setRenderStage('Compiling scene audio & visuals...');
+    setRenderProgress(20);
+    setRenderStage('Compiling scene audio & visuals with FFmpeg...');
 
     try {
-      const isLive = await apiClient.health.pingLive();
-      if (isLive) {
-        // Real FFmpeg render job on backend
-        await apiClient.rendering.render(content.id, content.id);
-      }
-    } catch {
-      // Local engine fallback
-    }
-
-    const success = await demoEngine.simulateRendering(content.id, (p, stage) => {
-      setRenderProgress(p);
-      setRenderStage(stage);
-    });
-
-    setRendering(false);
-
-    if (success) {
+      const res = await apiClient.rendering.render(content.id, content.id);
+      setRenderProgress(100);
+      setRenderStage('Render complete');
       updateContent(content.id, {
         status: 'rendered',
-        videoUrl: `https://storage.shortforge.io/renders/${content.id}.mp4`,
+        videoUrl: res?.assetUrl || res?.outputPath || content.videoUrl,
       });
       showToast({ type: 'success', title: 'Video Rendered Successfully', message: `${content.title} is ready for QC & publishing.` });
+    } catch (err: any) {
+      showToast({
+        type: 'error',
+        title: 'Rendering failed',
+        message: err.message || 'Render failed. Ensure FFmpeg and media assets are valid.',
+      });
+    } finally {
+      setRendering(false);
     }
   };
 

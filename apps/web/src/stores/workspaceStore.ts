@@ -122,18 +122,12 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   },
 
   connectYouTube: async () => {
-    try {
-      const res = await get().connectYouTubeOAuth();
-      if (res?.authUrl) {
-        window.location.href = res.authUrl;
-        return;
-      }
-    } catch {
-      // Fall through to local channel connection
+    const res = await get().connectYouTubeOAuth();
+    if (res?.authUrl) {
+      window.location.href = res.authUrl;
+      return;
     }
-    const channel = { ...seedYouTubeChannel(), connectionStatus: 'connected' as const };
-    storageSet(STORAGE_KEYS.youtube, channel);
-    set({ youtubeChannel: channel });
+    throw new Error(res?.error || 'Failed to initiate Google OAuth. Configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.');
   },
 
   setConnectedChannel: (channel: YouTubeChannel) => {

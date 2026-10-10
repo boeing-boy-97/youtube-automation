@@ -42,14 +42,14 @@ export async function registerAuth(app: FastifyInstance) {
     const body = RegisterSchema.parse(req.body);
     const result = await registerUser(body);
     setAuthCookies(reply, result.tokens.accessToken, result.tokens.refreshToken, result.tokens.expiresAt);
-    reply.code(201).send({ data: { user: result.user, workspace: result.workspace } });
+    reply.code(201).send({ data: { user: result.user, workspace: result.workspace, token: result.tokens.accessToken } });
   });
 
   app.post('/auth/login', async (req, reply) => {
     const body = LoginSchema.parse(req.body);
     const result = await loginUser(body);
     setAuthCookies(reply, result.tokens.accessToken, result.tokens.refreshToken, result.tokens.expiresAt);
-    reply.send({ data: { user: result.user, defaultWorkspace: result.defaultWorkspace } });
+    reply.send({ data: { user: result.user, defaultWorkspace: result.defaultWorkspace, workspace: result.defaultWorkspace, token: result.tokens.accessToken } });
   });
 
   app.post('/auth/logout', async (req, reply) => {

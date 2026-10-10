@@ -45,7 +45,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             createdAt: res.user.createdAt || new Date().toISOString(),
             plan: 'creator',
           };
-          const session: Session = { user: liveUser, token: `live_${res.user.id}` };
+          const token = (res as any).token || `live_${res.user.id}`;
+          const session: Session = { user: liveUser, token };
+          if ((res as any).token) {
+            localStorage.setItem('sf_auth_token', (res as any).token);
+          }
+          const wsId = (res as any).workspace?.id || (res as any).defaultWorkspace?.id;
+          if (wsId) {
+            localStorage.setItem('sf_active_workspace_id', wsId);
+          }
           storageSet(STORAGE_KEYS.user, liveUser);
           storageSet(STORAGE_KEYS.session, session);
           set({ user: liveUser, session, isAuthenticated: true });
@@ -86,7 +94,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             createdAt: res.user.createdAt || new Date().toISOString(),
             plan: 'creator',
           };
-          const session: Session = { user: liveUser, token: `live_${res.user.id}` };
+          const token = (res as any).token || `live_${res.user.id}`;
+          const session: Session = { user: liveUser, token };
+          if ((res as any).token) {
+            localStorage.setItem('sf_auth_token', (res as any).token);
+          }
+          const wsId = (res as any).workspace?.id;
+          if (wsId) {
+            localStorage.setItem('sf_active_workspace_id', wsId);
+          }
           storageSet(STORAGE_KEYS.user, liveUser);
           storageSet(STORAGE_KEYS.session, session);
           set({ user: liveUser, session, isAuthenticated: true });
@@ -139,6 +155,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: () => {
     apiClient.auth.logout().catch(() => undefined);
     storageRemove(STORAGE_KEYS.session);
+    localStorage.removeItem('sf_auth_token');
+    localStorage.removeItem('sf_active_workspace_id');
     set({ user: null, session: null, isAuthenticated: false });
   },
 
