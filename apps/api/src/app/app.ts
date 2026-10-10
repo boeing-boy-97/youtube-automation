@@ -59,7 +59,6 @@ function parseCorsOrigins(s: string): string[] | boolean {
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({
     logger: false,
-    disableRequestLogging: true,
     trustProxy: true,
     bodyLimit: 10 * 1024 * 1024,
   });
