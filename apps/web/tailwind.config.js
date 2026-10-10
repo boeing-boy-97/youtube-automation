@@ -70,6 +70,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        editorial: ['Newsreader', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       fontSize: {

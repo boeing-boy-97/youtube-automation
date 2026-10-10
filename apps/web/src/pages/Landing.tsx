@@ -10,7 +10,9 @@ import { STORAGE_KEYS } from '../lib/constants';
 // Modular Art-Directed Landing Sections
 import { LandingNav } from '../components/landing/LandingNav';
 import { HeroSection } from '../components/landing/HeroSection';
+import { CreativeProblemSection } from '../components/landing/CreativeProblemSection';
 import { ProductProofSection } from '../components/landing/ProductProofSection';
+import { ScriptStoryWorkspaceSection } from '../components/landing/ScriptStoryWorkspaceSection';
 import { InteractiveShowcaseSection } from '../components/landing/InteractiveShowcaseSection';
 import { FeatureStorytellingSection } from '../components/landing/FeatureStorytellingSection';
 import { VideoStudioWorkspaceSection } from '../components/landing/VideoStudioWorkspaceSection';
@@ -51,41 +53,49 @@ export function Landing() {
 
   return (
     <div className="min-h-screen bg-paper text-ink font-sans selection:bg-lime/30 selection:text-ink">
-      {/* 1. Refined, Compact Sticky Navigation */}
+      {/* 1. Refined Sticky Header */}
       <LandingNav onDemoClick={handleExploreDemo} />
 
-      {/* 2. Section A: Asymmetric Editorial Hero with Interactive Workspace */}
+      {/* 2. Section 1: Cinematic Asymmetric Hero & Scrubbable 9:16 Video Player */}
       <HeroSection onDemoClick={handleExploreDemo} />
 
-      {/* 3. Section B: Product Proof — 7-Stage Connected Production Sequence */}
+      {/* 3. Section 2: The Creative Problem & Friction of Short-Form Video */}
+      <CreativeProblemSection />
+
+      {/* 4. Section 3: The Connected 7-Stage Production Pipeline */}
       <ProductProofSection />
 
-      {/* 4. Section C: Standout Interactive Product Showcase */}
+      {/* 5. Section 4: Screenplay & Story Architecture (Script Studio) */}
+      <ScriptStoryWorkspaceSection />
+
+      {/* 6. Section 5: Interactive 6-Stage Studio Engine Showcase */}
       <InteractiveShowcaseSection />
 
-      {/* 5. Section D: Art-Directed Feature Storytelling */}
+      {/* 7. Section 6: Editorial Feature Storytelling */}
       <FeatureStorytellingSection />
 
-      {/* 6. Section E: Studio Workspace Deep-Dive */}
+      {/* 8. Section 7: Studio Workspace Deep-Dive (Multi-Track Compositor) */}
       <VideoStudioWorkspaceSection />
 
-      {/* 7. Section F: Automation Flow Diagram & Execution Guardrails */}
+      {/* 9. Section 8: Automation Execution Graph & Governance */}
       <AutomationFlowSection />
 
-      {/* 8. Section G: Curated Output Gallery */}
+      {/* 10. Section 9: Curated Output Gallery */}
       <OutputGallerySection />
 
-      {/* 9. Section H: Trust, Reliability & Security Standards */}
+      {/* 11. Section 10: Architectural Trust & Security Standards */}
       <TrustSecuritySection />
 
-      {/* 10. Section I: Transparent Pricing */}
+      {/* 12. Section 11: Transparent Pricing Plans */}
       <PricingSection />
 
-      {/* 11. Section J: Accessible Smooth FAQ Accordion */}
+      {/* 13. Section 12: Creator & Engineering FAQ */}
       <FAQSection />
 
-      {/* 12. Section K: Final Memorable CTA & Comprehensive Footer */}
+      {/* 14. Section 13: Final Conversion CTA */}
       <FinalCTASection onDemoClick={handleExploreDemo} />
+
+      {/* 15. Comprehensive Legal & Operational Footer */}
       <LandingFooter />
     </div>
   );
