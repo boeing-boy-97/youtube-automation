@@ -8,6 +8,37 @@ export default {
   theme: {
     extend: {
       colors: {
+        ink: {
+          DEFAULT: '#111310',
+          pure: '#0B0D0A',
+          subtle: '#181B17',
+          surface: '#1F231D',
+          border: 'rgba(255, 255, 255, 0.12)',
+        },
+        paper: {
+          DEFAULT: '#F7F6F2',
+          subtle: '#F0EEE6',
+          muted: '#E9E7E0',
+          border: 'rgba(17, 19, 16, 0.12)',
+        },
+        forest: {
+          DEFAULT: '#315C46',
+          dark: '#244534',
+          light: '#3E7358',
+          soft: 'rgba(49, 92, 70, 0.12)',
+        },
+        lime: {
+          DEFAULT: '#D5F36A',
+          hover: '#C8EA52',
+          dark: '#ADC93E',
+          soft: 'rgba(213, 243, 106, 0.15)',
+          contrast: '#111310',
+        },
+        stone: {
+          DEFAULT: '#E9E7E0',
+          muted: '#777970',
+          subtle: '#8C8E84',
+        },
         background: 'hsl(var(--background) / <alpha-value>)',
         foreground: 'hsl(var(--foreground) / <alpha-value>)',
         surface: 'hsl(var(--surface) / <alpha-value>)',
