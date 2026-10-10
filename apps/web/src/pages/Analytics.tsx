@@ -27,9 +27,14 @@ export function Analytics() {
   const items = useContentStore(s => s.items);
   const published = items.filter(i => i.status === 'published');
   const analytics = seedAnalytics();
-  const viewsData = seedViewsSeries();
-  const watchTimeData = seedWatchTimeSeries();
-  const subsData = seedSubscribersSeries();
+  const rawViewsData = seedViewsSeries();
+  const rawWatchTimeData = seedWatchTimeSeries();
+  const rawSubsData = seedSubscribersSeries();
+
+  const sliceCount = dateRange === '7d' ? 7 : dateRange === '30d' ? 14 : 30;
+  const viewsData = rawViewsData.slice(-sliceCount);
+  const watchTimeData = rawWatchTimeData.slice(-sliceCount);
+  const subsData = rawSubsData.slice(-sliceCount);
   const topics = seedTopics();
   const insights = seedInsights();
   const learned = seedLearnedPreferences();

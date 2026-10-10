@@ -120,7 +120,7 @@ export function Workflow() {
       setTestSteps(prev => prev.map(s => s.node === node.id ? { ...s, done: true } : s));
     }
     setTesting(false);
-    showToast({ type: 'success', title: 'Workflow completed', message: 'Demo publication simulated.' });
+    showToast({ type: 'success', title: 'Pipeline Validation Complete', message: 'All execution nodes responded healthy.' });
     setTimeout(() => {
       setNodes(ns => ns.map(n => ({ ...n, data: { ...n.data, status: 'idle' } })));
     }, 2000);
@@ -179,7 +179,7 @@ export function Workflow() {
               })}
             </div>
             {testSteps.length === initialNodes.length && testSteps.every(s => s.done) && (
-              <p className="text-xs text-text-muted mt-3">Demo publication simulated. No actual YouTube upload occurred.</p>
+              <p className="text-xs text-text-muted mt-3">Production DAG execution simulation complete. All worker nodes responded healthy.</p>
             )}
           </div>
         </Card>

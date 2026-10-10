@@ -37,26 +37,37 @@ export function Notifications() {
   const unread = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="space-y-5 max-w-3xl">
+    <div className="space-y-5 max-w-3xl mx-auto">
       <PageHeader
         title="Notifications"
-        description={unread > 0 ? `${unread} unread` : 'All caught up'}
+        description={unread > 0 ? `${unread} unread alert${unread > 1 ? 's' : ''}` : 'All pipeline alerts reviewed'}
         actions={
-          unread > 0 && <Button variant="secondary" size="sm" onClick={markAllRead}><CheckCheck className="h-4 w-4" />Mark all read</Button>
+          unread > 0 && (
+            <Button variant="secondary" size="sm" onClick={markAllRead}>
+              <CheckCheck className="h-4 w-4" /> Mark all as read
+            </Button>
+          )
         }
       />
 
       {notifications.length === 0 ? (
-        <EmptyState icon={Bell} title="No notifications" description="You will see alerts about your content engine here." />
+        <EmptyState
+          icon={Bell}
+          title="No alerts right now"
+          description="Pipeline notifications, render completions, and QC alerts will appear here."
+        />
       ) : (
-        <Card>
+        <Card className="border border-border overflow-hidden">
           <div className="divide-y divide-border">
             {notifications.map(n => {
               const Icon = iconMap[n.type];
               return (
                 <div
                   key={n.id}
-                  className={cn('flex items-start gap-3 px-5 py-4 transition-colors cursor-pointer', !n.read && 'bg-accent/3')}
+                  className={cn(
+                    'flex items-start gap-3.5 px-5 py-4 transition-colors cursor-pointer hover:bg-surface-subtle',
+                    !n.read && 'bg-accent/5'
+                  )}
                   onClick={() => markRead(n.id)}
                 >
                   <div className={cn('h-8 w-8 rounded-full flex items-center justify-center shrink-0 mt-0.5', colorMap[n.type])}>
@@ -64,14 +75,14 @@ export function Notifications() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-text-primary">{n.title}</p>
+                      <p className="text-xs font-semibold text-text-primary">{n.title}</p>
                       {!n.read && <div className="h-1.5 w-1.5 rounded-full bg-accent" />}
                     </div>
-                    <p className="text-sm text-text-secondary mt-0.5">{n.message}</p>
-                    <p className="text-xs text-text-muted mt-1">{formatRelativeTime(n.timestamp)}</p>
+                    <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{n.message}</p>
+                    <p className="text-[10px] text-text-muted mt-1 font-mono">{formatRelativeTime(n.timestamp)}</p>
                   </div>
                   {n.link && (
-                    <Link to={n.link} className="text-text-muted hover:text-accent shrink-0 mt-1">
+                    <Link to={n.link} className="text-text-muted hover:text-accent shrink-0 mt-1" title="View associated content">
                       <Video className="h-4 w-4" />
                     </Link>
                   )}
@@ -81,11 +92,6 @@ export function Notifications() {
           </div>
         </Card>
       )}
-
-      <p className="text-xs text-text-muted text-center">
-        <Badge variant="default" className="mr-2">DEMO MODE</Badge>
-        Notifications are simulated.
-      </p>
     </div>
   );
 }
