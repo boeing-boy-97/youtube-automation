@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Pause, ArrowRight, RotateCcw, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Play, Pause, ArrowRight, RotateCcw, Volume2, VolumeX, Sparkles, CheckCircle2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useMotionSafe, motionTokens, fadeInUpVariants } from '../../lib/motion';
 
 interface HeroSectionProps {
   onDemoClick: () => void;
@@ -52,6 +54,7 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
   const [currentTime, setCurrentTime] = useState(8);
   const [isMuted, setIsMuted] = useState(true);
   const totalDuration = 45;
+  const { shouldReduce } = useMotionSafe();
 
   const activeBeat =
     SAMPLE_BEATS.find((b) => currentTime >= b.startTime && currentTime < b.endTime) ||
@@ -82,17 +85,27 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
     <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 px-4 sm:px-6 lg:px-8 bg-canvas overflow-hidden">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Editorial Top Eyebrow */}
-        <div className="flex items-center gap-2 text-xs font-medium text-stone tracking-wide">
+        <motion.div
+          initial={shouldReduce ? { opacity: 1 } : { opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: motionTokens.duration.standard }}
+          className="flex items-center gap-2 text-xs font-medium text-stone tracking-wide"
+        >
           <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
           <span className="uppercase text-stone-muted font-mono tracking-wider">Independent Creative Technology</span>
           <span className="text-border">•</span>
           <span>ShortForge Studio 2026</span>
-        </div>
+        </motion.div>
 
         {/* Asymmetrical Editorial Composition */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
           {/* Left Column: Headline & Purpose */}
-          <div className="lg:col-span-7 space-y-6">
+          <motion.div
+            initial={shouldReduce ? { opacity: 1 } : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: motionTokens.duration.deliberate, ease: motionTokens.ease.editorial }}
+            className="lg:col-span-7 space-y-6"
+          >
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-ink tracking-tight leading-[1.08] text-balance">
               Turn the idea into <br />
               <span className="font-editorial italic font-normal text-vermilion">the finished video.</span>
@@ -129,10 +142,15 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
                 Authorized YouTube OAuth upload
               </span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Genuine 9:16 Portrait Media Showcase */}
-          <div className="lg:col-span-5 flex justify-center">
+          <motion.div
+            initial={shouldReduce ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: motionTokens.duration.spatial, ease: motionTokens.ease.editorial, delay: 0.1 }}
+            className="lg:col-span-5 flex justify-center"
+          >
             <div className="w-full max-w-sm bg-surface rounded-xl border border-border shadow-md p-4 space-y-4">
               {/* Studio Canvas Status Bar */}
               <div className="flex items-center justify-between text-xs text-stone border-b border-border pb-2.5">
@@ -248,7 +266,7 @@ export function HeroSection({ onDemoClick }: HeroSectionProps) {
                 Sample composition demonstrating synchronous subtitle alignment.
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Workflow Progression Strip */}

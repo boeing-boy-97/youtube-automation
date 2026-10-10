@@ -33,9 +33,10 @@ export function LandingNav({ onDemoClick }: LandingNavProps) {
 
   const navLinks = [
     { label: 'Workflow', href: '#workflow' },
+    { label: 'Ecosystem', href: '#integrations' },
     { label: 'Scripts', href: '#scripts' },
     { label: 'Studio', href: '#studio' },
-    { label: 'Output', href: '#output' },
+    { label: 'Outputs', href: '#output' },
     { label: 'Pricing', href: '#pricing' },
     { label: 'FAQ', href: '#faq' },
   ];

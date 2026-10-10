@@ -106,8 +106,10 @@ export function AppRouter() {
           <Route path="/content" element={<ContentLibrary />} />
           <Route path="/content/:id" element={<ContentDetails />} />
           <Route path="/create" element={<Create />} />
+          <Route path="/script-lab" element={<ScriptLab />} />
           <Route path="/script-lab/:id" element={<ScriptLab />} />
           <Route path="/script-lab/new" element={<ScriptLab />} />
+          <Route path="/studio" element={<VideoStudio />} />
           <Route path="/studio/:id" element={<VideoStudio />} />
           <Route path="/studio/new" element={<VideoStudio />} />
           <Route path="/queue" element={<Queue />} />

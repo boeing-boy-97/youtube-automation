@@ -7,17 +7,18 @@ import { seedContent, seedIdeas, seedNotifications, seedYouTubeChannel } from '.
 import { storageSet } from '../lib/utils';
 import { STORAGE_KEYS } from '../lib/constants';
 
-// Modular Art-Directed Landing Sections
+// Modular Art-Directed Landing Sections with Signature Reference Motion
 import { LandingNav } from '../components/landing/LandingNav';
 import { HeroSection } from '../components/landing/HeroSection';
 import { CreativeProblemSection } from '../components/landing/CreativeProblemSection';
 import { ProductProofSection } from '../components/landing/ProductProofSection';
+import { CurvedIntegrationSection } from '../components/landing/CurvedIntegrationSection';
 import { ScriptStoryWorkspaceSection } from '../components/landing/ScriptStoryWorkspaceSection';
 import { InteractiveShowcaseSection } from '../components/landing/InteractiveShowcaseSection';
 import { FeatureStorytellingSection } from '../components/landing/FeatureStorytellingSection';
 import { VideoStudioWorkspaceSection } from '../components/landing/VideoStudioWorkspaceSection';
 import { AutomationFlowSection } from '../components/landing/AutomationFlowSection';
-import { OutputGallerySection } from '../components/landing/OutputGallerySection';
+import { SpatialCarouselSection } from '../components/landing/SpatialCarouselSection';
 import { TrustSecuritySection } from '../components/landing/TrustSecuritySection';
 import { PricingSection } from '../components/landing/PricingSection';
 import { FAQSection } from '../components/landing/FAQSection';
@@ -65,37 +66,40 @@ export function Landing() {
       {/* 4. Connected 7-Stage Production Pipeline */}
       <ProductProofSection />
 
-      {/* 5. Screenplay & Story Architecture (Script Studio) */}
+      {/* 5. Pattern 1.1: Curved Integration Showcase */}
+      <CurvedIntegrationSection />
+
+      {/* 6. Screenplay & Story Architecture (Script Studio) */}
       <ScriptStoryWorkspaceSection />
 
-      {/* 6. Interactive Studio Engine Showcase */}
+      {/* 7. Interactive Studio Engine Showcase */}
       <InteractiveShowcaseSection />
 
-      {/* 7. Editorial Feature Storytelling */}
+      {/* 8. Editorial Feature Storytelling */}
       <FeatureStorytellingSection />
 
-      {/* 8. Studio Workspace Deep-Dive */}
+      {/* 9. Studio Workspace Deep-Dive */}
       <VideoStudioWorkspaceSection />
 
-      {/* 9. Automation Execution Graph & Governance */}
+      {/* 10. Automation Execution Graph & Governance */}
       <AutomationFlowSection />
 
-      {/* 10. Curated Output Gallery */}
-      <OutputGallerySection />
+      {/* 11. Pattern 1.2: Animated Central-Card Spatial Carousel */}
+      <SpatialCarouselSection />
 
-      {/* 11. Architectural Trust & Security Standards */}
+      {/* 12. Architectural Trust & Security Standards */}
       <TrustSecuritySection />
 
-      {/* 12. Transparent Pricing Plans */}
+      {/* 13. Transparent Pricing Plans */}
       <PricingSection />
 
-      {/* 13. Creator & Engineering FAQ */}
+      {/* 14. Creator & Engineering FAQ */}
       <FAQSection />
 
-      {/* 14. Final Conversion CTA */}
+      {/* 15. Final Conversion CTA */}
       <FinalCTASection onDemoClick={handleExploreDemo} />
 
-      {/* 15. Comprehensive Legal & Operational Footer */}
+      {/* 16. Pattern 1.3: Oversized Footer Wordmark */}
       <LandingFooter />
     </div>
   );
