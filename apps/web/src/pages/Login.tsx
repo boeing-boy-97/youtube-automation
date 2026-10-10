@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../lib/validators';
@@ -16,11 +16,15 @@ import { Input } from '../components/ui/Input';
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const login = useAuthStore((s) => s.login);
   const setOnboardingComplete = useWorkspaceStore((s) => s.setOnboardingComplete);
   const initContent = useContentStore((s) => s.init);
   const showToast = useUIStore((s) => s.showToast);
   const [loading, setLoading] = useState(false);
+
+  // Preserve intended destination after login
+  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/dashboard';
 
   const {
     register,
@@ -36,7 +40,7 @@ export function Login() {
     try {
       await login(data.email, data.password);
       showToast({ type: 'success', title: 'Welcome back' });
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     } catch {
       showToast({ type: 'error', title: 'Login failed', message: 'Please check your credentials' });
     } finally {
@@ -59,7 +63,7 @@ export function Login() {
         title: 'Studio Tour Activated',
         message: 'Welcome to your ShortForge Creative Studio.',
       });
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     } finally {
       setLoading(false);
     }

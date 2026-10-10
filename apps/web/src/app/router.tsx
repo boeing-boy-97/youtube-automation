@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useWorkspaceStore } from '../stores/workspaceStore';
 import { AppLayout } from '../components/shell/AppLayout';
@@ -35,7 +35,7 @@ function PageLoader() {
     <div className="flex items-center justify-center py-24">
       <div className="flex items-center gap-3 text-text-muted">
         <div className="h-5 w-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm">Loading...</span>
+        <span className="text-sm">Loading studio workspace...</span>
       </div>
     </div>
   );
@@ -44,9 +44,10 @@ function PageLoader() {
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated);
   const isLoading = useAuthStore(s => s.isLoading);
+  const location = useLocation();
 
   if (isLoading) return <PageLoader />;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />;
   return <>{children}</>;
 }
 
@@ -74,7 +75,7 @@ export function AppRouter() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        {/* Public */}
+        {/* Public Marketing & Authentication */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={
           <AuthenticatedRedirect>
@@ -87,7 +88,7 @@ export function AppRouter() {
           </AuthenticatedRedirect>
         } />
 
-        {/* Onboarding */}
+        {/* Guided Studio Onboarding */}
         <Route path="/onboarding" element={
           <OnboardingRoute>
             <Onboarding />
@@ -99,7 +100,7 @@ export function AppRouter() {
           </OnboardingRoute>
         } />
 
-        {/* App */}
+        {/* Authenticated Studio Workspace */}
         <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/ideas" element={<Ideas />} />
@@ -126,6 +127,7 @@ export function AppRouter() {
           <Route path="/help" element={<Help />} />
         </Route>
 
+        {/* 404 & Fallback */}
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>

@@ -149,9 +149,17 @@ export function Onboarding() {
 
   const handleConnectYouTube = async () => {
     setConnecting(true);
-    await connectYouTube();
-    setConnecting(false);
-    showToast({ type: 'success', title: 'YouTube connected', message: 'Demo account linked successfully' });
+    try {
+      await connectYouTube();
+    } catch (err: any) {
+      showToast({
+        type: 'warning',
+        title: 'OAuth Credentials Required',
+        message: err.message || 'Configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to link your YouTube channel.',
+      });
+    } finally {
+      setConnecting(false);
+    }
   };
 
   const playVoicePreview = () => {
@@ -267,14 +275,11 @@ export function Onboarding() {
                   <p className="text-sm text-text-muted mb-6">Connect your YouTube channel to start publishing</p>
                   <Button onClick={handleConnectYouTube} loading={connecting}>
                     <YoutubeIcon className="h-4 w-4" />
-                    {connecting ? 'Connecting...' : 'Connect YouTube'}
+                    {connecting ? 'Initiating OAuth...' : 'Connect YouTube Channel'}
                   </Button>
-                  {connecting && (
-                    <div className="mt-4 flex items-center justify-center gap-2 text-sm text-text-muted">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Simulating OAuth connection...
-                    </div>
-                  )}
+                  <p className="text-xs text-text-muted mt-4">
+                    Optional during onboarding. You can connect your channel at any time in the YouTube portal.
+                  </p>
                 </div>
               ) : youtubeChannel.connectionStatus === 'connected' ? (
                 <div className="flex items-center gap-4">
@@ -290,7 +295,7 @@ export function Onboarding() {
               ) : null}
             </Card>
 
-            <p className="text-xs text-text-muted mt-4 text-center">Demo mode: This simulates a YouTube connection.</p>
+            <p className="text-xs text-text-muted mt-4 text-center">Direct Google OAuth 2.0 authorization with encrypted token storage.</p>
           </div>
         );
 
@@ -756,7 +761,7 @@ export function Onboarding() {
                 {currentStep > 0 && <ArrowLeft className="h-4 w-4" />}
                 {currentStep === 0 ? 'Cancel' : 'Back'}
               </Button>
-              <Button onClick={next} disabled={ONBOARDING_STEPS[currentStep].key === 'channel' && !youtubeChannel}>
+              <Button onClick={next} >
                 Continue
                 <ArrowRight className="h-4 w-4" />
               </Button>

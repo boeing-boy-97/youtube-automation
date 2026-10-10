@@ -33,12 +33,24 @@ import {
 export function ContentDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const initialized = useContentStore((s) => s.initialized);
   const content = useContentStore((s) => s.items.find((i) => i.id === id));
   const duplicateContent = useContentStore((s) => s.duplicateContent);
   const updateContent = useContentStore((s) => s.updateContent);
   const showToast = useUIStore((s) => s.showToast);
   const [publishing, setPublishing] = useState(false);
   const [publishProgress, setPublishProgress] = useState(0);
+
+  if (!initialized) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <div className="flex items-center gap-3 text-stone">
+          <Loader2 className="h-5 w-5 text-coral animate-spin" />
+          <span className="text-sm font-medium">Loading production deliverable...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (!content) return <NotFound />;
 
