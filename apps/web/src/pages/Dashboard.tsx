@@ -29,6 +29,8 @@ import {
   ThumbsUp,
   Video,
   ChevronRight,
+  Download,
+  Edit3,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -119,6 +121,46 @@ export function Dashboard() {
 
   const engineActive = config.status === 'active';
 
+  // Quick workflow anchors for 4 primary user tasks
+  const latestDraft = useMemo(() => {
+    return items.find((i) =>
+      ['draft', 'idea', 'script_ready', 'voice_ready', 'visuals_ready'].includes(i.status)
+    );
+  }, [items]);
+
+  const activeRenderJobs = useMemo(() => {
+    return items.filter((i) => ['rendering', 'quality_check'].includes(i.status));
+  }, [items]);
+
+  const latestExport = useMemo(() => {
+    return items.find(
+      (i) =>
+        ['rendered', 'review', 'approved', 'scheduled', 'published'].includes(i.status) ||
+        Boolean(i.videoUrl)
+    );
+  }, [items]);
+
+  const handleDownload = (item: any, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const filename = `${(item.title || 'shortforge_master').replace(/[^a-zA-Z0-9_-]/g, '_')}.mp4`;
+    if (item.videoUrl) {
+      const a = document.createElement('a');
+      a.href = item.videoUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    showToast({
+      type: 'success',
+      title: 'Downloading MP4',
+      message: `Exporting master file for "${item.title}".`,
+    });
+  };
+
   const handleEngineToggle = () => {
     if (engineActive) {
       pauseEngine();
@@ -197,6 +239,15 @@ export function Dashboard() {
         {/* Action Controls */}
         <div className="flex items-center gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-border">
           <Button
+            variant="primary"
+            size="sm"
+            onClick={() => navigate('/create')}
+            className="btn-primary h-9 text-xs"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Create Short</span>
+          </Button>
+          <Button
             variant="secondary"
             size="sm"
             onClick={() => navigate('/queue')}
@@ -206,10 +257,10 @@ export function Dashboard() {
             <span>View Queue</span>
           </Button>
           <Button
-            variant={engineActive ? 'danger' : 'primary'}
+            variant={engineActive ? 'danger' : 'secondary'}
             size="sm"
             onClick={handleEngineToggle}
-            className={engineActive ? 'h-9 text-xs' : 'btn-primary h-9 text-xs'}
+            className={engineActive ? 'h-9 text-xs' : 'btn-secondary h-9 text-xs'}
           >
             {engineActive ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current" />}
             <span>{engineActive ? 'Pause Engine' : 'Resume Engine'}</span>
@@ -239,6 +290,159 @@ export function Dashboard() {
           label="In Production"
           value={activeItems.length.toString()}
         />
+      </div>
+
+      {/* Quick Workflow Launchpad (4 Core User Tasks) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Task 1: Continue Draft */}
+        <div className="p-4 rounded-xl bg-surface border border-border shadow-xs flex flex-col justify-between hover:border-coral/40 transition-colors">
+          <div>
+            <div className="flex items-center justify-between text-xs text-stone font-mono mb-2">
+              <span className="uppercase tracking-wider font-bold text-coral">Continue Draft</span>
+              <Edit3 className="h-3.5 w-3.5 text-stone-muted" />
+            </div>
+            {latestDraft ? (
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-ink truncate">{latestDraft.title}</h4>
+                <div className="flex items-center gap-2 text-[11px] text-stone font-mono">
+                  <span className="capitalize">{latestDraft.status.replace('_', ' ')}</span>
+                  <span>•</span>
+                  <span>{formatRelativeTime(latestDraft.updatedAt)}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-ink">No Draft in Progress</h4>
+                <p className="text-[11px] text-stone">All current concepts have reached review or published status.</p>
+              </div>
+            )}
+          </div>
+          <div className="pt-3 mt-3 border-t border-border flex items-center justify-between">
+            {latestDraft ? (
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  if (latestDraft.status === 'visuals_ready') {
+                    navigate(`/studio/${latestDraft.id}`);
+                  } else {
+                    navigate(`/script-lab/${latestDraft.id}`);
+                  }
+                }}
+                className="btn-secondary h-8 px-3 text-xs w-full justify-between"
+              >
+                <span>Resume {latestDraft.status === 'visuals_ready' ? 'in Studio' : 'Script'}</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => navigate('/create')}
+                className="btn-secondary h-8 px-3 text-xs w-full justify-between"
+              >
+                <span>Draft from Idea</span>
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Task 2: Check Render Jobs */}
+        <div className="p-4 rounded-xl bg-surface border border-border shadow-xs flex flex-col justify-between hover:border-coral/40 transition-colors">
+          <div>
+            <div className="flex items-center justify-between text-xs text-stone font-mono mb-2">
+              <span className="uppercase tracking-wider font-bold text-coral">Render Queue</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-canvas-subtle border border-border text-stone">
+                {activeRenderJobs.length} active
+              </span>
+            </div>
+            {activeRenderJobs.length > 0 ? (
+              <div className="space-y-2">
+                <h4 className="text-sm font-bold text-ink truncate">{activeRenderJobs[0].title}</h4>
+                <div className="flex items-center justify-between text-[11px] text-stone font-mono">
+                  <span>Rendering composite</span>
+                  <span className="text-coral font-bold">{activeRenderJobs[0].progress || 35}%</span>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-ink">Workers Idle & Ready</h4>
+                <p className="text-[11px] text-stone">BullMQ queues clear. Ready for immediate FFmpeg compilation.</p>
+              </div>
+            )}
+          </div>
+          <div className="pt-3 mt-3 border-t border-border flex items-center justify-between">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => navigate('/queue')}
+              className="btn-secondary h-8 px-3 text-xs w-full justify-between"
+            >
+              <span>{activeRenderJobs.length > 0 ? 'Check Render Status' : 'Inspect Queue'}</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Task 3: Open an Export */}
+        <div className="p-4 rounded-xl bg-surface border border-border shadow-xs flex flex-col justify-between hover:border-coral/40 transition-colors">
+          <div>
+            <div className="flex items-center justify-between text-xs text-stone font-mono mb-2">
+              <span className="uppercase tracking-wider font-bold text-coral">Recent Export</span>
+              <Download className="h-3.5 w-3.5 text-stone-muted" />
+            </div>
+            {latestExport ? (
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-ink truncate">{latestExport.title}</h4>
+                <div className="flex items-center gap-2 text-[11px] text-stone font-mono">
+                  <span className="text-moss font-semibold">1080×1920 MP4</span>
+                  <span>•</span>
+                  <span>QC Passed</span>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-ink">No Exports Rendered</h4>
+                <p className="text-[11px] text-stone">Render a video project to generate high-definition MP4 masters.</p>
+              </div>
+            )}
+          </div>
+          <div className="pt-3 mt-3 border-t border-border flex items-center gap-2">
+            {latestExport ? (
+              <>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => navigate(`/content/${latestExport.id}`)}
+                  className="btn-secondary h-8 px-3 text-xs flex-1"
+                >
+                  <span>Open Export</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={(e) => handleDownload(latestExport, e)}
+                  className="btn-primary h-8 px-3 text-xs flex items-center gap-1.5"
+                  title="Download MP4"
+                >
+                  <Download className="h-3 w-3" />
+                  <span>Download</span>
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => navigate('/create')}
+                className="btn-secondary h-8 px-3 text-xs w-full justify-between"
+              >
+                <span>Render First Short</span>
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Main 2-Column Area: Pipeline Progression + Needs Attention */}

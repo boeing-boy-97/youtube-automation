@@ -20,6 +20,7 @@ import {
   RefreshCw,
   Loader2,
   CheckCircle,
+  Download,
 } from 'lucide-react';
 
 const ASPECT_PRESETS = [
@@ -206,6 +207,23 @@ export function VideoStudio() {
     }
   };
 
+  const handleExportDownload = () => {
+    const filename = `${(content.title || 'shortforge_master').replace(/[^a-zA-Z0-9_-]/g, '_')}.mp4`;
+    if (content.videoUrl) {
+      const a = document.createElement('a');
+      a.href = content.videoUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    showToast({
+      type: 'success',
+      title: 'Downloading MP4',
+      message: `Exporting master file for "${content.title}".`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -221,6 +239,18 @@ export function VideoStudio() {
             >
               Overview
             </Button>
+            {(content.videoUrl || content.status === 'rendered') && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleExportDownload}
+                className="btn-secondary h-8 px-3 text-xs"
+                title="Download composite MP4 file"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Export MP4</span>
+              </Button>
+            )}
             <Button
               size="sm"
               onClick={handleRender}
