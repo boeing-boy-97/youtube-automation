@@ -10,17 +10,36 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   inputSize?: 'sm' | 'md' | 'lg';
 }
 
-const sizeMap = { sm: 'h-9 px-3 text-sm rounded-md', md: 'h-10 px-3.5 rounded-lg', lg: 'h-11 px-4 rounded-lg' };
+const sizeMap = {
+  sm: 'h-8 px-2.5 text-xs rounded-md',
+  md: 'h-9 px-3 text-xs rounded-md',
+  lg: 'h-10 px-3.5 text-sm rounded-md',
+};
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, hint, error, leftIcon, rightIcon, inputSize = 'md', id, ...props }, ref) => {
+  (
+    { className, label, hint, error, leftIcon, rightIcon, inputSize = 'md', id, ...props },
+    ref
+  ) => {
     const inputId = id || props.name;
-    const base = 'w-full bg-surface text-[14px] text-text-primary placeholder:text-text-muted/70 border transition-[border-color,box-shadow] duration-150 focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 disabled:bg-surface-subtle disabled:text-text-muted';
+    const base =
+      'w-full bg-surface text-ink placeholder:text-stone-muted border transition-all duration-150 focus:outline-none focus:border-vermilion focus:ring-1 focus:ring-vermilion/20 disabled:bg-canvas-subtle disabled:text-stone-muted';
     return (
       <div className={className}>
-        {label && <label htmlFor={inputId} className="block text-[12px] font-medium text-text-secondary mb-1.5 tracking-wide">{label}</label>}
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="block text-xs font-medium text-stone mb-1.5"
+          >
+            {label}
+          </label>
+        )}
         <div className="relative">
-          {leftIcon && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">{leftIcon}</span>}
+          {leftIcon && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-muted pointer-events-none">
+              {leftIcon}
+            </span>
+          )}
           <input
             ref={ref}
             id={inputId}
@@ -29,13 +48,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               sizeMap[inputSize],
               leftIcon && 'pl-9',
               rightIcon && 'pr-9',
-              error ? 'border-danger focus:border-danger focus:ring-danger/10' : 'border-border'
+              error ? 'border-danger focus:border-danger focus:ring-danger/20' : 'border-border'
             )}
             {...props}
           />
-          {rightIcon && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted">{rightIcon}</span>}
+          {rightIcon && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-muted">
+              {rightIcon}
+            </span>
+          )}
         </div>
-        {error ? <p className="mt-1.5 text-xs text-danger">{error}</p> : hint ? <p className="mt-1.5 text-xs text-text-muted">{hint}</p> : null}
+        {error ? (
+          <p className="mt-1 text-[11px] text-danger">{error}</p>
+        ) : hint ? (
+          <p className="mt-1 text-[11px] text-stone-muted">{hint}</p>
+        ) : null}
       </div>
     );
   }

@@ -15,23 +15,27 @@ export function MetricCard({ label, value, icon: Icon, trend, sparkline, classNa
   const positive = trend !== undefined && trend > 0;
   const negative = trend !== undefined && trend < 0;
   return (
-    <div className={cn('card p-4', className)}>
-      <div className="flex items-start justify-between mb-3">
+    <div className={cn('studio-card p-4 space-y-2', className)}>
+      <div className="flex items-start justify-between">
         {Icon ? (
-          <div className="h-8 w-8 rounded-lg bg-surface-subtle flex items-center justify-center">
-            <Icon className="h-4 w-4 text-text-muted" />
+          <div className="h-8 w-8 rounded-md bg-canvas-subtle border border-border flex items-center justify-center">
+            <Icon className="h-4 w-4 text-stone" />
           </div>
-        ) : <div />}
+        ) : (
+          <div />
+        )}
         {sparkline && <Sparkline data={sparkline} width={72} height={24} />}
       </div>
-      <div className="kpi-value">{value}</div>
-      <div className="flex items-center gap-2 mt-1.5">
-        <span className="text-[12px] text-text-secondary">{label}</span>
+      <div className="text-xl font-bold tracking-tight text-ink">{value}</div>
+      <div className="flex items-center justify-between text-xs text-stone pt-0.5">
+        <span className="truncate">{label}</span>
         {trend !== undefined && trend !== 0 && (
-          <span className={cn(
-            'text-[11px] font-medium tabular-nums',
-            positive ? 'text-success' : negative ? 'text-danger' : 'text-text-muted'
-          )}>
+          <span
+            className={cn(
+              'font-mono text-[11px] font-semibold tabular-nums',
+              positive ? 'text-moss' : negative ? 'text-danger' : 'text-stone-muted'
+            )}
+          >
             {positive ? '+' : ''}{trend}%
           </span>
         )}
