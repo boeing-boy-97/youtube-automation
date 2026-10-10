@@ -146,7 +146,7 @@ export function Dashboard() {
             className={cn(
               'h-10 w-10 rounded-lg flex items-center justify-center shrink-0 border',
               healthStatus === 'healthy'
-                ? 'bg-vermilion-soft border-vermilion/30 text-vermilion'
+                ? 'bg-coral-soft border-coral/30 text-coral'
                 : healthStatus === 'degraded'
                 ? 'bg-amber-500/10 border-amber-500/30 text-amber-600'
                 : 'bg-danger/10 border-danger/30 text-danger'
@@ -156,10 +156,10 @@ export function Dashboard() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-vermilion uppercase tracking-wide">
+              <span className="text-xs font-mono font-bold text-coral uppercase tracking-wide">
                 STUDIO PRODUCTION ENGINE
               </span>
-              <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+              <span className="h-1.5 w-1.5 rounded-full bg-coral" />
               <span className="text-xs text-stone font-mono capitalize">{healthStatus}</span>
             </div>
             <h2 className="text-base sm:text-lg font-bold text-ink mt-0.5">
@@ -280,9 +280,9 @@ export function Dashboard() {
                   className={cn(
                     'flex flex-col items-center gap-1.5 p-2 rounded-lg border transition-all text-center',
                     isFiltered
-                      ? 'bg-vermilion-soft border-vermilion'
+                      ? 'bg-coral-soft border-coral'
                       : isActive
-                      ? 'bg-canvas-subtle border-border hover:border-vermilion/50'
+                      ? 'bg-canvas-subtle border-border hover:border-coral/50'
                       : 'bg-surface border-border opacity-70 hover:opacity-100'
                   )}
                 >
@@ -290,9 +290,9 @@ export function Dashboard() {
                     className={cn(
                       'h-7 w-7 rounded-md flex items-center justify-center font-mono text-xs font-bold transition-colors',
                       isPublished
-                        ? 'bg-vermilion text-white'
+                        ? 'bg-coral text-white'
                         : isActive
-                        ? 'bg-vermilion-soft text-vermilion border border-vermilion/30'
+                        ? 'bg-coral-soft text-coral border border-coral/30'
                         : 'bg-surface border border-border text-stone-muted'
                     )}
                   >
@@ -321,7 +321,7 @@ export function Dashboard() {
                 className="flex items-center justify-between p-3 rounded-md bg-canvas-subtle hover:bg-surface border border-border transition-all"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-8 w-8 rounded-md bg-surface border border-border flex items-center justify-center text-vermilion shrink-0">
+                  <div className="h-8 w-8 rounded-md bg-surface border border-border flex items-center justify-center text-coral shrink-0">
                     <Video className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
@@ -363,7 +363,7 @@ export function Dashboard() {
           <div className="flex items-center justify-between border-b border-border pb-3">
             <h3 className="text-sm font-bold text-ink">Action Checkpoint</h3>
             {needsReview.length + failedItems.length > 0 && (
-              <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-vermilion-soft text-vermilion">
+              <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-coral-soft text-coral">
                 {needsReview.length + failedItems.length} pending
               </span>
             )}
@@ -371,7 +371,7 @@ export function Dashboard() {
 
           {needsReview.length === 0 && failedItems.length === 0 && (
             <div className="py-8 text-center space-y-2">
-              <div className="h-9 w-9 rounded-full bg-vermilion-soft text-vermilion mx-auto flex items-center justify-center">
+              <div className="h-9 w-9 rounded-full bg-coral-soft text-coral mx-auto flex items-center justify-center">
                 <CheckCircle2 className="h-4 w-4" />
               </div>
               <p className="text-xs font-semibold text-ink">No Blocking Items</p>
@@ -403,7 +403,7 @@ export function Dashboard() {
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-ink truncate">{item.title}</span>
-                <span className="text-[10px] font-mono text-vermilion font-bold">Review</span>
+                <span className="text-[10px] font-mono text-coral font-bold">Review</span>
               </div>
               <p className="text-[11px] text-stone leading-tight">
                 Draft rendered. Awaiting creator publication approval.

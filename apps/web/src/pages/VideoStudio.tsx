@@ -241,7 +241,7 @@ export function VideoStudio() {
           <div className="p-4 rounded-xl bg-surface border border-border shadow-xs space-y-3">
             <div className="flex items-center justify-between border-b border-border pb-2.5">
               <span className="text-xs font-bold text-ink uppercase tracking-wide">Scene Beats</span>
-              <span className="text-[10px] font-mono text-vermilion font-bold">
+              <span className="text-[10px] font-mono text-coral font-bold">
                 {scenes.length} Scenes
               </span>
             </div>
@@ -263,7 +263,7 @@ export function VideoStudio() {
                     className={cn(
                       'p-3 rounded-lg border text-left cursor-pointer transition-all space-y-1.5',
                       isPlayingScene
-                        ? 'bg-vermilion-soft border-vermilion shadow-xs'
+                        ? 'bg-coral-soft border-coral shadow-xs'
                         : isSelected
                         ? 'bg-canvas-subtle border-border-strong'
                         : 'bg-surface border-border hover:border-border-strong'
@@ -317,12 +317,12 @@ export function VideoStudio() {
                 <span className="bg-black/50 px-2 py-0.5 rounded">
                   Scene 0{activeSceneIndex + 1}/{scenes.length}
                 </span>
-                <span className="bg-black/50 px-2 py-0.5 rounded text-vermilion">1080×1920</span>
+                <span className="bg-black/50 px-2 py-0.5 rounded text-coral">1080×1920</span>
               </div>
 
               {/* Center Stage Animation */}
               <div className="text-center px-4 my-auto space-y-2">
-                <div className="h-10 w-10 rounded-full bg-vermilion/80 flex items-center justify-center mx-auto text-white shadow">
+                <div className="h-10 w-10 rounded-full bg-coral/80 flex items-center justify-center mx-auto text-white shadow">
                   <Sparkles className="h-4 w-4" />
                 </div>
                 <h3 className="text-sm font-bold text-white leading-snug drop-shadow">
@@ -348,7 +348,7 @@ export function VideoStudio() {
                       'inline-block text-white font-bold tracking-tight text-xs sm:text-sm',
                       captionStyle === 'Bold Sans' && 'uppercase text-white',
                       captionStyle === 'Minimal Editorial' && 'italic font-editorial text-marigold',
-                      captionStyle === 'Kinetic Accent' && 'text-vermilion underline',
+                      captionStyle === 'Kinetic Accent' && 'text-coral underline',
                       captionStyle === 'Clean Box' && 'text-white'
                     )}
                   >
@@ -377,7 +377,7 @@ export function VideoStudio() {
                 <button
                   type="button"
                   onClick={() => setPlaying(!playing)}
-                  className="h-8 w-8 rounded-md bg-vermilion text-white flex items-center justify-center hover:bg-vermilion-hover transition-colors"
+                  className="h-8 w-8 rounded-md bg-coral text-white flex items-center justify-center hover:bg-coral-hover transition-colors"
                   title={playing ? 'Pause' : 'Play'}
                 >
                   {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current ml-0.5" />}
@@ -398,7 +398,7 @@ export function VideoStudio() {
                   step={0.5}
                   value={currentTime}
                   onChange={(e) => setCurrentTime(Number(e.target.value))}
-                  className="flex-1 accent-vermilion h-1.5 bg-canvas-muted rounded cursor-pointer"
+                  className="flex-1 accent-coral h-1.5 bg-canvas-muted rounded cursor-pointer"
                 />
 
                 <span className="font-mono text-xs text-ink tabular-nums">
@@ -428,7 +428,7 @@ export function VideoStudio() {
                     className={cn(
                       'w-full text-left p-2 rounded-md text-xs font-medium transition-all border',
                       captionStyle === style
-                        ? 'bg-vermilion-soft border-vermilion text-vermilion font-semibold'
+                        ? 'bg-coral-soft border-coral text-coral font-semibold'
                         : 'bg-canvas-subtle border-border text-stone hover:text-ink'
                     )}
                   >
@@ -450,7 +450,7 @@ export function VideoStudio() {
                     className={cn(
                       'p-1.5 rounded text-center text-xs font-mono capitalize transition-all border',
                       captionPosition === pos
-                        ? 'bg-surface border-vermilion text-vermilion font-semibold'
+                        ? 'bg-surface border-coral text-coral font-semibold'
                         : 'bg-canvas-subtle border-border text-stone'
                     )}
                   >
@@ -472,7 +472,7 @@ export function VideoStudio() {
                 max={100}
                 value={volume}
                 onChange={(e) => setVolume(Number(e.target.value))}
-                className="w-full accent-vermilion"
+                className="w-full accent-coral"
               />
             </div>
           </div>

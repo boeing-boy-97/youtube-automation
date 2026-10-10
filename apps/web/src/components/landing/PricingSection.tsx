@@ -66,12 +66,12 @@ export function PricingSection() {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="max-w-2xl mx-auto text-center space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             Transparent Pricing
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             Predictable plans. <br />
-            <span className="font-editorial italic font-normal text-vermilion">Zero hidden fees.</span>
+            <span className="font-editorial italic font-normal text-coral">Zero hidden fees.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             Start free on our community tier. Upgrade when your channel is ready for high-frequency daily production.
@@ -98,7 +98,7 @@ export function PricingSection() {
               )}
             >
               <span>Annual Billing</span>
-              <span className="px-1.5 py-0.5 rounded bg-vermilion-soft text-vermilion text-[10px] font-mono font-bold">
+              <span className="px-1.5 py-0.5 rounded bg-coral-soft text-coral text-[10px] font-mono font-bold">
                 Save 20%
               </span>
             </button>
@@ -116,12 +116,12 @@ export function PricingSection() {
                 className={cn(
                   'rounded-xl border p-6 flex flex-col justify-between transition-all relative',
                   plan.popular
-                    ? 'bg-surface border-vermilion shadow-md ring-1 ring-vermilion/20'
+                    ? 'bg-surface border-coral shadow-md ring-1 ring-coral/20'
                     : 'bg-surface border-border shadow-xs'
                 )}
               >
                 {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-vermilion text-white text-[10px] font-mono font-bold tracking-wide shadow-xs">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-coral text-white text-[10px] font-mono font-bold tracking-wide shadow-xs">
                     {plan.badge}
                   </div>
                 )}
@@ -148,7 +148,7 @@ export function PricingSection() {
                     <ul className="space-y-2 text-xs text-stone">
                       {plan.features.map((feat, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-vermilion shrink-0 mt-0.5" />
+                          <Check className="h-4 w-4 text-coral shrink-0 mt-0.5" />
                           <span>{feat}</span>
                         </li>
                       ))}

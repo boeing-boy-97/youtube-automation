@@ -23,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const inputId = id || props.name;
     const base =
-      'w-full bg-surface text-ink placeholder:text-stone-muted border transition-all duration-150 focus:outline-none focus:border-vermilion focus:ring-1 focus:ring-vermilion/20 disabled:bg-canvas-subtle disabled:text-stone-muted';
+      'w-full bg-surface text-ink placeholder:text-stone-muted border transition-all duration-150 focus:outline-none focus:border-coral focus:ring-1 focus:ring-coral/20 disabled:bg-canvas-subtle disabled:text-stone-muted';
     return (
       <div className={className}>
         {label && (

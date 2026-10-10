@@ -118,7 +118,7 @@ export function ContentLibrary() {
             placeholder="Search by title or topic..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-3 rounded-md border border-border bg-surface text-xs placeholder:text-stone-muted focus:border-vermilion focus:outline-none"
+            className="w-full h-9 pl-9 pr-3 rounded-md border border-border bg-surface text-xs placeholder:text-stone-muted focus:border-coral focus:outline-none"
           />
         </div>
 
@@ -126,7 +126,7 @@ export function ContentLibrary() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            className="h-9 px-3 text-xs rounded-md border border-border bg-surface text-ink focus:outline-none focus:border-vermilion"
+            className="h-9 px-3 text-xs rounded-md border border-border bg-surface text-ink focus:outline-none focus:border-coral"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -184,7 +184,7 @@ export function ContentLibrary() {
               className={cn(
                 'px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-all border',
                 filter === f.key
-                  ? 'bg-surface border-vermilion text-vermilion font-semibold shadow-xs'
+                  ? 'bg-surface border-coral text-coral font-semibold shadow-xs'
                   : 'bg-canvas-subtle border-border text-stone hover:text-ink'
               )}
             >
@@ -201,8 +201,8 @@ export function ContentLibrary() {
 
       {/* Bulk actions */}
       {selected.size > 0 && (
-        <div className="bg-canvas-subtle border border-vermilion/30 rounded-lg px-4 py-2 flex items-center gap-3 text-xs">
-          <CheckCircle className="h-4 w-4 text-vermilion" />
+        <div className="bg-canvas-subtle border border-coral/30 rounded-lg px-4 py-2 flex items-center gap-3 text-xs">
+          <CheckCircle className="h-4 w-4 text-coral" />
           <span className="font-semibold text-ink">{selected.size} items selected</span>
           <Button
             variant="ghost"
@@ -241,7 +241,7 @@ export function ContentLibrary() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="group bg-surface rounded-lg border border-border overflow-hidden hover:border-vermilion/50 transition-all shadow-xs flex flex-col justify-between"
+              className="group bg-surface rounded-lg border border-border overflow-hidden hover:border-coral/50 transition-all shadow-xs flex flex-col justify-between"
             >
               <Link to={`/content/${item.id}`} className="block">
                 {/* 9:16 Vertical Thumbnail Card */}
@@ -257,7 +257,7 @@ export function ContentLibrary() {
                       className={cn(
                         'h-5 w-5 rounded border transition-all flex items-center justify-center',
                         selected.has(item.id)
-                          ? 'bg-vermilion border-vermilion text-white'
+                          ? 'bg-coral border-coral text-white'
                           : 'border-white/40 bg-black/30'
                       )}
                     >
@@ -266,7 +266,7 @@ export function ContentLibrary() {
                   </div>
 
                   <div className="my-auto text-center">
-                    <div className="h-10 w-10 rounded-full bg-vermilion/80 flex items-center justify-center mx-auto opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all">
+                    <div className="h-10 w-10 rounded-full bg-coral/80 flex items-center justify-center mx-auto opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all">
                       <Play className="h-4 w-4 fill-current ml-0.5" />
                     </div>
                   </div>
@@ -292,7 +292,7 @@ export function ContentLibrary() {
                   </h4>
                   <div className="flex items-center justify-between text-[10px] text-stone-muted pt-1 border-t border-border font-mono">
                     <span>{formatRelativeTime(item.createdAt)}</span>
-                    <span className="text-vermilion font-medium group-hover:underline">Studio &rarr;</span>
+                    <span className="text-coral font-medium group-hover:underline">Studio &rarr;</span>
                   </div>
                 </div>
               </Link>

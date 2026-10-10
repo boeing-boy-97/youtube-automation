@@ -54,11 +54,11 @@ export function LandingNav({ onDemoClick }: LandingNavProps) {
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="h-7 w-7 rounded-md bg-ink flex items-center justify-center text-canvas shadow-xs font-mono font-bold text-xs group-hover:bg-vermilion transition-colors">
+            <div className="h-7 w-7 rounded-md bg-ink flex items-center justify-center text-canvas shadow-xs font-mono font-bold text-xs group-hover:bg-coral transition-colors">
               SF
             </div>
             <span className="font-bold text-ink text-base tracking-tight">ShortForge</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-vermilion ml-0.5" />
+            <span className="h-1.5 w-1.5 rounded-full bg-coral ml-0.5" />
           </Link>
 
           {/* Desktop Nav Links */}
@@ -91,7 +91,7 @@ export function LandingNav({ onDemoClick }: LandingNavProps) {
                   onClick={onDemoClick}
                   className="btn-secondary h-9 px-3.5 text-xs"
                 >
-                  <Play className="h-3 w-3 fill-current text-vermilion" />
+                  <Play className="h-3 w-3 fill-current text-coral" />
                   <span>Studio Tour</span>
                 </button>
                 <Link to="/signup" className="btn-primary h-9 px-4 text-xs">
@@ -144,7 +144,7 @@ export function LandingNav({ onDemoClick }: LandingNavProps) {
                   }}
                   className="btn-secondary w-full justify-center"
                 >
-                  <Play className="h-3.5 w-3.5 text-vermilion fill-current" />
+                  <Play className="h-3.5 w-3.5 text-coral fill-current" />
                   <span>Explore Studio Tour</span>
                 </button>
                 <Link

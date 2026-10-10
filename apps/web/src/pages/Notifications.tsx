@@ -73,7 +73,7 @@ export function Notifications() {
                 onClick={() => markRead(n.id)}
                 className={cn(
                   'p-4 flex items-start gap-4 transition-colors cursor-pointer',
-                  !n.read ? 'bg-vermilion-soft/20 hover:bg-vermilion-soft/30' : 'hover:bg-canvas-subtle/50'
+                  !n.read ? 'bg-coral-soft/20 hover:bg-coral-soft/30' : 'hover:bg-canvas-subtle/50'
                 )}
               >
                 <div
@@ -95,7 +95,7 @@ export function Notifications() {
                   <p className="text-xs text-stone leading-relaxed">{n.message}</p>
                 </div>
 
-                {!n.read && <span className="h-2 w-2 rounded-full bg-vermilion shrink-0 mt-2" />}
+                {!n.read && <span className="h-2 w-2 rounded-full bg-coral shrink-0 mt-2" />}
               </div>
             );
           })}

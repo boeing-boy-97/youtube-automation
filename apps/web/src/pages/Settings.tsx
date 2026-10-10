@@ -278,7 +278,7 @@ export function Settings() {
               className={cn(
                 'w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors text-left',
                 activeSection === s.key
-                  ? 'bg-vermilion-soft text-vermilion font-semibold'
+                  ? 'bg-coral-soft text-coral font-semibold'
                   : 'text-stone hover:bg-canvas-subtle hover:text-ink'
               )}
             >

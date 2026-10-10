@@ -244,18 +244,18 @@ export function ContentDetails() {
             <div className="w-full max-w-xs aspect-[9/16] bg-ink rounded-lg relative overflow-hidden flex flex-col justify-between p-4 text-white shadow-md">
               <div className="flex items-center justify-between text-[11px] font-mono text-white/70">
                 <span className="bg-black/50 px-2 py-0.5 rounded">9:16 Preview</span>
-                <span className="text-vermilion">1080×1920</span>
+                <span className="text-coral">1080×1920</span>
               </div>
 
               <div className="my-auto text-center space-y-2">
                 {content.status === 'rendering' ? (
                   <div className="space-y-2">
-                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-vermilion" />
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-coral" />
                     <p className="text-xs font-mono text-white/80">Rendering {content.progress}%</p>
                   </div>
                 ) : content.videoUrl || content.status === 'published' ? (
                   <div className="space-y-2">
-                    <div className="h-12 w-12 rounded-full bg-vermilion text-white flex items-center justify-center mx-auto shadow">
+                    <div className="h-12 w-12 rounded-full bg-coral text-white flex items-center justify-center mx-auto shadow">
                       <Play className="h-5 w-5 fill-current ml-0.5" />
                     </div>
                     <span className="text-xs text-white/80 font-mono block">Video Master Ready</span>
@@ -311,7 +311,7 @@ export function ContentDetails() {
               </div>
               <div className="flex justify-between text-stone">
                 <span>Aspect Ratio:</span>
-                <span className="text-vermilion font-semibold">9:16 Vertical</span>
+                <span className="text-coral font-semibold">9:16 Vertical</span>
               </div>
               {content.scheduledAt && (
                 <div className="flex justify-between text-stone">

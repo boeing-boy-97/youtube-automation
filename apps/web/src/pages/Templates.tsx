@@ -51,14 +51,14 @@ export function Templates() {
         {templates.map((t) => (
           <div
             key={t.id}
-            className="p-5 rounded-xl bg-surface border border-border shadow-xs hover:border-vermilion/50 transition-all flex flex-col justify-between space-y-4"
+            className="p-5 rounded-xl bg-surface border border-border shadow-xs hover:border-coral/50 transition-all flex flex-col justify-between space-y-4"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs">
                 <span className="px-2 py-0.5 rounded bg-canvas-subtle border border-border text-[10px] font-mono text-stone">
                   {t.category}
                 </span>
-                <span className="font-mono text-xs text-vermilion font-bold">{t.duration}s</span>
+                <span className="font-mono text-xs text-coral font-bold">{t.duration}s</span>
               </div>
 
               <div>
@@ -67,7 +67,7 @@ export function Templates() {
               </div>
 
               <div className="p-3 rounded-md bg-canvas-subtle border border-border space-y-1">
-                <span className="text-[10px] font-mono font-bold text-vermilion uppercase block">
+                <span className="text-[10px] font-mono font-bold text-coral uppercase block">
                   Hook Structure
                 </span>
                 <p className="text-xs text-stone italic leading-relaxed">"{t.hook}"</p>

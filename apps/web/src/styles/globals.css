@@ -3,55 +3,58 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   SHORTFORGE — Elite Studio Design Tokens (Reference B Palette)
+   SHORTFORGE — Elite Video-Automation Design Tokens
+   Palette: Canvas #FAF7F0, Ink #222520, Coral #E96D50, Green #376B53,
+            Mint #D8EDE0, Warm Yellow #F2D78B, Muted #70746D, Border #E5E1D7
    ========================================================================== */
 @layer base {
   :root {
-    /* Palette Tokens */
-    --color-canvas: #F7F8F4;
-    --color-canvas-subtle: #EEF0EB;
+    /* Token Palette */
+    --color-canvas: #FAF7F0;
+    --color-canvas-subtle: #F2EEE5;
     --color-surface: #FFFFFF;
-    --color-ink: #202522;
-    --color-ink-subtle: #363D39;
-    --color-coral: #F27660;
-    --color-vermilion: #F27660;
-    --color-mint: #CDEBDD;
-    --color-green: #32755B;
-    --color-butter: #F0D783;
-    --color-marigold: #F0D783;
-    --color-muted: #737B75;
-    --color-stone: #737B75;
-    --color-border: #E3E7E0;
-    --color-dark-surface: #171C19;
+    --color-ink: #222520;
+    --color-ink-subtle: #393E37;
+    --color-coral: #E96D50;
+    --color-vermilion: #E96D50;
+    --color-green: #376B53;
+    --color-moss: #376B53;
+    --color-mint: #D8EDE0;
+    --color-yellow: #F2D78B;
+    --color-marigold: #F2D78B;
+    --color-muted: #70746D;
+    --color-stone: #70746D;
+    --color-border: #E5E1D7;
+    --color-dark-surface: #1D211E;
 
     /* Base Surfaces */
-    --background: 80 14% 96%;           /* #F7F8F4 */
+    --background: 42 36% 96%;           /* #FAF7F0 */
     --surface: 0 0% 100%;               /* #FFFFFF */
-    --surface-subtle: 80 12% 94%;       /* #EEF0EB */
-    --surface-muted: 80 10% 90%;        /* #E4E7DF */
+    --surface-subtle: 42 30% 93%;       /* #F2EEE5 */
+    --surface-muted: 42 24% 88%;        /* #EAE4D8 */
     --surface-elevated: 0 0% 100%;
-    --surface-hover: 80 12% 95%;
+    --surface-hover: 42 30% 95%;
 
     /* Text */
-    --text-primary: 144 7% 13%;         /* #202522 deep ink */
-    --text-secondary: 135 3% 47%;       /* #737B75 */
-    --text-muted: 135 4% 57%;           /* #8E9690 */
+    --text-primary: 100 8% 13%;         /* #222520 primary ink */
+    --text-secondary: 94 3% 44%;        /* #70746D */
+    --text-muted: 94 3% 55%;            /* #8B8F88 */
     --text-inverse: 0 0% 100%;
 
     /* Borders */
-    --border: 90 8% 89%;                /* #E3E7E0 */
-    --border-strong: 90 9% 82%;         /* #D1D7CD */
-    --border-focus: 9 84% 66%;          /* #F27660 */
+    --border: 43 20% 87%;               /* #E5E1D7 */
+    --border-strong: 43 15% 80%;        /* #D5D0C4 */
+    --border-focus: 12 79% 61%;         /* #E96D50 */
 
-    /* Accent: Coral / High-energy film vermilion */
-    --accent: 9 84% 66%;                /* #F27660 */
-    --accent-hover: 9 77% 60%;          /* #E5624B */
-    --accent-soft: 9 84% 95%;           /* #FDEEEB */
+    /* Accent: Brand Coral */
+    --accent: 12 79% 61%;               /* #E96D50 */
+    --accent-hover: 12 70% 55%;         /* #DA5C3E */
+    --accent-soft: 12 79% 94%;          /* #FDF0ED */
     --accent-contrast: 0 0% 100%;
 
     /* Semantic */
-    --success: 156 40% 33%;             /* #32755B */
-    --success-soft: 156 35% 94%;
+    --success: 153 32% 31%;             /* #376B53 */
+    --success-soft: 153 30% 94%;
     --warning: 31 72% 51%;              /* #D9822B */
     --warning-soft: 31 60% 95%;
     --danger: 3 45% 46%;               /* #B93832 */
@@ -70,25 +73,25 @@
   }
 
   .dark {
-    --background: 144 11% 9%;           /* #141715 */
-    --surface: 144 11% 11%;             /* #171C19 */
-    --surface-subtle: 144 10% 13%;
-    --surface-muted: 144 8% 16%;
-    --surface-elevated: 144 10% 14%;
-    --surface-hover: 144 10% 16%;
+    --background: 100 9% 10%;           /* #181B17 */
+    --surface: 100 8% 12%;              /* #1D211E */
+    --surface-subtle: 100 7% 14%;
+    --surface-muted: 100 6% 16%;
+    --surface-elevated: 100 7% 15%;
+    --surface-hover: 100 7% 17%;
 
-    --text-primary: 80 14% 96%;
-    --text-secondary: 135 4% 68%;
-    --text-muted: 135 4% 52%;
-    --text-inverse: 144 7% 13%;
+    --text-primary: 42 36% 96%;
+    --text-secondary: 94 4% 68%;
+    --text-muted: 94 4% 52%;
+    --text-inverse: 100 8% 13%;
 
-    --border: 144 8% 20%;
-    --border-strong: 144 8% 28%;
-    --border-focus: 9 84% 66%;
+    --border: 100 6% 22%;
+    --border-strong: 100 6% 30%;
+    --border-focus: 12 79% 61%;
 
-    --accent: 9 84% 66%;
-    --accent-hover: 9 77% 60%;
-    --accent-soft: 9 40% 20%;
+    --accent: 12 79% 61%;
+    --accent-hover: 12 70% 55%;
+    --accent-soft: 12 40% 20%;
     --accent-contrast: 0 0% 100%;
   }
 }
@@ -117,8 +120,8 @@
   }
 
   ::selection {
-    background-color: rgba(242, 118, 96, 0.22);
-    color: #202522;
+    background-color: rgba(233, 109, 80, 0.22);
+    color: #222520;
   }
 }
 
@@ -155,15 +158,7 @@
     @apply tag-pill bg-coral-soft text-coral border border-coral/20;
   }
 
-  .tag-vermilion {
-    @apply tag-pill bg-coral-soft text-coral border border-coral/20;
-  }
-
   .tag-green {
-    @apply tag-pill bg-green-soft text-green-dark border border-green/20;
-  }
-
-  .tag-moss {
     @apply tag-pill bg-green-soft text-green-dark border border-green/20;
   }
 

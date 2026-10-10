@@ -147,7 +147,7 @@ export function Analytics() {
             <span className="text-xs font-mono font-bold text-ink uppercase tracking-wide">
               Views Progression
             </span>
-            <span className="text-[11px] font-mono text-vermilion">1080×1920 Shorts</span>
+            <span className="text-[11px] font-mono text-coral">1080×1920 Shorts</span>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -245,7 +245,7 @@ export function Analytics() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 p-5 rounded-xl bg-surface border border-border shadow-xs space-y-4">
           <div className="flex items-center gap-2 border-b border-border pb-3">
-            <Brain className="h-4 w-4 text-vermilion" />
+            <Brain className="h-4 w-4 text-coral" />
             <span className="text-xs font-mono font-bold text-ink uppercase tracking-wide">
               Algorithmic Feedback Insights
             </span>
@@ -256,7 +256,7 @@ export function Analytics() {
                 key={ins.id}
                 className="p-3.5 rounded-lg bg-canvas-subtle border border-border flex items-start gap-3"
               >
-                <Lightbulb className="h-4 w-4 text-vermilion shrink-0 mt-0.5" />
+                <Lightbulb className="h-4 w-4 text-coral shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <p className="text-xs font-medium text-ink leading-relaxed">{ins.text}</p>
                   <span className="text-[10px] font-mono text-stone-muted uppercase block">
@@ -270,7 +270,7 @@ export function Analytics() {
 
         <div className="lg:col-span-4 p-5 rounded-xl bg-surface border border-border shadow-xs space-y-4">
           <div className="flex items-center gap-2 border-b border-border pb-3">
-            <BarChart3 className="h-4 w-4 text-vermilion" />
+            <BarChart3 className="h-4 w-4 text-coral" />
             <span className="text-xs font-mono font-bold text-ink uppercase tracking-wide">
               Pacing Diagnostics
             </span>
@@ -291,7 +291,7 @@ export function Analytics() {
             </div>
             <div className="p-2.5 rounded bg-canvas-subtle border border-border flex justify-between">
               <span className="text-stone">Release Slot:</span>
-              <span className="font-semibold text-vermilion">{learned.bestPostingTime}</span>
+              <span className="font-semibold text-coral">{learned.bestPostingTime}</span>
             </div>
           </div>
         </div>

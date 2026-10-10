@@ -9,12 +9,12 @@ export function FeatureStorytellingSection() {
         <div className="p-8 sm:p-10 rounded-xl bg-surface border border-border shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6 space-y-4">
-              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
                 Architecture & Reliability
               </span>
               <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-ink">
                 Built as a durable production engine, <br />
-                <span className="font-editorial italic font-normal text-vermilion">not a shallow AI wrapper.</span>
+                <span className="font-editorial italic font-normal text-coral">not a shallow AI wrapper.</span>
               </h3>
               <p className="text-sm sm:text-base text-stone leading-relaxed">
                 ShortForge handles generation, audio processing, and rendering through background queue workers. The database remains the source of truth, jobs survive restarts, and publish operations are protected by distributed locking to prevent duplicate uploads.
@@ -54,7 +54,7 @@ export function FeatureStorytellingSection() {
         {/* Layout 2: Editorial Split Panel (Retention Science) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs space-y-4">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
               Retention Science
             </span>
             <h4 className="text-xl font-bold text-ink">The First-3-Second Dynamic</h4>
@@ -68,7 +68,7 @@ export function FeatureStorytellingSection() {
           </div>
 
           <div className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs space-y-4">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
               Kinetic Typography
             </span>
             <h4 className="text-xl font-bold text-ink">Burned-in Subtitle Safe Zones</h4>

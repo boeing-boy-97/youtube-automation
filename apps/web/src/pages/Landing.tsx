@@ -53,7 +53,7 @@ export function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-canvas text-ink font-sans selection:bg-vermilion-soft selection:text-ink">
+    <div className="min-h-screen bg-canvas text-ink font-sans selection:bg-coral-soft selection:text-ink">
       {/* 1. Header Navigation */}
       <LandingNav onDemoClick={handleExploreDemo} />
 

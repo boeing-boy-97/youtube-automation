@@ -233,7 +233,7 @@ export function Calendar() {
                           setSelectedItem(item);
                           setRescheduleDate(item.scheduledAt!.split('T')[0]);
                         }}
-                        className="p-1 rounded bg-vermilion-soft border border-vermilion/30 text-[10px] font-medium text-vermilion truncate cursor-pointer hover:border-vermilion"
+                        className="p-1 rounded bg-coral-soft border border-coral/30 text-[10px] font-medium text-coral truncate cursor-pointer hover:border-coral"
                       >
                         {item.title}
                       </div>

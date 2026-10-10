@@ -33,7 +33,7 @@ export function MetricCard({ label, value, icon: Icon, trend, sparkline, classNa
           <span
             className={cn(
               'font-mono text-[11px] font-semibold tabular-nums',
-              positive ? 'text-moss' : negative ? 'text-danger' : 'text-stone-muted'
+              positive ? 'text-green' : negative ? 'text-danger' : 'text-stone-muted'
             )}
           >
             {positive ? '+' : ''}{trend}%

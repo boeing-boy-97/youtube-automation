@@ -32,12 +32,12 @@ export function InteractiveShowcaseSection() {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="max-w-2xl space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             Interactive Studio Engine
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             Creative control across <br />
-            <span className="font-editorial italic font-normal text-vermilion">every production layer.</span>
+            <span className="font-editorial italic font-normal text-coral">every production layer.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             ShortForge gives creators direct oversight at every stage, from hook writing to subtitle placement. Explore each studio layer below.
@@ -69,7 +69,7 @@ export function InteractiveShowcaseSection() {
                       : 'text-stone hover:text-ink'
                   )}
                 >
-                  <Icon className={cn('h-3.5 w-3.5', isActive ? 'text-vermilion' : 'text-stone')} />
+                  <Icon className={cn('h-3.5 w-3.5', isActive ? 'text-coral' : 'text-stone')} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -87,7 +87,7 @@ export function InteractiveShowcaseSection() {
                   <h3 className="text-lg font-bold text-ink">Concept Lab</h3>
                   <p className="text-xs text-stone">Filter topics by content pillars, hook intrigue, and estimated duration.</p>
                 </div>
-                <span className="text-xs font-mono text-vermilion">STAGE 01</span>
+                <span className="text-xs font-mono text-coral">STAGE 01</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -98,13 +98,13 @@ export function InteractiveShowcaseSection() {
                     className={cn(
                       'p-4 rounded-lg border text-left cursor-pointer transition-all space-y-2',
                       selectedTopic === idx
-                        ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                        ? 'bg-canvas-subtle border-coral/50 shadow-xs'
                         : 'bg-surface border-border hover:border-border-strong'
                     )}
                   >
                     <div className="flex items-center justify-between text-[11px] text-stone">
                       <span className="font-mono">{t.category}</span>
-                      <span className="font-mono text-vermilion">{t.duration}</span>
+                      <span className="font-mono text-coral">{t.duration}</span>
                     </div>
                     <div className="text-sm font-semibold text-ink line-clamp-2">{t.title}</div>
                     <div className="text-[11px] text-stone-muted pt-1 border-t border-border">
@@ -124,12 +124,12 @@ export function InteractiveShowcaseSection() {
                   <h3 className="text-lg font-bold text-ink">Script Studio</h3>
                   <p className="text-xs text-stone">3-Act screenplay drafting with strict 145 WPM pacing control.</p>
                 </div>
-                <span className="text-xs font-mono text-vermilion">STAGE 02</span>
+                <span className="text-xs font-mono text-coral">STAGE 02</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-2">
-                  <div className="text-xs font-mono font-semibold text-vermilion">ACT I: HOOK (0:00 - 0:04)</div>
+                  <div className="text-xs font-mono font-semibold text-coral">ACT I: HOOK (0:00 - 0:04)</div>
                   <p className="text-xs text-ink leading-relaxed font-sans">
                     "If your dev team is still writing boilerplate by hand in 2026, stop immediately."
                   </p>
@@ -169,7 +169,7 @@ export function InteractiveShowcaseSection() {
                   <h3 className="text-lg font-bold text-ink">Neural Voice Direction</h3>
                   <p className="text-xs text-stone">ElevenLabs voice synthesis with breath-accurate cadence.</p>
                 </div>
-                <span className="text-xs font-mono text-vermilion">STAGE 03</span>
+                <span className="text-xs font-mono text-coral">STAGE 03</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -184,18 +184,18 @@ export function InteractiveShowcaseSection() {
                     className={cn(
                       'p-4 rounded-lg border text-left cursor-pointer transition-all space-y-2',
                       activeVoice === v.id
-                        ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                        ? 'bg-canvas-subtle border-coral/50 shadow-xs'
                         : 'bg-surface border-border hover:border-border-strong'
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-sm text-ink">{v.name}</span>
-                      <span className="text-xs text-vermilion font-mono">{v.style}</span>
+                      <span className="text-xs text-coral font-mono">{v.style}</span>
                     </div>
                     <div className="text-xs text-stone">{v.desc}</div>
                     <div className="pt-2 border-t border-border flex items-center justify-between text-[11px]">
                       <span className="text-stone-muted">48kHz Master</span>
-                      {activeVoice === v.id && <span className="text-vermilion font-medium">Selected</span>}
+                      {activeVoice === v.id && <span className="text-coral font-medium">Selected</span>}
                     </div>
                   </div>
                 ))}
@@ -211,7 +211,7 @@ export function InteractiveShowcaseSection() {
                   <h3 className="text-lg font-bold text-ink">Visual Scene Directing</h3>
                   <p className="text-xs text-stone">9:16 portrait scene composition tailored to vertical platforms.</p>
                 </div>
-                <span className="text-xs font-mono text-vermilion">STAGE 04</span>
+                <span className="text-xs font-mono text-coral">STAGE 04</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -226,7 +226,7 @@ export function InteractiveShowcaseSection() {
                       <span>{s.duration}</span>
                     </div>
                     <p className="text-xs text-stone leading-relaxed font-mono">{s.prompt}</p>
-                    <div className="text-[11px] text-vermilion font-mono pt-1">Resolution: 1080×1920</div>
+                    <div className="text-[11px] text-coral font-mono pt-1">Resolution: 1080×1920</div>
                   </div>
                 ))}
               </div>
@@ -241,7 +241,7 @@ export function InteractiveShowcaseSection() {
                   <h3 className="text-lg font-bold text-ink">Kinetic Subtitles & Safe-Zone Alignment</h3>
                   <p className="text-xs text-stone">Frame-accurate subtitle styling burned into YouTube Shorts safe zones.</p>
                 </div>
-                <span className="text-xs font-mono text-vermilion">STAGE 05</span>
+                <span className="text-xs font-mono text-coral">STAGE 05</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -256,13 +256,13 @@ export function InteractiveShowcaseSection() {
                     className={cn(
                       'p-4 rounded-lg border text-left cursor-pointer transition-all space-y-2',
                       captionPreset === preset.id
-                        ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                        ? 'bg-canvas-subtle border-coral/50 shadow-xs'
                         : 'bg-surface border-border hover:border-border-strong'
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-sm text-ink">{preset.name}</span>
-                      <span className="text-xs text-vermilion font-mono">{preset.font}</span>
+                      <span className="text-xs text-coral font-mono">{preset.font}</span>
                     </div>
                     <p className="text-xs text-stone leading-relaxed">{preset.desc}</p>
                     <div className="pt-2 border-t border-border flex items-center justify-between text-[11px]">
@@ -283,13 +283,13 @@ export function InteractiveShowcaseSection() {
                   <h3 className="text-lg font-bold text-ink">Authorized YouTube Publishing</h3>
                   <p className="text-xs text-stone">Direct OAuth upload with scheduling slots and privacy settings.</p>
                 </div>
-                <span className="text-xs font-mono text-vermilion">STAGE 06</span>
+                <span className="text-xs font-mono text-coral">STAGE 06</span>
               </div>
 
               <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-3">
                 <div className="flex items-center justify-between text-xs text-stone border-b border-border pb-2">
                   <span className="font-semibold text-ink">Connected Destination</span>
-                  <span className="text-vermilion font-mono">Google OAuth v3</span>
+                  <span className="text-coral font-mono">Google OAuth v3</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone">
                   <div>

@@ -242,7 +242,7 @@ export function Automation() {
                 className={cn(
                   'p-5 rounded-xl border transition-all cursor-pointer space-y-3 flex flex-col justify-between',
                   isSelected
-                    ? 'bg-surface border-vermilion shadow-xs'
+                    ? 'bg-surface border-coral shadow-xs'
                     : 'bg-surface border-border hover:border-border-strong'
                 )}
               >
@@ -251,13 +251,13 @@ export function Automation() {
                     <div
                       className={cn(
                         'h-8 w-8 rounded-md flex items-center justify-center',
-                        isSelected ? 'bg-vermilion text-white' : 'bg-canvas-subtle text-stone'
+                        isSelected ? 'bg-coral text-white' : 'bg-canvas-subtle text-stone'
                       )}
                     >
                       <Icon className="h-4 w-4" />
                     </div>
                     {isSelected && (
-                      <span className="text-[10px] font-mono font-bold text-vermilion uppercase">
+                      <span className="text-[10px] font-mono font-bold text-coral uppercase">
                         Active Mode
                       </span>
                     )}
@@ -279,7 +279,7 @@ export function Automation() {
       <div className="p-5 sm:p-6 rounded-xl bg-surface border border-border shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-border pb-3">
           <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-vermilion" />
+            <Shield className="h-4 w-4 text-coral" />
             <h3 className="text-sm font-bold text-ink">Autonomous Safety Guardrails</h3>
           </div>
           <span className="text-[11px] font-mono text-stone-muted">Security Policy §4.2</span>
@@ -305,7 +305,7 @@ export function Automation() {
       <Dialog open={confirmDialog === 'autonomous'} onClose={() => setConfirmDialog(null)} size="md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-vermilion" />
+            <AlertTriangle className="h-5 w-5 text-coral" />
             <DialogTitle>Enable Autonomous Publishing?</DialogTitle>
           </div>
           <DialogDescription>

@@ -117,7 +117,7 @@ export function Header() {
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Status Indicators */}
           {workspace?.automationMode === 'autonomous' && (
-            <span className="hidden xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-vermilion-soft text-vermilion border border-vermilion/20">
+            <span className="hidden xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-coral-soft text-coral border border-coral/20">
               <Zap className="h-3 w-3" />
               <span>Autonomous</span>
             </span>
@@ -152,7 +152,7 @@ export function Header() {
               <YoutubeIcon
                 className={cn(
                   'h-4 w-4',
-                  youtube?.connectionStatus === 'connected' ? 'text-vermilion' : 'text-stone-muted'
+                  youtube?.connectionStatus === 'connected' ? 'text-coral' : 'text-stone-muted'
                 )}
               />
             </NavLink>
@@ -167,7 +167,7 @@ export function Header() {
             >
               <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 h-3.5 min-w-[14px] rounded-full bg-vermilion text-white text-[9px] font-mono font-bold flex items-center justify-center px-0.5">
+                <span className="absolute top-1 right-1 h-3.5 min-w-[14px] rounded-full bg-coral text-white text-[9px] font-mono font-bold flex items-center justify-center px-0.5">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}

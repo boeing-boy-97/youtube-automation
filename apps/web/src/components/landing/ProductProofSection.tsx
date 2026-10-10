@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Lightbulb,
   FileText,
@@ -11,6 +12,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useMotionSafe, motionTokens } from '../../lib/motion';
 
 interface StepDetail {
   id: string;
@@ -60,7 +62,7 @@ const PRODUCTION_STAGES: StepDetail[] = [
     inputLabel: 'Selected Voice Model',
     inputContent: 'Voice: Adam (Authoritative Tech Narration) • ElevenLabs Neural Engine',
     outputLabel: 'Audio Master Result',
-    outputContent: '48,000 Hz, 320 kbps AAC stereo, broadcast normalized.',
+    outputContent: '48,000 Hz, 320 kbps AAC stereo, broadcast normalized (-14 LUFS).',
   },
   {
     id: 'scenes',
@@ -115,18 +117,19 @@ const PRODUCTION_STAGES: StepDetail[] = [
 export function ProductProofSection() {
   const [activeStageIndex, setActiveStageIndex] = useState(0);
   const activeStage = PRODUCTION_STAGES[activeStageIndex];
+  const { shouldReduce } = useMotionSafe();
 
   return (
-    <section id="workflow" className="py-20 px-4 sm:px-6 lg:px-8 bg-canvas border-t border-border text-ink">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <section id="workflow" className="py-24 px-4 sm:px-6 lg:px-8 bg-canvas border-t border-border text-ink">
+      <div className="max-w-7xl mx-auto space-y-14">
         {/* Section Header */}
         <div className="max-w-2xl space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             The Production Workflow
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             How a concept becomes <br />
-            <span className="font-editorial italic font-normal text-vermilion">a vertical short.</span>
+            <span className="font-editorial italic font-normal text-coral">a vertical short.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             Every video progresses through an automated, state-machine validated pipeline. Click any stage below to inspect how data passes from idea to finished deliverable.
@@ -147,7 +150,7 @@ export function ProductProofSection() {
                 className={cn(
                   'p-3.5 rounded-lg border text-left transition-all flex flex-col justify-between gap-3',
                   isActive
-                    ? 'bg-surface border-vermilion shadow-xs'
+                    ? 'bg-surface border-coral shadow-sm ring-1 ring-coral/20'
                     : 'bg-surface/60 border-border hover:bg-surface hover:border-border-strong'
                 )}
               >
@@ -155,7 +158,7 @@ export function ProductProofSection() {
                   <div
                     className={cn(
                       'h-8 w-8 rounded-md flex items-center justify-center transition-colors',
-                      isActive ? 'bg-vermilion text-white' : 'bg-canvas-subtle text-stone'
+                      isActive ? 'bg-coral text-white' : 'bg-canvas-subtle text-stone'
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -174,38 +177,49 @@ export function ProductProofSection() {
 
         {/* Detailed Stage Inspector Panel */}
         <div className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-vermilion">{activeStage.badge}</span>
-              <span className="text-stone-muted">•</span>
-              <h3 className="text-lg font-bold text-ink">{activeStage.title}</h3>
-            </div>
-            <span className="text-xs text-stone">{activeStage.shortDesc}</span>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeStage.id}
+              initial={shouldReduce ? { opacity: 1 } : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={shouldReduce ? { opacity: 1 } : { opacity: 0, y: -8 }}
+              transition={{ duration: motionTokens.duration.standard }}
+              className="space-y-6"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-coral">{activeStage.badge}</span>
+                  <span className="text-stone-muted">•</span>
+                  <h3 className="text-lg font-bold text-ink">{activeStage.title}</h3>
+                </div>
+                <span className="text-xs text-stone">{activeStage.shortDesc}</span>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Input Data Card */}
-            <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-2">
-              <div className="text-xs font-semibold text-stone uppercase tracking-wider font-mono">
-                Input Payload
-              </div>
-              <div className="text-xs font-medium text-ink">{activeStage.inputLabel}</div>
-              <div className="p-3 rounded bg-surface border border-border font-mono text-xs text-stone whitespace-pre-line leading-relaxed">
-                {activeStage.inputContent}
-              </div>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Input Data Card */}
+                <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-2">
+                  <div className="text-xs font-semibold text-stone uppercase tracking-wider font-mono">
+                    Input Payload
+                  </div>
+                  <div className="text-xs font-medium text-ink">{activeStage.inputLabel}</div>
+                  <div className="p-3 rounded bg-surface border border-border font-mono text-xs text-stone whitespace-pre-line leading-relaxed">
+                    {activeStage.inputContent}
+                  </div>
+                </div>
 
-            {/* Output Data Card */}
-            <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-2">
-              <div className="text-xs font-semibold text-vermilion uppercase tracking-wider font-mono">
-                Pipeline Output
+                {/* Output Data Card */}
+                <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-2">
+                  <div className="text-xs font-semibold text-coral uppercase tracking-wider font-mono">
+                    Pipeline Output
+                  </div>
+                  <div className="text-xs font-medium text-ink">{activeStage.outputLabel}</div>
+                  <div className="p-3 rounded bg-surface border border-border font-mono text-xs text-ink whitespace-pre-line leading-relaxed">
+                    {activeStage.outputContent}
+                  </div>
+                </div>
               </div>
-              <div className="text-xs font-medium text-ink">{activeStage.outputLabel}</div>
-              <div className="p-3 rounded bg-surface border border-border font-mono text-xs text-ink whitespace-pre-line leading-relaxed">
-                {activeStage.outputContent}
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>

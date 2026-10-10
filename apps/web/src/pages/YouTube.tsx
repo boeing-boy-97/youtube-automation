@@ -116,7 +116,7 @@ export function YouTubePage() {
       <div className="p-6 rounded-xl bg-surface border border-border shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-vermilion-soft text-vermilion flex items-center justify-center border border-vermilion/20">
+            <div className="h-10 w-10 rounded-lg bg-coral-soft text-coral flex items-center justify-center border border-coral/20">
               <YoutubeIcon className="h-5 w-5 fill-current" />
             </div>
             <div>

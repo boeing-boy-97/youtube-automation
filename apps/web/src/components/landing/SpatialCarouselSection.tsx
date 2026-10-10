@@ -164,13 +164,13 @@ export function SpatialCarouselSection() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-canvas-subtle border border-border text-xs font-mono font-medium text-stone">
-            <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+            <span className="h-1.5 w-1.5 rounded-full bg-coral" />
             <span>Creator Workflow Showcase</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-[1.12]">
             Authentic video deliverables, <br />
-            <span className="font-editorial italic font-normal text-vermilion">
+            <span className="font-editorial italic font-normal text-coral">
               crafted for high retention.
             </span>
           </h2>
@@ -252,8 +252,8 @@ export function SpatialCarouselSection() {
                     'absolute w-[240px] sm:w-[270px] aspect-[9/16] rounded-xl overflow-hidden border cursor-pointer',
                     'flex flex-col justify-between p-4 text-white shadow-lg transition-colors',
                     isCenter
-                      ? 'border-vermilion ring-4 ring-vermilion/10 shadow-2xl cursor-default'
-                      : 'border-border/80 hover:border-vermilion/40 hover:opacity-90'
+                      ? 'border-coral ring-4 ring-coral/10 shadow-2xl cursor-default'
+                      : 'border-border/80 hover:border-coral/40 hover:opacity-90'
                   )}
                   style={{
                     zIndex: zIndexVal,
@@ -294,7 +294,7 @@ export function SpatialCarouselSection() {
                       className={cn(
                         'h-12 w-12 rounded-full mx-auto flex items-center justify-center transition-all',
                         isCenter
-                          ? 'bg-vermilion text-white shadow-md hover:scale-110'
+                          ? 'bg-coral text-white shadow-md hover:scale-110'
                           : 'bg-black/60 text-white/70'
                       )}
                       onClick={(e) => {
@@ -352,7 +352,7 @@ export function SpatialCarouselSection() {
                   className={cn(
                     'h-1.5 rounded-full transition-all duration-300',
                     activeIndex === idx
-                      ? 'w-7 bg-vermilion'
+                      ? 'w-7 bg-coral'
                       : 'w-2 bg-border hover:bg-stone-muted'
                   )}
                   aria-label={`Jump to sample: ${sample.title}`}
@@ -395,7 +395,7 @@ export function SpatialCarouselSection() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-mono font-bold text-vermilion uppercase tracking-wide">
+                    <span className="text-[11px] font-mono font-bold text-coral uppercase tracking-wide">
                       {activeSample.category}
                     </span>
                     <span className="text-border">•</span>
@@ -438,7 +438,7 @@ export function SpatialCarouselSection() {
           <div>
             <DialogHeader>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-mono font-bold text-vermilion uppercase">
+                <span className="text-xs font-mono font-bold text-coral uppercase">
                   {inspectedSample.category}
                 </span>
                 <span className="text-border">•</span>
@@ -452,7 +452,7 @@ export function SpatialCarouselSection() {
 
             <DialogContent className="space-y-4">
               <div className="p-3.5 rounded-md bg-canvas-subtle border border-border space-y-1">
-                <span className="text-[11px] font-mono font-bold text-vermilion uppercase block">
+                <span className="text-[11px] font-mono font-bold text-coral uppercase block">
                   Opening 3-Second Retention Hook
                 </span>
                 <p className="text-xs sm:text-sm font-semibold text-ink">

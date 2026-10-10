@@ -46,12 +46,12 @@ export function FAQSection() {
       <div className="max-w-3xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="text-center space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             Frequently Asked Questions
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             Clear answers to <br />
-            <span className="font-editorial italic font-normal text-vermilion">common questions.</span>
+            <span className="font-editorial italic font-normal text-coral">common questions.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             Everything you need to know about ownership, architecture, and YouTube integration.
@@ -70,13 +70,13 @@ export function FAQSection() {
                 <button
                   type="button"
                   onClick={() => toggle(idx)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-sm text-ink hover:text-vermilion transition-colors"
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-sm text-ink hover:text-coral transition-colors"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
                     className={cn(
                       'h-4 w-4 text-stone shrink-0 transition-transform duration-200',
-                      isOpen && 'rotate-180 text-vermilion'
+                      isOpen && 'rotate-180 text-coral'
                     )}
                   />
                 </button>

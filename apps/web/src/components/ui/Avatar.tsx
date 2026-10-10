@@ -24,7 +24,7 @@ function getInitials(name: string): string {
 }
 
 function getColor(name: string): string {
-  const colors = ['bg-ink', 'bg-vermilion', 'bg-moss', 'bg-stone', 'bg-ink-pure'];
+  const colors = ['bg-ink', 'bg-coral', 'bg-green', 'bg-stone', 'bg-ink-pure'];
   const idx = name.split('').reduce((s, c) => s + c.charCodeAt(0), 0) % colors.length;
   return colors[idx];
 }

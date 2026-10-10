@@ -52,12 +52,12 @@ export function TrustSecuritySection() {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="max-w-2xl space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             Engineering Standards & Security
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             Reliability built for <br />
-            <span className="font-editorial italic font-normal text-vermilion">real production workflows.</span>
+            <span className="font-editorial italic font-normal text-coral">real production workflows.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             ShortForge operates on production infrastructure with strict safety guarantees. Here is how our architecture protects your channels, credentials, and data.
@@ -73,7 +73,7 @@ export function TrustSecuritySection() {
                 key={idx}
                 className="bg-surface border border-border rounded-lg p-5 space-y-3 hover:border-border-strong transition-all shadow-xs"
               >
-                <div className="h-9 w-9 rounded-md bg-canvas-subtle text-vermilion flex items-center justify-center border border-border">
+                <div className="h-9 w-9 rounded-md bg-canvas-subtle text-coral flex items-center justify-center border border-border">
                   <Icon className="h-4 w-4" />
                 </div>
                 <h3 className="font-bold text-sm text-ink">{g.title}</h3>

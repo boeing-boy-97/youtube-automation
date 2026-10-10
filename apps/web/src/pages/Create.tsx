@@ -309,11 +309,11 @@ export function Create() {
                         pillar: concept.pillar,
                       }));
                     }}
-                    className="w-full text-left p-3 rounded-lg border border-border bg-surface hover:border-vermilion transition-all"
+                    className="w-full text-left p-3 rounded-lg border border-border bg-surface hover:border-coral transition-all"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-semibold text-ink">{concept.title}</span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-canvas-subtle border border-border text-vermilion">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-canvas-subtle border border-border text-coral">
                         {concept.pillar}
                       </span>
                     </div>
@@ -379,7 +379,7 @@ export function Create() {
                     className={cn(
                       'p-3 rounded-lg border text-left transition-all',
                       form.goal === g.key
-                        ? 'border-vermilion bg-vermilion-soft'
+                        ? 'border-coral bg-coral-soft'
                         : 'border-border bg-surface hover:bg-canvas-subtle'
                     )}
                   >
@@ -464,7 +464,7 @@ export function Create() {
                   className={cn(
                     'p-3 rounded-lg border text-left transition-all',
                     form.voice === v.id
-                      ? 'border-vermilion bg-vermilion-soft'
+                      ? 'border-coral bg-coral-soft'
                       : 'border-border bg-surface hover:bg-canvas-subtle'
                   )}
                 >
@@ -575,7 +575,7 @@ export function Create() {
             <div className="p-5 rounded-lg bg-surface border border-border space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <span className="text-xs font-bold text-ink">ffprobe Media Validation</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-vermilion-soft text-vermilion">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-coral-soft text-coral">
                   PASSED
                 </span>
               </div>
@@ -672,7 +672,7 @@ export function Create() {
               className={cn(
                 'flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-all border',
                 isActive
-                  ? 'bg-surface border-vermilion text-vermilion shadow-xs font-semibold'
+                  ? 'bg-surface border-coral text-coral shadow-xs font-semibold'
                   : isDone
                   ? 'bg-canvas-subtle border-border text-ink'
                   : 'bg-canvas-subtle border-border text-stone-muted'

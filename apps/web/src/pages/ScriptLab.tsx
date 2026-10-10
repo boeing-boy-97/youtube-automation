@@ -276,7 +276,7 @@ export function ScriptLab() {
               loading={generating}
               className="btn-secondary h-8 px-3 text-xs"
             >
-              <Sparkles className="h-3.5 w-3.5 text-vermilion" />
+              <Sparkles className="h-3.5 w-3.5 text-coral" />
               <span>Regenerate</span>
             </Button>
             <Button
@@ -338,7 +338,7 @@ export function ScriptLab() {
                 </div>
                 <div className="p-2 rounded bg-canvas-subtle border border-border">
                   <span className="text-stone-muted block text-[10px]">EST. RUNTIME:</span>
-                  <span className="font-semibold text-vermilion">~{estDuration}s</span>
+                  <span className="font-semibold text-coral">~{estDuration}s</span>
                 </div>
                 <div className="p-2 rounded bg-canvas-subtle border border-border">
                   <span className="text-stone-muted block text-[10px]">AVG SENTENCE:</span>
@@ -358,7 +358,7 @@ export function ScriptLab() {
                   className="p-4 rounded-xl bg-surface border border-border shadow-xs space-y-2"
                 >
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="font-bold text-vermilion">{scene.title}</span>
+                    <span className="font-bold text-coral">{scene.title}</span>
                     <span className="px-2 py-0.5 rounded bg-canvas-subtle border border-border text-stone">
                       ~{scene.duration}s
                     </span>
@@ -383,10 +383,10 @@ export function ScriptLab() {
                   key={idx}
                   type="button"
                   onClick={() => handleAIAction(action.label)}
-                  className="p-2.5 rounded-lg border border-border bg-canvas-subtle hover:bg-surface hover:border-vermilion/50 transition-all text-left space-y-1"
+                  className="p-2.5 rounded-lg border border-border bg-canvas-subtle hover:bg-surface hover:border-coral/50 transition-all text-left space-y-1"
                 >
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-ink">
-                    <action.icon className="h-3.5 w-3.5 text-vermilion" />
+                    <action.icon className="h-3.5 w-3.5 text-coral" />
                     <span>{action.label}</span>
                   </div>
                   <div className="text-[10px] text-stone leading-tight">{action.desc}</div>
@@ -415,7 +415,7 @@ export function ScriptLab() {
                   className={cn(
                     'p-2.5 rounded-md border text-left cursor-pointer transition-all space-y-1',
                     currentVersionIndex === idx
-                      ? 'bg-vermilion-soft border-vermilion/40 shadow-xs'
+                      ? 'bg-coral-soft border-coral/40 shadow-xs'
                       : 'bg-canvas-subtle border-border hover:border-border-strong'
                   )}
                 >

@@ -65,7 +65,7 @@ export function BrandKit() {
         {/* Left: Configuration Form */}
         <div className="lg:col-span-7 space-y-4">
           <div className="p-5 rounded-xl bg-surface border border-border shadow-xs space-y-4">
-            <span className="text-xs font-mono font-bold text-vermilion uppercase tracking-wide block border-b border-border pb-2">
+            <span className="text-xs font-mono font-bold text-coral uppercase tracking-wide block border-b border-border pb-2">
               Brand Attributes
             </span>
 

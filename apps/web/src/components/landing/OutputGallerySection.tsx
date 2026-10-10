@@ -88,12 +88,12 @@ export function OutputGallerySection() {
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div className="max-w-2xl space-y-3">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
               Sample Deliverables
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
               Sample video outputs <br />
-              <span className="font-editorial italic font-normal text-vermilion">from real pipelines.</span>
+              <span className="font-editorial italic font-normal text-coral">from real pipelines.</span>
             </h2>
             <p className="text-base text-stone leading-relaxed">
               Every video below was synthesized from a text premise using ShortForge’s script generator, neural voiceover, and server-side FFmpeg rendering.
@@ -108,7 +108,7 @@ export function OutputGallerySection() {
             <div
               key={sample.id}
               onClick={() => setInspectedSample(sample)}
-              className="group bg-surface rounded-lg border border-border overflow-hidden hover:border-vermilion/50 transition-all cursor-pointer shadow-xs flex flex-col"
+              className="group bg-surface rounded-lg border border-border overflow-hidden hover:border-coral/50 transition-all cursor-pointer shadow-xs flex flex-col"
             >
               {/* Vertical Card Preview */}
               <div className={cn('aspect-[9/16] p-4 flex flex-col justify-between text-white relative bg-gradient-to-b', sample.gradient)}>
@@ -123,7 +123,7 @@ export function OutputGallerySection() {
 
                 {/* Middle Play Button Overlay */}
                 <div className="my-auto text-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-vermilion/90 text-white mx-auto flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+                  <div className="h-12 w-12 rounded-full bg-coral/90 text-white mx-auto flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
                     <Play className="h-5 w-5 fill-current ml-0.5" />
                   </div>
                   <span className="text-[11px] font-medium text-white/80 block">
@@ -150,7 +150,7 @@ export function OutputGallerySection() {
                 </h3>
                 <div className="flex items-center justify-between text-[11px] text-stone-muted pt-2 border-t border-border">
                   <span>{sample.voice}</span>
-                  <span className="text-vermilion font-medium group-hover:underline">Details &rarr;</span>
+                  <span className="text-coral font-medium group-hover:underline">Details &rarr;</span>
                 </div>
               </div>
             </div>
@@ -164,7 +164,7 @@ export function OutputGallerySection() {
           <div>
             <DialogHeader>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-mono font-bold text-vermilion uppercase">
+                <span className="text-xs font-mono font-bold text-coral uppercase">
                   {inspectedSample.category}
                 </span>
                 <span className="text-border">•</span>
@@ -180,7 +180,7 @@ export function OutputGallerySection() {
 
             <DialogContent className="space-y-4">
               <div className="p-3.5 rounded-md bg-canvas-subtle border border-border space-y-1">
-                <span className="text-[11px] font-mono font-bold text-vermilion uppercase block">
+                <span className="text-[11px] font-mono font-bold text-coral uppercase block">
                   Opening Hook
                 </span>
                 <p className="text-xs font-medium text-ink">

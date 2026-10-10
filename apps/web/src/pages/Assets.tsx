@@ -164,7 +164,7 @@ export function Assets() {
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all border',
                   activeTab === tab.key
-                    ? 'bg-surface border-vermilion text-vermilion font-semibold shadow-xs'
+                    ? 'bg-surface border-coral text-coral font-semibold shadow-xs'
                     : 'bg-canvas-subtle border-border text-stone hover:text-ink'
                 )}
               >
@@ -183,7 +183,7 @@ export function Assets() {
             placeholder="Filter assets..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-8 pl-8 pr-3 text-xs rounded-md border border-border bg-surface text-ink placeholder:text-stone-muted focus:border-vermilion focus:outline-none"
+            className="w-full h-8 pl-8 pr-3 text-xs rounded-md border border-border bg-surface text-ink placeholder:text-stone-muted focus:border-coral focus:outline-none"
           />
         </div>
       </div>
@@ -201,7 +201,7 @@ export function Assets() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-xl bg-surface border border-border shadow-xs hover:border-vermilion/50 transition-all flex flex-col justify-between space-y-3"
+              className="p-4 rounded-xl bg-surface border border-border shadow-xs hover:border-coral/50 transition-all flex flex-col justify-between space-y-3"
             >
               <div
                 className={cn(
@@ -210,7 +210,7 @@ export function Assets() {
                 )}
               >
                 {item.type === 'videos' ? (
-                  <Video className="h-8 w-8 text-vermilion" />
+                  <Video className="h-8 w-8 text-coral" />
                 ) : item.type === 'audio' || item.type === 'music' ? (
                   <FileAudio className="h-8 w-8 text-moss" />
                 ) : (

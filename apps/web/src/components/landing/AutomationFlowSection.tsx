@@ -20,12 +20,12 @@ export function AutomationFlowSection() {
         {/* Section Header & Mode Toggle */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="max-w-2xl space-y-3">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
               Autonomous Execution Guardrails
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
               Automation on <br />
-              <span className="font-editorial italic font-normal text-vermilion">your own terms.</span>
+              <span className="font-editorial italic font-normal text-coral">your own terms.</span>
             </h2>
             <p className="text-base text-stone leading-relaxed">
               Choose between human-in-the-loop review or scheduled hands-free publishing. You retain full control over posting frequency, budget caps, and channel privacy.
@@ -53,7 +53,7 @@ export function AutomationFlowSection() {
               className={cn(
                 'flex items-center gap-2 px-4 py-2 rounded-md text-xs font-medium transition-all',
                 mode === 'autonomous'
-                  ? 'bg-vermilion text-white shadow-xs font-semibold'
+                  ? 'bg-coral text-white shadow-xs font-semibold'
                   : 'text-stone hover:text-ink'
               )}
             >
@@ -67,7 +67,7 @@ export function AutomationFlowSection() {
         <div className="p-6 sm:p-8 rounded-xl bg-surface border border-border shadow-xs space-y-6">
           <div className="flex items-center justify-between border-b border-border pb-4">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-vermilion">
+              <span className="text-xs font-mono font-bold text-coral">
                 {mode === 'assisted' ? 'HUMAN-IN-THE-LOOP FLOW' : 'AUTONOMOUS RECURRING DISPATCH'}
               </span>
             </div>
@@ -105,7 +105,7 @@ export function AutomationFlowSection() {
             ].map((col) => (
               <div key={col.step} className="p-4 rounded-md bg-canvas-subtle border border-border space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-vermilion">{col.step}</span>
+                  <span className="font-mono text-xs font-bold text-coral">{col.step}</span>
                   <span className="text-xs font-semibold text-ink">{col.title}</span>
                 </div>
                 <p className="text-xs text-stone leading-relaxed">
@@ -118,7 +118,7 @@ export function AutomationFlowSection() {
           {/* Guardrails Banner */}
           <div className="p-4 rounded-md bg-canvas border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 text-stone">
-              <Shield className="h-4 w-4 text-vermilion shrink-0" />
+              <Shield className="h-4 w-4 text-coral shrink-0" />
               <span>
                 <strong>Safety Guardrail:</strong> AI cannot modify channel privacy, spending caps, or publishing targets without explicit workspace authorization.
               </span>

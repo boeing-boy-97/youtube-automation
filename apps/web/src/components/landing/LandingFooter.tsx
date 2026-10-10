@@ -46,7 +46,7 @@ export function LandingFooter() {
                 SF
               </div>
               <span className="font-bold text-ink text-base tracking-tight">ShortForge</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+              <span className="h-1.5 w-1.5 rounded-full bg-coral" />
             </Link>
             <p className="text-xs sm:text-sm text-stone leading-relaxed max-w-sm">
               The continuous vertical video studio. Turning raw creator concepts into high-retention 9:16 shorts with neural voiceover, scene directing, and verified YouTube publishing.
@@ -107,7 +107,7 @@ export function LandingFooter() {
                 <button
                   type="button"
                   onClick={() => setLegalModal('contact')}
-                  className="hover:text-ink transition-colors text-left font-semibold text-vermilion"
+                  className="hover:text-ink transition-colors text-left font-semibold text-coral"
                 >
                   Contact Engineering
                 </button>
@@ -163,7 +163,7 @@ export function LandingFooter() {
       <Dialog open={legalModal === 'privacy'} onClose={() => setLegalModal(null)} size="lg">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-vermilion" />
+            <ShieldCheck className="h-5 w-5 text-coral" />
             <DialogTitle>Privacy Policy</DialogTitle>
           </div>
           <DialogDescription>Effective Date: October 2026 • Real Data Protection</DialogDescription>
@@ -199,7 +199,7 @@ export function LandingFooter() {
       <Dialog open={legalModal === 'terms'} onClose={() => setLegalModal(null)} size="lg">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <FileCheck className="h-5 w-5 text-vermilion" />
+            <FileCheck className="h-5 w-5 text-coral" />
             <DialogTitle>Terms of Service</DialogTitle>
           </div>
           <DialogDescription>Production & Usage Agreement</DialogDescription>
@@ -229,7 +229,7 @@ export function LandingFooter() {
       <Dialog open={legalModal === 'contact'} onClose={() => setLegalModal(null)} size="md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <Mail className="h-5 w-5 text-vermilion" />
+            <Mail className="h-5 w-5 text-coral" />
             <DialogTitle>Contact Engineering & Support</DialogTitle>
           </div>
           <DialogDescription>Direct communication with our product team.</DialogDescription>
@@ -255,7 +255,7 @@ export function LandingFooter() {
               <label className="block text-xs font-medium text-stone mb-1.5">Message / Inquiry</label>
               <textarea
                 rows={4}
-                className="w-full bg-surface text-ink placeholder:text-stone-muted border border-border rounded-md px-3 py-2 text-xs focus:outline-none focus:border-vermilion focus:ring-1 focus:ring-vermilion/20"
+                className="w-full bg-surface text-ink placeholder:text-stone-muted border border-border rounded-md px-3 py-2 text-xs focus:outline-none focus:border-coral focus:ring-1 focus:ring-coral/20"
                 placeholder="Describe your inquiry, channel requirements, or API access needs..."
                 value={contactForm.message}
                 onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}

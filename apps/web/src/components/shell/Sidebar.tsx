@@ -112,13 +112,13 @@ export function Sidebar() {
         )}
       >
         <NavLink to="/dashboard" className="flex items-center gap-2 group">
-          <div className="h-7 w-7 rounded-md bg-ink flex items-center justify-center text-canvas font-mono font-bold text-xs shrink-0 group-hover:bg-vermilion transition-colors">
+          <div className="h-7 w-7 rounded-md bg-ink flex items-center justify-center text-canvas font-mono font-bold text-xs shrink-0 group-hover:bg-coral transition-colors">
             SF
           </div>
           {!sidebarCollapsed && (
             <div className="flex items-center gap-1">
               <span className="font-bold text-ink tracking-tight text-sm">ShortForge</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+              <span className="h-1.5 w-1.5 rounded-full bg-coral" />
             </div>
           )}
         </NavLink>
@@ -167,11 +167,11 @@ export function Sidebar() {
                       'flex items-center gap-2.5 h-9 rounded-md text-xs font-medium transition-all relative',
                       sidebarCollapsed ? 'justify-center w-9 mx-auto' : 'px-2.5',
                       active
-                        ? 'bg-vermilion-soft text-vermilion font-semibold'
+                        ? 'bg-coral-soft text-coral font-semibold'
                         : 'text-stone hover:text-ink hover:bg-canvas-subtle'
                     )}
                   >
-                    <Icon className={cn('shrink-0 h-4 w-4', active ? 'text-vermilion' : 'text-stone')} />
+                    <Icon className={cn('shrink-0 h-4 w-4', active ? 'text-coral' : 'text-stone')} />
                     {!sidebarCollapsed && (
                       <>
                         <span className="truncate">{item.label}</span>

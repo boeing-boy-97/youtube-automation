@@ -65,7 +65,7 @@ function CustomNode({
     <div
       className={cn(
         'px-3 py-2 rounded-lg border bg-surface shadow-xs min-w-[140px] transition-all',
-        selected ? 'border-vermilion ring-1 ring-vermilion/30' : 'border-border',
+        selected ? 'border-coral ring-1 ring-coral/30' : 'border-border',
         data.status === 'running' && 'border-amber-500 ring-1 ring-amber-500/30',
         data.status === 'success' && 'border-moss',
         data.status === 'error' && 'border-danger'
@@ -82,7 +82,7 @@ function CustomNode({
               ? 'bg-moss/10 text-moss-dark'
               : data.status === 'error'
               ? 'bg-danger/10 text-danger'
-              : 'bg-canvas-subtle text-vermilion'
+              : 'bg-canvas-subtle text-coral'
           )}
         >
           {data.status === 'running' ? <Loader2 className="h-3 w-3 animate-spin" /> : <Icon className="h-3 w-3" />}

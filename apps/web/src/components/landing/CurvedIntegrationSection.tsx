@@ -68,7 +68,7 @@ const ECOSYSTEM_ITEMS: EcosystemItem[] = [
     statusText: '12 Studio Voices Configured',
     statusType: 'live',
     icon: Mic,
-    accentColor: '#EC5A3A',
+    accentColor: '#E96D50',
     bgLight: 'rgba(236, 90, 58, 0.08)',
     actionLabel: 'Explore Studio Voices',
     actionLink: '/brand-kit',
@@ -228,13 +228,13 @@ export function CurvedIntegrationSection() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-canvas-subtle border border-border text-xs font-mono font-medium text-stone">
-            <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+            <span className="h-1.5 w-1.5 rounded-full bg-coral" />
             <span>ShortForge Production Ecosystem</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-[1.12]">
             Integrated creative tools, <br />
-            <span className="font-editorial italic font-normal text-vermilion">
+            <span className="font-editorial italic font-normal text-coral">
               one unified production pipeline.
             </span>
           </h2>
@@ -288,8 +288,8 @@ export function CurvedIntegrationSection() {
                     'absolute p-3.5 sm:p-4 rounded-xl border text-left cursor-pointer transition-colors',
                     'flex flex-col items-center justify-center gap-2.5 shadow-sm',
                     isActive
-                      ? 'bg-surface border-vermilion shadow-md ring-2 ring-vermilion/20'
-                      : 'bg-surface/90 border-border hover:border-vermilion/40 hover:bg-surface'
+                      ? 'bg-surface border-coral shadow-md ring-2 ring-coral/20'
+                      : 'bg-surface/90 border-border hover:border-coral/40 hover:bg-surface'
                   )}
                   style={{
                     zIndex,
@@ -342,7 +342,7 @@ export function CurvedIntegrationSection() {
                   {isActive && (
                     <motion.div
                       layoutId="active-indicator-dot"
-                      className="absolute -bottom-1.5 h-1.5 w-6 rounded-full bg-vermilion"
+                      className="absolute -bottom-1.5 h-1.5 w-6 rounded-full bg-coral"
                       transition={{ duration: 0.25 }}
                     />
                   )}
@@ -372,7 +372,7 @@ export function CurvedIntegrationSection() {
                   className={cn(
                     'h-1.5 rounded-full transition-all duration-300',
                     activeIndex === idx
-                      ? 'w-6 bg-vermilion'
+                      ? 'w-6 bg-coral'
                       : 'w-1.5 bg-border hover:bg-stone-muted'
                   )}
                   aria-label={`Jump to ${item.name}`}
@@ -423,7 +423,7 @@ export function CurvedIntegrationSection() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono font-bold text-vermilion uppercase tracking-wide">
+                      <span className="text-[11px] font-mono font-bold text-coral uppercase tracking-wide">
                         {activeItem.badge}
                       </span>
                       <span className="text-border">•</span>

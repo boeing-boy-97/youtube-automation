@@ -70,11 +70,11 @@ export function Login() {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center gap-2 mb-4 group">
-            <div className="h-8 w-8 rounded-md bg-ink flex items-center justify-center text-canvas font-mono font-bold text-xs group-hover:bg-vermilion transition-colors shadow-xs">
+            <div className="h-8 w-8 rounded-md bg-ink flex items-center justify-center text-canvas font-mono font-bold text-xs group-hover:bg-coral transition-colors shadow-xs">
               SF
             </div>
             <span className="font-bold text-ink text-lg tracking-tight">ShortForge</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-vermilion" />
+            <span className="h-1.5 w-1.5 rounded-full bg-coral" />
           </Link>
           <h1 className="text-xl font-bold text-ink tracking-tight">Sign in to your studio</h1>
           <p className="text-xs text-stone">Access your continuous short-form production pipeline.</p>
@@ -124,7 +124,7 @@ export function Login() {
 
         <p className="text-center text-xs text-stone">
           Need an account?{' '}
-          <Link to="/signup" className="text-vermilion hover:underline font-semibold">
+          <Link to="/signup" className="text-coral hover:underline font-semibold">
             Create account
           </Link>
         </p>

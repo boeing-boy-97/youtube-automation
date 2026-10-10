@@ -137,7 +137,7 @@ export function Help() {
           placeholder="Search technical documentation, OAuth, or FFmpeg guides..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 rounded-md border border-border bg-surface text-xs placeholder:text-stone-muted focus:border-vermilion focus:outline-none"
+          className="w-full pl-9 pr-4 py-2 rounded-md border border-border bg-surface text-xs placeholder:text-stone-muted focus:border-coral focus:outline-none"
         />
       </div>
 
@@ -150,7 +150,7 @@ export function Help() {
               className="rounded-xl border border-border bg-surface shadow-xs overflow-hidden"
             >
               <div className="p-4 border-b border-border bg-canvas-subtle/50 flex items-center gap-2.5">
-                <Icon className="h-4 w-4 text-vermilion" />
+                <Icon className="h-4 w-4 text-coral" />
                 <h3 className="font-semibold text-xs text-ink uppercase tracking-wider">
                   {section.title}
                 </h3>
@@ -168,7 +168,7 @@ export function Help() {
                       >
                         <span className="text-xs font-semibold text-ink">{item.q}</span>
                         {isOpen ? (
-                          <ChevronDown className="h-3.5 w-3.5 text-vermilion shrink-0" />
+                          <ChevronDown className="h-3.5 w-3.5 text-coral shrink-0" />
                         ) : (
                           <ChevronRight className="h-3.5 w-3.5 text-stone-muted shrink-0" />
                         )}

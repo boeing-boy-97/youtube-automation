@@ -134,7 +134,7 @@ export function Ideas() {
               className={cn(
                 'px-4 py-2 text-xs font-medium border-b-2 transition-all whitespace-nowrap -mb-px',
                 activeTab === tab.key
-                  ? 'border-vermilion text-vermilion font-semibold'
+                  ? 'border-coral text-coral font-semibold'
                   : 'border-transparent text-stone hover:text-ink'
               )}
             >
@@ -212,7 +212,7 @@ export function Ideas() {
           >
             <div className="px-5 py-4 border-b border-border flex items-center justify-between">
               <h3 className="font-bold text-ink text-sm flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-vermilion" />
+                <Sparkles className="h-4 w-4 text-coral" />
                 <span>Concept Generation Studio</span>
               </h3>
               {!generating && (
@@ -227,7 +227,7 @@ export function Ideas() {
 
             {generating ? (
               <div className="p-8 text-center space-y-3">
-                <Loader2 className="h-6 w-6 text-vermilion animate-spin mx-auto" />
+                <Loader2 className="h-6 w-6 text-coral animate-spin mx-auto" />
                 <p className="text-xs font-semibold text-ink">{genProgress.stage}</p>
                 <p className="text-[11px] text-stone">Synthesizing curiosity hooks and 3-act pacing...</p>
               </div>
@@ -264,7 +264,7 @@ export function Ideas() {
                     max={8}
                     value={genForm.count}
                     onChange={(e) => setGenForm({ ...genForm, count: Number(e.target.value) })}
-                    className="w-full accent-vermilion"
+                    className="w-full accent-coral"
                   />
                 </div>
                 <div className="pt-2 flex justify-end gap-2 border-t border-border">
@@ -311,7 +311,7 @@ function IdeaCard({
 
   return (
     <div
-      className="p-5 rounded-lg bg-surface border border-border shadow-xs hover:border-vermilion/50 transition-all space-y-3 flex flex-col justify-between"
+      className="p-5 rounded-lg bg-surface border border-border shadow-xs hover:border-coral/50 transition-all space-y-3 flex flex-col justify-between"
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
@@ -328,7 +328,7 @@ function IdeaCard({
                   className="p-1 rounded text-stone hover:text-ink"
                   title={saved ? 'Unsave' : 'Save'}
                 >
-                  <Bookmark className={cn('h-3.5 w-3.5', saved && 'fill-vermilion text-vermilion')} />
+                  <Bookmark className={cn('h-3.5 w-3.5', saved && 'fill-coral text-coral')} />
                 </button>
                 <button
                   onClick={onRemix}
@@ -356,7 +356,7 @@ function IdeaCard({
         <h4 className="font-semibold text-ink text-sm leading-snug">{idea.title}</h4>
 
         <div className="p-2.5 rounded bg-canvas-subtle border border-border space-y-1">
-          <span className="text-[10px] font-mono font-bold text-vermilion uppercase block">
+          <span className="text-[10px] font-mono font-bold text-coral uppercase block">
             Opening Hook
           </span>
           <p className="text-xs text-stone leading-relaxed italic">"{idea.hook}"</p>

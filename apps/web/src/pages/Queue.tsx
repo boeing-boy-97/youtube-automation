@@ -94,7 +94,7 @@ export function Queue() {
                       onClick={() => setSelectedJob(item.id)}
                       className={cn(
                         'hover:bg-canvas-subtle/50 cursor-pointer transition-colors',
-                        selectedJob === item.id && 'bg-vermilion-soft/30'
+                        selectedJob === item.id && 'bg-coral-soft/30'
                       )}
                     >
                       <td className="px-4 py-3">
@@ -144,7 +144,7 @@ export function Queue() {
             {selectedContent ? (
               <div className="p-5 rounded-xl bg-surface border border-border shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-border pb-3">
-                  <span className="text-xs font-mono font-bold text-vermilion uppercase">
+                  <span className="text-xs font-mono font-bold text-coral uppercase">
                     Job Details
                   </span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-canvas-subtle border border-border text-stone">

@@ -119,12 +119,12 @@ export function ScriptStoryWorkspaceSection() {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="max-w-2xl space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             The Script Story Architecture
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             Vertical writing engineered <br />
-            <span className="font-editorial italic font-normal text-vermilion">for retention.</span>
+            <span className="font-editorial italic font-normal text-coral">for retention.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             Short-form scripts must balance spoken cadence, breath timing, and instant curiosity. ShortForge writes in structured beats calibrated for 140–160 words per minute.
@@ -141,7 +141,7 @@ export function ScriptStoryWorkspaceSection() {
               className={cn(
                 'px-4 py-2 rounded-md text-xs font-medium transition-all whitespace-nowrap border',
                 selectedScriptIndex === idx
-                  ? 'bg-surface border-vermilion text-vermilion shadow-xs font-semibold'
+                  ? 'bg-surface border-coral text-coral shadow-xs font-semibold'
                   : 'bg-canvas-subtle border-border text-stone hover:text-ink'
               )}
             >
@@ -155,7 +155,7 @@ export function ScriptStoryWorkspaceSection() {
           {/* Left Column: Script Metadata & Full Narration Text */}
           <div className="lg:col-span-5 bg-surface border border-border rounded-xl p-6 space-y-5 shadow-xs">
             <div className="space-y-2 border-b border-border pb-4">
-              <span className="text-xs font-mono text-vermilion">{activeScript.niche}</span>
+              <span className="text-xs font-mono text-coral">{activeScript.niche}</span>
               <h3 className="text-lg font-bold text-ink leading-snug">{activeScript.title}</h3>
               <div className="flex items-center gap-4 text-xs text-stone font-mono pt-1">
                 <span className="flex items-center gap-1">
@@ -172,7 +172,7 @@ export function ScriptStoryWorkspaceSection() {
 
             {/* Opening Hook Highlight */}
             <div className="p-4 rounded-md bg-canvas-subtle border border-border space-y-1.5">
-              <span className="text-[11px] font-mono font-bold text-vermilion uppercase tracking-wide">
+              <span className="text-[11px] font-mono font-bold text-coral uppercase tracking-wide">
                 First-3-Second Hook
               </span>
               <p className="text-xs sm:text-sm text-ink font-medium leading-relaxed">
@@ -204,7 +204,7 @@ export function ScriptStoryWorkspaceSection() {
                 className="bg-surface border border-border rounded-xl p-5 space-y-3 shadow-xs"
               >
                 <div className="flex items-center justify-between border-b border-border pb-2.5">
-                  <span className="text-xs font-mono font-bold text-vermilion">{scene.beat}</span>
+                  <span className="text-xs font-mono font-bold text-coral">{scene.beat}</span>
                   <span className="text-xs font-mono px-2 py-0.5 rounded bg-canvas-subtle border border-border text-stone">
                     {scene.time}
                   </span>

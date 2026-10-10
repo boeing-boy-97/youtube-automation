@@ -21,12 +21,12 @@ export function VideoStudioWorkspaceSection() {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="max-w-2xl space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             Studio Production Environment
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             A creative workstation <br />
-            <span className="font-editorial italic font-normal text-vermilion">built for vertical flow.</span>
+            <span className="font-editorial italic font-normal text-coral">built for vertical flow.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             Fine-tune scene durations, switch typography presets, and re-order storyboard blocks without switching between heavyweight desktop software.
@@ -38,7 +38,7 @@ export function VideoStudioWorkspaceSection() {
           {/* Top Control Bar */}
           <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-border">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-vermilion">STUDIO WORKSPACE</span>
+              <span className="text-xs font-mono font-bold text-coral">STUDIO WORKSPACE</span>
               <span className="text-border">•</span>
               <span className="text-xs text-ink font-medium">9:16 Vertical Master</span>
             </div>
@@ -73,7 +73,7 @@ export function VideoStudioWorkspaceSection() {
               <div className="w-full max-w-xs aspect-[9/16] bg-ink rounded-lg relative overflow-hidden flex flex-col justify-between p-4 shadow-sm">
                 <div className="flex items-center justify-between text-[11px] font-mono text-white/70">
                   <span className="bg-black/40 px-2 py-0.5 rounded">Preview Frame</span>
-                  <span className="text-vermilion">1080×1920</span>
+                  <span className="text-coral">1080×1920</span>
                 </div>
 
                 <div className="text-center space-y-2 my-auto px-4">
@@ -125,13 +125,13 @@ export function VideoStudioWorkspaceSection() {
                 className={cn(
                   'p-3.5 rounded-lg border transition-all cursor-pointer space-y-2',
                   selectedTrack === 'video'
-                    ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                    ? 'bg-canvas-subtle border-coral/50 shadow-xs'
                     : 'bg-surface border-border hover:border-border-strong'
                 )}
               >
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-ink flex items-center gap-1.5">
-                    <Film className="h-3.5 w-3.5 text-vermilion" />
+                    <Film className="h-3.5 w-3.5 text-coral" />
                     Visual Track (3 Scenes)
                   </span>
                   <span className="font-mono text-[11px] text-stone">1080×1920</span>
@@ -140,7 +140,7 @@ export function VideoStudioWorkspaceSection() {
                   <div className="p-2 rounded bg-surface border border-border text-ink">
                     Scene 1 (4s)
                   </div>
-                  <div className="p-2 rounded bg-vermilion-soft border border-vermilion/30 text-vermilion font-semibold">
+                  <div className="p-2 rounded bg-coral-soft border border-coral/30 text-coral font-semibold">
                     Scene 2 (20s)
                   </div>
                   <div className="p-2 rounded bg-surface border border-border text-ink">
@@ -155,13 +155,13 @@ export function VideoStudioWorkspaceSection() {
                 className={cn(
                   'p-3.5 rounded-lg border transition-all cursor-pointer space-y-2',
                   selectedTrack === 'audio'
-                    ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                    ? 'bg-canvas-subtle border-coral/50 shadow-xs'
                     : 'bg-surface border-border hover:border-border-strong'
                 )}
               >
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-ink flex items-center gap-1.5">
-                    <Volume2 className="h-3.5 w-3.5 text-vermilion" />
+                    <Volume2 className="h-3.5 w-3.5 text-coral" />
                     Speech Track (ElevenLabs)
                   </span>
                   <span className="font-mono text-[11px] text-stone">48kHz Master</span>
@@ -177,13 +177,13 @@ export function VideoStudioWorkspaceSection() {
                 className={cn(
                   'p-3.5 rounded-lg border transition-all cursor-pointer space-y-2',
                   selectedTrack === 'captions'
-                    ? 'bg-canvas-subtle border-vermilion/50 shadow-xs'
+                    ? 'bg-canvas-subtle border-coral/50 shadow-xs'
                     : 'bg-surface border-border hover:border-border-strong'
                 )}
               >
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-ink flex items-center gap-1.5">
-                    <Type className="h-3.5 w-3.5 text-vermilion" />
+                    <Type className="h-3.5 w-3.5 text-coral" />
                     Subtitles (Safe-Zone Burned)
                   </span>
                   <span className="font-mono text-[11px] text-stone">WebVTT Synced</span>

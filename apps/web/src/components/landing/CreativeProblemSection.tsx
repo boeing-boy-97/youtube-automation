@@ -40,12 +40,12 @@ export function CreativeProblemSection() {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="max-w-2xl space-y-3">
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-vermilion">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-coral">
             The Creative Problem
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-ink leading-tight">
             Why short-form video creation <br />
-            <span className="font-editorial italic font-normal text-vermilion">breaks creative momentum.</span>
+            <span className="font-editorial italic font-normal text-coral">breaks creative momentum.</span>
           </h2>
           <p className="text-base text-stone leading-relaxed">
             The barrier to consistent publishing is rarely lack of ideas. It is the friction of stitching disconnected AI wrappers, audio downloads, and timeline editors together by hand.
@@ -65,12 +65,12 @@ export function CreativeProblemSection() {
                   className={cn(
                     'p-5 rounded-lg border transition-all cursor-pointer',
                     isSelected
-                      ? 'bg-surface border-vermilion/50 shadow-xs'
+                      ? 'bg-surface border-coral/50 shadow-xs'
                       : 'bg-surface/50 border-border hover:bg-surface hover:border-border-strong'
                   )}
                 >
                   <div className="flex items-center justify-between gap-4 mb-2">
-                    <span className="text-xs font-mono font-bold text-vermilion">0{idx + 1}</span>
+                    <span className="text-xs font-mono font-bold text-coral">0{idx + 1}</span>
                     <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-canvas-subtle border border-border text-stone">
                       {f.metric}
                     </span>
@@ -81,7 +81,7 @@ export function CreativeProblemSection() {
                   {isSelected && (
                     <div className="mt-3 pt-3 border-t border-border text-xs text-stone-muted leading-relaxed space-y-1.5">
                       <p>{f.detail}</p>
-                      <div className="font-mono text-vermilion text-[11px] font-semibold">
+                      <div className="font-mono text-coral text-[11px] font-semibold">
                         CONSEQUENCE: {f.impact}
                       </div>
                     </div>
@@ -96,7 +96,7 @@ export function CreativeProblemSection() {
             <div className="space-y-4">
               <div className="flex items-center justify-between text-xs border-b border-border pb-2.5">
                 <span className="font-semibold text-ink uppercase">Workflow Contrast</span>
-                <span className="text-vermilion font-mono text-[11px]">STUDIO PIPELINE</span>
+                <span className="text-coral font-mono text-[11px]">STUDIO PIPELINE</span>
               </div>
 
               {/* The Disconnected Stack */}
@@ -134,7 +134,7 @@ export function CreativeProblemSection() {
                 <div className="p-3.5 rounded-md bg-canvas border border-border-strong space-y-2 text-xs text-ink">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Unified Content Model:</span>
-                    <span className="text-vermilion font-semibold">1 Workspace</span>
+                    <span className="text-coral font-semibold">1 Workspace</span>
                   </div>
                   <div className="flex items-center justify-between text-stone">
                     <span>Structured 3-Act Script:</span>
@@ -154,7 +154,7 @@ export function CreativeProblemSection() {
 
             <div className="p-3 rounded-md bg-canvas-subtle border border-border flex items-center justify-between text-xs">
               <span className="text-stone">Production Time Per Short:</span>
-              <span className="text-vermilion font-bold font-mono">2 Minutes vs 90 Minutes</span>
+              <span className="text-coral font-bold font-mono">2 Minutes vs 90 Minutes</span>
             </div>
           </div>
         </div>
