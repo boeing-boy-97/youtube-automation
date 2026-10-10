@@ -3,7 +3,10 @@ import { prisma } from '../database/prisma.js';
 import { redis } from '../config/redis.config.js';
 
 export async function registerHealth(app: FastifyInstance) {
-  app.get('/health/live', async () => ({ status: 'ok', service: 'shortforge-api', ts: new Date().toISOString() }));
+  const liveHandler = async () => ({ status: 'ok', service: 'shortforge-api', ts: new Date().toISOString() });
+
+  app.get('/health', liveHandler);
+  app.get('/health/live', liveHandler);
 
   app.get('/health/ready', async (request, reply) => {
     void request;

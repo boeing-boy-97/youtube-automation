@@ -27,3 +27,20 @@ export async function getWorkspace(workspaceId: string) {
   if (!ws) throw new NotFoundError('Workspace', workspaceId);
   return ws;
 }
+
+export async function updateWorkspace(workspaceId: string, data: { name?: string; slug?: string; avatarUrl?: string | null; settings?: Record<string, any> }) {
+  const existing = await prisma.workspace.findUnique({ where: { id: workspaceId } });
+  if (!existing) throw new NotFoundError('Workspace', workspaceId);
+
+  const updated = await prisma.workspace.update({
+    where: { id: workspaceId },
+    data: {
+      ...(data.name ? { name: data.name } : {}),
+      ...(data.slug ? { slug: data.slug } : {}),
+      ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
+      ...(data.settings ? { settings: { ...((existing.settings as any) || {}), ...data.settings } } : {}),
+    },
+    include: { _count: { select: { members: true, contents: true, channels: true } } },
+  });
+  return updated;
+}

@@ -4,6 +4,7 @@ import type { YouTubeChannel } from '../types/youtube';
 import { storageGet, storageSet } from '../lib/utils';
 import { STORAGE_KEYS, DEFAULT_PILLARS, DEFAULT_CONTENT_RULES, DEFAULT_VOICE, DEFAULT_BRAND, DEFAULT_PUBLISHING } from '../lib/constants';
 import { seedYouTubeChannel } from '../mock/seedData';
+import { apiClient } from '../services/apiClient';
 
 interface WorkspaceState {
   workspace: Workspace | null;
@@ -13,26 +14,28 @@ interface WorkspaceState {
 
   initWorkspace: () => void;
   createWorkspace: (data: Partial<Workspace>) => Workspace;
-  updateWorkspace: (data: Partial<Workspace>) => void;
+  updateWorkspace: (data: Partial<Workspace>) => Promise<void>;
   setOnboardingComplete: () => void;
   setAutomationMode: (mode: AutomationMode) => void;
   connectYouTube: () => Promise<void>;
-  disconnectYouTube: () => void;
+  connectYouTubeOAuth: () => Promise<{ authUrl?: string; error?: string }>;
+  setConnectedChannel: (channel: YouTubeChannel) => void;
+  disconnectYouTube: () => Promise<void>;
   switchWorkspace: (id: string) => void;
   resetDemoData: () => void;
 }
 
 const defaultWorkspace = (): Workspace => ({
   id: 'ws_default',
-  name: 'My Channel',
-  channelName: '',
-  niche: '',
-  targetAudience: '',
+  name: 'ShortForge Production',
+  channelName: 'AI Shorts Studio',
+  niche: 'AI & Automation',
+  targetAudience: 'Creators & Tech Enthusiasts',
   primaryLanguage: 'en',
   pillars: DEFAULT_PILLARS,
   contentRules: DEFAULT_CONTENT_RULES,
   voice: DEFAULT_VOICE,
-  brand: { ...DEFAULT_BRAND, name: '' },
+  brand: { ...DEFAULT_BRAND, name: 'ShortForge' },
   publishing: DEFAULT_PUBLISHING,
   automationMode: 'manual',
   onboardingComplete: false,
@@ -42,7 +45,7 @@ const defaultWorkspace = (): Workspace => ({
 export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   workspace: null,
   youtubeChannel: null,
-  workspaces: [{ id: 'ws_default', name: 'My Channel' }, { id: 'ws_test', name: 'Test Channel' }],
+  workspaces: [{ id: 'ws_default', name: 'ShortForge Production' }],
   activeWorkspaceId: 'ws_default',
 
   initWorkspace: () => {
@@ -51,7 +54,9 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     if (stored) {
       set({ workspace: stored, youtubeChannel: yt });
     } else {
-      set({ workspace: defaultWorkspace() });
+      const initial = defaultWorkspace();
+      storageSet(STORAGE_KEYS.workspace, initial);
+      set({ workspace: initial, youtubeChannel: yt });
     }
   },
 
@@ -62,12 +67,35 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     return ws;
   },
 
-  updateWorkspace: (data) => {
+  updateWorkspace: async (data) => {
     const current = get().workspace;
     if (!current) return;
     const updated = { ...current, ...data };
     storageSet(STORAGE_KEYS.workspace, updated);
     set({ workspace: updated });
+
+    try {
+      const isLive = await apiClient.health.pingLive();
+      if (isLive) {
+        await apiClient.workspaces.updateCurrent({
+          name: updated.name,
+          settings: {
+            channelName: updated.channelName,
+            niche: updated.niche,
+            targetAudience: updated.targetAudience,
+            primaryLanguage: updated.primaryLanguage,
+            pillars: updated.pillars,
+            contentRules: updated.contentRules,
+            voice: updated.voice,
+            brand: updated.brand,
+            publishing: updated.publishing,
+            automationMode: updated.automationMode,
+          },
+        });
+      }
+    } catch {
+      // Local mode fallback
+    }
   },
 
   setOnboardingComplete: () => {
@@ -78,20 +106,56 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     get().updateWorkspace({ automationMode: mode });
   },
 
+  connectYouTubeOAuth: async () => {
+    try {
+      const isLive = await apiClient.health.pingLive();
+      if (isLive) {
+        const res = await apiClient.youtube.connect();
+        if (res?.authUrl) {
+          return { authUrl: res.authUrl };
+        }
+      }
+      return { error: 'API service offline or Google OAuth credentials not configured in backend .env' };
+    } catch (err: any) {
+      return { error: err?.message || 'Failed to initiate OAuth flow' };
+    }
+  },
+
   connectYouTube: async () => {
-    set({ youtubeChannel: { ...seedYouTubeChannel(), connectionStatus: 'connecting' } });
-    await new Promise(r => setTimeout(r, 2000));
+    try {
+      const res = await get().connectYouTubeOAuth();
+      if (res?.authUrl) {
+        window.location.href = res.authUrl;
+        return;
+      }
+    } catch {
+      // Fall through to local channel connection
+    }
     const channel = { ...seedYouTubeChannel(), connectionStatus: 'connected' as const };
     storageSet(STORAGE_KEYS.youtube, channel);
     set({ youtubeChannel: channel });
   },
 
-  disconnectYouTube: () => {
+  setConnectedChannel: (channel: YouTubeChannel) => {
+    storageSet(STORAGE_KEYS.youtube, channel);
+    set({ youtubeChannel: channel });
+  },
+
+  disconnectYouTube: async () => {
+    const yt = get().youtubeChannel;
+    if (yt?.channelId) {
+      try {
+        await apiClient.youtube.disconnect(yt.channelId);
+      } catch {
+        // Continue to clear local
+      }
+    }
     localStorage.removeItem(STORAGE_KEYS.youtube);
     set({ youtubeChannel: null });
   },
 
   switchWorkspace: (id) => {
+    localStorage.setItem('sf_active_workspace_id', id);
     set({ activeWorkspaceId: id });
   },
 
@@ -105,7 +169,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       STORAGE_KEYS.analytics,
     ];
     keysToReset.forEach(k => localStorage.removeItem(k));
-    // Keep workspace/user but reset onboarding
     const ws = defaultWorkspace();
     storageSet(STORAGE_KEYS.workspace, ws);
     localStorage.removeItem(STORAGE_KEYS.youtube);

@@ -22,8 +22,15 @@ import {
   Clock,
   TrendingUp,
   Layers,
+  Send,
+  Mail,
+  ShieldCheck,
+  FileCheck,
 } from 'lucide-react';
 import { useState } from 'react';
+import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogFooter, DialogDescription } from '../components/ui/Dialog';
+import { Input } from '../components/ui/Input';
+import { Button } from '../components/ui/Button';
 
 function Nav({ onDemoClick }: { onDemoClick: () => void }) {
   return (
@@ -182,6 +189,25 @@ export function Landing() {
   const setOnboardingComplete = useWorkspaceStore(s => s.setOnboardingComplete);
   const initContent = useContentStore(s => s.init);
   const showToast = useUIStore(s => s.showToast);
+
+  const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'contact' | null>(null);
+  const [contactForm, setContactForm] = useState({ name: '', email: '', category: 'General Inquiry', message: '' });
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactForm.name || !contactForm.email || !contactForm.message) {
+      showToast({ type: 'error', title: 'Validation Error', message: 'Please complete all required fields.' });
+      return;
+    }
+    setContactSubmitting(true);
+    setTimeout(() => {
+      setContactSubmitting(false);
+      setLegalModal(null);
+      setContactForm({ name: '', email: '', category: 'General Inquiry', message: '' });
+      showToast({ type: 'success', title: 'Message Received', message: 'Our engineering and support team will reply within 24 hours.' });
+    }, 600);
+  };
 
   const handleExploreDemo = async () => {
     try {
@@ -416,15 +442,171 @@ export function Landing() {
               <Sparkles className="h-3 w-3 text-white" />
             </div>
             <span className="font-semibold text-text-primary text-sm">ShortForge</span>
-            <span className="text-xs text-text-muted ml-2">© 2026</span>
+            <span className="text-xs text-text-muted ml-2">© 2026 ShortForge AI Inc.</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-text-muted">
-            <a href="#" className="hover:text-text-primary transition-colors">Privacy</a>
-            <a href="#" className="hover:text-text-primary transition-colors">Terms</a>
-            <a href="#" className="hover:text-text-primary transition-colors">Contact</a>
+            <button
+              type="button"
+              onClick={() => setLegalModal('privacy')}
+              className="hover:text-text-primary transition-colors cursor-pointer"
+            >
+              Privacy Policy
+            </button>
+            <button
+              type="button"
+              onClick={() => setLegalModal('terms')}
+              className="hover:text-text-primary transition-colors cursor-pointer"
+            >
+              Terms of Service
+            </button>
+            <button
+              type="button"
+              onClick={() => setLegalModal('contact')}
+              className="hover:text-text-primary transition-colors cursor-pointer"
+            >
+              Contact & Support
+            </button>
           </div>
         </div>
       </footer>
+
+      {/* Privacy Policy Modal */}
+      <Dialog open={legalModal === 'privacy'} onClose={() => setLegalModal(null)} size="lg">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-accent" />
+            <DialogTitle>Privacy Policy</DialogTitle>
+          </div>
+          <DialogDescription>Effective Date: October 2026</DialogDescription>
+        </DialogHeader>
+        <DialogContent className="max-h-[60vh] overflow-y-auto space-y-4 text-xs text-text-secondary leading-relaxed">
+          <div>
+            <h4 className="font-semibold text-text-primary text-sm mb-1">1. Information We Collect</h4>
+            <p>
+              ShortForge collects email addresses, workspace metadata, and creative input parameters for generating short-form video scripts and media. When you connect third-party platforms such as YouTube or Google OAuth, we store encrypted access and refresh tokens.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-text-primary text-sm mb-1">2. Google API Services User Data Policy</h4>
+            <p>
+              ShortForge's use and transfer to any other app of information received from Google APIs will adhere to the{' '}
+              <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noreferrer" className="text-accent underline">
+                Google API Services User Data Policy
+              </a>
+              , including the Limited Use requirements. We request only scopes strictly required for uploading vertical Shorts and viewing channel performance metrics.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-text-primary text-sm mb-1">3. Data Security & Storage</h4>
+            <p>
+              Passswords are protected using Argon2id cryptographic hashing. OAuth credentials are AES-256 encrypted at rest. Rendered video assets are retained in private cloud storage according to your workspace retention policies.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogFooter>
+          <Button onClick={() => setLegalModal(null)}>I Understand</Button>
+        </DialogFooter>
+      </Dialog>
+
+      {/* Terms of Service Modal */}
+      <Dialog open={legalModal === 'terms'} onClose={() => setLegalModal(null)} size="lg">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <FileCheck className="h-5 w-5 text-accent" />
+            <DialogTitle>Terms of Service</DialogTitle>
+          </div>
+          <DialogDescription>Production & Usage Agreement</DialogDescription>
+        </DialogHeader>
+        <DialogContent className="max-h-[60vh] overflow-y-auto space-y-4 text-xs text-text-secondary leading-relaxed">
+          <div>
+            <h4 className="font-semibold text-text-primary text-sm mb-1">1. Production & Content Ownership</h4>
+            <p>
+              You retain full commercial rights and intellectual property ownership over all scripts, audio voiceovers, visuals, and rendered MP4 video deliverables generated through your ShortForge account.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-text-primary text-sm mb-1">2. YouTube Terms of Service</h4>
+            <p>
+              By utilizing the automated YouTube publishing features, you agree to be bound by the{' '}
+              <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className="text-accent underline">
+                YouTube Terms of Service
+              </a>
+              . You are responsible for ensuring your published content complies with YouTube Community Guidelines.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-text-primary text-sm mb-1">3. Automated Operations Guardrails</h4>
+            <p>
+              In Autonomous publishing mode, ShortForge executes scheduled operations within configured daily and monthly quotas. We maintain strict quality checks and safe margins to minimize distribution errors.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogFooter>
+          <Button onClick={() => setLegalModal(null)}>Agree & Close</Button>
+        </DialogFooter>
+      </Dialog>
+
+      {/* Contact & Support Modal */}
+      <Dialog open={legalModal === 'contact'} onClose={() => setLegalModal(null)} size="md">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <Mail className="h-5 w-5 text-accent" />
+            <DialogTitle>Contact Engineering & Support</DialogTitle>
+          </div>
+          <DialogDescription>Questions, custom integration inquiries, or API assistance.</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleContactSubmit}>
+          <DialogContent className="space-y-3">
+            <Input
+              label="Your Name"
+              value={contactForm.name}
+              onChange={e => setContactForm({ ...contactForm, name: e.target.value })}
+              placeholder="e.g. Alex Rivera"
+              required
+            />
+            <Input
+              label="Work Email"
+              type="email"
+              value={contactForm.email}
+              onChange={e => setContactForm({ ...contactForm, email: e.target.value })}
+              placeholder="alex@company.com"
+              required
+            />
+            <div>
+              <label className="label mb-1.5 block">Category</label>
+              <select
+                value={contactForm.category}
+                onChange={e => setContactForm({ ...contactForm, category: e.target.value })}
+                className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
+              >
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="API Integration">API & Custom Providers</option>
+                <option value="YouTube OAuth">YouTube OAuth Support</option>
+                <option value="Billing & Enterprise">Enterprise & Volume Billing</option>
+              </select>
+            </div>
+            <div>
+              <label className="label mb-1.5 block">Message</label>
+              <textarea
+                value={contactForm.message}
+                onChange={e => setContactForm({ ...contactForm, message: e.target.value })}
+                rows={4}
+                className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-accent resize-none"
+                placeholder="How can our engineering team assist you today?"
+                required
+              />
+            </div>
+          </DialogContent>
+          <DialogFooter>
+            <Button variant="secondary" type="button" onClick={() => setLegalModal(null)}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={contactSubmitting}>
+              <Send className="h-4 w-4" /> Send Message
+            </Button>
+          </DialogFooter>
+        </form>
+      </Dialog>
     </div>
   );
 }

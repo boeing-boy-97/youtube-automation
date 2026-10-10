@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { Session, User } from '../types/user';
 import { storageGet, storageSet, storageRemove, uid } from '../lib/utils';
 import { STORAGE_KEYS } from '../lib/constants';
+import { apiClient } from '../services/apiClient';
 
 interface AuthState {
   user: User | null;
@@ -9,8 +10,9 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 
-  login: (email: string, password: string) => Promise<User>;
-  signup: (name: string, email: string, password: string) => Promise<User>;
+  login: (email: string, password?: string) => Promise<User>;
+  signup: (name: string, email: string, password?: string) => Promise<User>;
+  updateUser: (data: Partial<User>) => Promise<User>;
   logout: () => void;
   getSession: () => Session | null;
   init: () => void;
@@ -30,9 +32,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: false });
   },
 
-  login: async (email, _password) => {
-    // Mock login - accept any valid email
-    await new Promise(r => setTimeout(r, 600));
+  login: async (email, password = 'password123') => {
+    try {
+      const isLive = await apiClient.health.pingLive();
+      if (isLive) {
+        const res = await apiClient.auth.login({ email, password });
+        if (res?.user) {
+          const liveUser: User = {
+            id: res.user.id,
+            email: res.user.email,
+            name: res.user.name || email.split('@')[0],
+            createdAt: res.user.createdAt || new Date().toISOString(),
+            plan: 'creator',
+          };
+          const session: Session = { user: liveUser, token: `live_${res.user.id}` };
+          storageSet(STORAGE_KEYS.user, liveUser);
+          storageSet(STORAGE_KEYS.session, session);
+          set({ user: liveUser, session, isAuthenticated: true });
+          return liveUser;
+        }
+      }
+    } catch {
+      // Fall through to local demo store
+    }
+
     const existingUser = storageGet<User | null>(STORAGE_KEYS.user, null);
     const user: User = existingUser && existingUser.email === email
       ? existingUser
@@ -50,8 +73,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     return user;
   },
 
-  signup: async (name, email, _password) => {
-    await new Promise(r => setTimeout(r, 800));
+  signup: async (name, email, password = 'password123') => {
+    try {
+      const isLive = await apiClient.health.pingLive();
+      if (isLive) {
+        const res = await apiClient.auth.register({ name, email, password });
+        if (res?.user) {
+          const liveUser: User = {
+            id: res.user.id,
+            email: res.user.email,
+            name: res.user.name || name,
+            createdAt: res.user.createdAt || new Date().toISOString(),
+            plan: 'creator',
+          };
+          const session: Session = { user: liveUser, token: `live_${res.user.id}` };
+          storageSet(STORAGE_KEYS.user, liveUser);
+          storageSet(STORAGE_KEYS.session, session);
+          set({ user: liveUser, session, isAuthenticated: true });
+          return liveUser;
+        }
+      }
+    } catch {
+      // Fall through to local demo store
+    }
+
     const user: User = {
       id: uid('user'),
       email,
@@ -66,7 +111,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     return user;
   },
 
+  updateUser: async (data: Partial<User>) => {
+    const current = get().user;
+    if (!current) throw new Error('No active user');
+    const updated: User = { ...current, ...data };
+
+    try {
+      const isLive = await apiClient.health.pingLive();
+      if (isLive) {
+        await apiClient.users.updateMe({
+          name: data.name,
+          avatarUrl: data.avatar || null,
+        });
+      }
+    } catch {
+      // Local mode persistence
+    }
+
+    const session = get().session;
+    const newSession = session ? { ...session, user: updated } : null;
+    storageSet(STORAGE_KEYS.user, updated);
+    if (newSession) storageSet(STORAGE_KEYS.session, newSession);
+    set({ user: updated, session: newSession });
+    return updated;
+  },
+
   logout: () => {
+    apiClient.auth.logout().catch(() => undefined);
     storageRemove(STORAGE_KEYS.session);
     set({ user: null, session: null, isAuthenticated: false });
   },

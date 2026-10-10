@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { requireAuth, requireWorkspace, kUser, kWorkspace } from '../../common/authorization/rbac.middleware.js';
-import { listWorkspacesForUser, createWorkspace, getWorkspace } from './workspaces.service.js';
+import { listWorkspacesForUser, createWorkspace, getWorkspace, updateWorkspace } from './workspaces.service.js';
 
 export async function registerWorkspaces(app: FastifyInstance) {
   app.get('/workspaces', { preHandler: [requireAuth] }, async (req) => {
@@ -21,5 +21,17 @@ export async function registerWorkspaces(app: FastifyInstance) {
     const w = (req as any)[kWorkspace];
     const ws = await getWorkspace(w.id);
     return { data: ws };
+  });
+
+  app.patch('/workspaces/current', { preHandler: [requireAuth, requireWorkspace] }, async (req) => {
+    const w = (req as any)[kWorkspace];
+    const body = z.object({
+      name: z.string().min(1).max(100).optional(),
+      slug: z.string().min(2).max(60).regex(/^[a-z0-9-]+$/).optional(),
+      avatarUrl: z.string().url().nullable().optional(),
+      settings: z.record(z.any()).optional(),
+    }).parse(req.body);
+    const updated = await updateWorkspace(w.id, body);
+    return { data: updated };
   });
 }
